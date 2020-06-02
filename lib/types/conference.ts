@@ -1,6 +1,4 @@
-/*
-MedMe Audio/Video Conference API SDK
- */
+"use strict";
 
 /**
  *
@@ -61,7 +59,7 @@ export interface IService {
         lang: LanguageListEnum;
         text: String;
     }]
-};
+}
 
 /**
  * Интерфейс данных конференции
@@ -98,62 +96,4 @@ export interface IConferenceInfo {
     scheduledDurationSeconds: Number,
     l10n: LanguageListEnum,
     isOpen: Boolean,
-}
-
-/**
- *
- */
-export class ConferenceModifyAPI {
-    private baseUrl: string;
-
-    public constructor(baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    public async createConference() {
-
-    }
-
-    public async moveConference() {
-
-    }
-
-    public async resizeConference() {
-
-    }
-
-    public async updateConferenceInfo() {
-
-    }
-}
-
-/**
- *
- */
-export class ConferenceAccessAPI {
-    private baseUrl: string;
-
-    public constructor(baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    public async exchange(accessToken) {
-
-    }
-
-    public async otpSend() {
-
-    }
-
-    public async otpVerify() {
-
-    }
-
-    public async getConferenceInfoByAccessToken() {
-
-    }
-
-    public async openForJoining() {
-
-    }
 }

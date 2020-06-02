@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "dist/cjs",
+    "declaration": true
+  },
+  "files": [
+    "lib/types/conference.ts",
+    "lib/request.ts",
+    "lib/index.ts"
+  ]
+}

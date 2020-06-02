@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "umd",
+    "target": "ES2015",
+    "outDir": "dist/es2015",
+    "declaration": true
+  },
+  "files": [
+    "lib/index.ts"
+  ]
+}

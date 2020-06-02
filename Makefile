@@ -1,2 +1,6 @@
 build:
-	tsc index.ts -o dist/index.js
+	rm -rf dist/* && tsc -b tsconfig.cjs.json && \
+		tsc -b tsconfig.es2015.json
+
+test:
+	npm run test
