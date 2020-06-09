@@ -3,24 +3,27 @@
  */
 
 import {apiRequest} from './request';
-import {IConferenceInfo} from './types/conference'
+import {ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput} from './types/conference'
 
 /**
- *
+ * Описание ответа на запрос создания конференции.
+ * В ответ приходит поле access_token. По нему будет осуществляться доступ
+ * к другим действиям над конференцией.
  */
 export interface ICreateConferenceResponse {
     access_token: string;
 }
 
 /**
- *
+ * Описание ответа на запрос получения ключа конференции (conference_token).
+ * Этот ключ используется для перехода на страницу конференции.
  */
 export interface IExchangeTokenResponse {
     conference_token: string;
 }
 
 /**
- *
+ * Содержит запросы на создание и изменение конференций.
  */
 export class ConferenceModifyAPI {
     private readonly baseUrl: string;
@@ -29,9 +32,21 @@ export class ConferenceModifyAPI {
         this.baseUrl = baseUrl;
     }
 
-    public async create(apiKey: string): Promise<ICreateConferenceResponse> {
-        return apiRequest('POST', this.baseUrl + '/create',
-            {api_key: apiKey});
+    /**
+     * Запрос на создание конференции.
+     * @param apiKey
+     * @param userId
+     * @param userRole
+     * @param conferenceInfo
+     */
+    public async create(apiKey: string, userId: string, userRole: ConferenceRolesEnum, conferenceInfo: IConferenceInfoInput): Promise<ICreateConferenceResponse> {
+        const params = {
+            api_key: apiKey,
+            user_id: userId,
+            user_role: userRole,
+            conference_info: conferenceInfo
+        }
+        return apiRequest('POST', this.baseUrl + '/create', params);
     }
 
     public async move() {
@@ -48,7 +63,8 @@ export class ConferenceModifyAPI {
 }
 
 /**
- *
+ * Содержит запросы на получение данных по конференции, а также на управлением статусом и
+ * работой конференции.
  */
 export class ConferenceAccessAPI {
     private readonly baseUrl: string;
@@ -74,6 +90,10 @@ export class ConferenceAccessAPI {
 
     }
 
+    /**
+     * Получение информации по конференции.
+     * @param accessToken
+     */
     public async getConferenceInfo(accessToken: string): Promise<IConferenceInfo> {
         const urlParams = new URLSearchParams({access_token: accessToken});
         return apiRequest('GET', this.baseUrl + '/info?' + urlParams);

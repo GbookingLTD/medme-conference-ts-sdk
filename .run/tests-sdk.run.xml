@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="tests-sdk" type="mocha-javascript-test-runner">
+    <node-interpreter>project</node-interpreter>
+    <node-options />
+    <mocha-package>$PROJECT_DIR$/../medme-conference-ts-sdk/node_modules/mocha</mocha-package>
+    <working-directory>$PROJECT_DIR$/../medme-conference-ts-sdk</working-directory>
+    <pass-parent-env>true</pass-parent-env>
+    <ui>bdd</ui>
+    <extra-mocha-options>-r ts-node/register</extra-mocha-options>
+    <test-kind>TEST_FILE</test-kind>
+    <test-file>$PROJECT_DIR$/../medme-conference-ts-sdk/tests/index.ts</test-file>
+    <method v="2" />
+  </configuration>
+</component>

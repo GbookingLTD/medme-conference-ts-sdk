@@ -32,7 +32,7 @@ enum LanguageListEnum {
 /**
  *
  */
-enum ConferenceRolesEnum {
+export enum ConferenceRolesEnum {
     Client = 'CLIENT',
     Specialist = 'SPECIALIST'
 }
@@ -79,9 +79,9 @@ export interface IConferenceInfo {
         id: String,
         role: String,
     },
-    specialists: [ISpecialist],
-    clients: [IClient],
-    services: [IService],
+    specialists: ISpecialist[],
+    clients: IClient[],
+    services: IService[],
     filialInfo?: {
         id: String,
         title: String,
@@ -96,4 +96,31 @@ export interface IConferenceInfo {
     scheduledDurationSeconds: Number,
     l10n: LanguageListEnum,
     isOpen: Boolean,
+}
+
+/**
+ * Описание полей входящего для создания конференции.
+ */
+export interface IConferenceInfoInput {
+    appointmentId: String,
+    appointmentEngine?: AppointmentEnginesEnum,
+    openingDurationSeconds: Number,
+    otp: Boolean,
+    specialists: ISpecialist[],
+    clients: IClient[],
+    services: IService[],
+    filialInfo?: {
+        id: String,
+        title: String,
+        timezone: String
+    },
+    organizationInfo?: {
+        id: String,
+        title: String,
+    },
+    cabinetNumber?: String,
+    scheduledStart: Date,
+    scheduledDurationSeconds: Number,
+    l10n?: LanguageListEnum,
+    isOpen?: Boolean,
 }
