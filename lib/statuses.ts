@@ -11,6 +11,7 @@ export enum ErrorStatuses {
     Unauthorized = 'UNAUTHORIZED',
     ValidationError = 'VALIDATION_ERROR',
     ExpiredToken = 'EXPIRED_TOKEN',
+    AccessTokenNotFound = 'ACCESS_TOKEN_NOT_FOUND',
     ExpectRequestFields = 'EXPECT_REQUEST_FIELDS',
     OtpExpect = 'OTP_EXPECT',
     OtpWrongCode = 'OTP_WRONG_CODE',

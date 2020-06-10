@@ -34,13 +34,10 @@ const simpleConf = (): IConferenceInfoInput =>
         specialists: []
     })
 
+const modifyAPI: ConferenceModifyAPI = new ConferenceModifyAPI(CONFERENCE_ENDPOINT);
+const accessAPI: ConferenceAccessAPI = new ConferenceAccessAPI(CONFERENCE_ENDPOINT);
+
 describe('ConferenceModifyAPI', () => {
-    let modifyAPI: ConferenceModifyAPI;
-    let accessAPI: ConferenceAccessAPI;
-    before(() => {
-        modifyAPI = new ConferenceModifyAPI(CONFERENCE_ENDPOINT);
-        accessAPI = new ConferenceAccessAPI(CONFERENCE_ENDPOINT);
-    })
     it('create with wrong apikey should Unauthorized error', async () => {
         try {
             await modifyAPI.create('[:::soME_anOTheR_ApikEy:::]', '1', ConferenceRolesEnum.Client, simpleConf());
@@ -83,8 +80,35 @@ describe('ConferenceModifyAPI', () => {
 });
 
 describe('ConferenceAccessAPI', () => {
-    it('exchange', () => {
+    // create conf and get access_token
+    const createSimpleConf = async () => {
+        const conf = simpleConf();
+        conf.clients.push({
+            id: '1',
+            name: 'Vasja',
+            surname: 'Petrov',
+            middleName: 'Ibn'
+        });
+        return await modifyAPI.create(APIKEY, '1', ConferenceRolesEnum.Client, conf);
+    }
 
+    it('exchange with wrong access_token', async () => {
+        try {
+            await accessAPI.exchange('[:::wrONG_AcceSs_TokEN:::]');
+        } catch (err) {
+            if (err instanceof APIError) {
+                assert.strictEqual(err.response.status, ErrorStatuses.AccessTokenNotFound)
+                return;
+            }
+        }
+
+        assert.fail('wrong access token passed');
+    });
+    it('exchange with simple input', async () => {
+            const {access_token} = await createSimpleConf();
+            const {conference_token} = await accessAPI.exchange(access_token);
+            assert(conference_token);
+            assert.strictEqual(conference_token.length, 256)
     });
     it('getConferenceInfoByAccessToken', () => {
 
