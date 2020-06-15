@@ -1,4 +1,5 @@
-import * as fetch from 'node-fetch';
+///<reference path="../node_modules/cross-fetch/index.d.ts" />
+import fetch from 'cross-fetch';
 import {SuccessStatus, ErrorStatuses} from "./statuses";
 import {REQUEST_DEBUG} from "../env"
 

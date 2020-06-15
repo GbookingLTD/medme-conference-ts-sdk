@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "declaration": true,
+    "newLine": "lf",
+    "lib": [
+      "ES2015.Promise",
+      "es2015.symbol.wellknown"
+    ],
+    "types": [ "node" ],
+    "typeRoots": [ "../node_modules/@types" ]
+  },
+  "files": [
+    "lib/index.ts"
+  ]
+}

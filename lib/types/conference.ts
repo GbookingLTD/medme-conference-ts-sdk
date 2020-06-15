@@ -38,26 +38,26 @@ export enum ConferenceRolesEnum {
 }
 
 export interface ISpecialist {
-    id: String;
-    name: String;
-    surname: String;
-    middleName: String;
-    profession: String;
-    required: String;
+    id: string;
+    name: string;
+    surname: string;
+    middleName: string;
+    profession: string;
+    required: string;
 }
 
 export interface IClient {
-    id: String;
-    name: String;
-    surname: String;
-    middleName: String;
+    id: string;
+    name: string;
+    surname: string;
+    middleName: string;
 }
 
 export interface IService {
-    id: String;
+    id: string;
     name: [{
         lang: LanguageListEnum;
-        text: String;
+        text: string;
     }]
 }
 
@@ -65,62 +65,62 @@ export interface IService {
  * Интерфейс данных конференции
  */
 export interface IConferenceInfo {
-    appointmentId: String,
+    appointmentId: string,
     appointmentEngine: AppointmentEnginesEnum,
     createdAt: Date,
     createdBy: {
-        id: String,
+        id: string,
         role: ConferenceRolesEnum,
     },
-    openingDurationSeconds: Number,
-    otp: Boolean,
+    openingDurationSeconds: number,
+    otp: boolean,
     openForJoiningAt?: Date,
     openForJoiningBy?: {
-        id: String,
-        role: String,
+        id: string,
+        role: string,
     },
     specialists: ISpecialist[],
     clients: IClient[],
     services: IService[],
     filialInfo?: {
-        id: String,
-        title: String,
-        timezone: String
+        id: string,
+        title: string,
+        timezone: string
     },
     organizationInfo?: {
-        id: String,
-        title: String,
+        id: string,
+        title: string,
     },
-    cabinetNumber?: String,
+    cabinetNumber?: string,
     scheduledStart: Date,
-    scheduledDurationSeconds: Number,
+    scheduledDurationSeconds: number,
     l10n: LanguageListEnum,
-    isOpen: Boolean,
+    isOpen: boolean,
 }
 
 /**
  * Описание полей входящего для создания конференции.
  */
 export interface IConferenceInfoInput {
-    appointmentId: String,
+    appointmentId: string,
     appointmentEngine?: AppointmentEnginesEnum,
-    openingDurationSeconds: Number,
-    otp: Boolean,
+    openingDurationSeconds: number,
+    otp: boolean,
     specialists: ISpecialist[],
     clients: IClient[],
     services: IService[],
     filialInfo?: {
-        id: String,
-        title: String,
-        timezone: String
+        id: string,
+        title: string,
+        timezone: string
     },
     organizationInfo?: {
-        id: String,
-        title: String,
+        id: string,
+        title: string,
     },
-    cabinetNumber?: String,
+    cabinetNumber?: string,
     scheduledStart: Date,
-    scheduledDurationSeconds: Number,
+    scheduledDurationSeconds: number,
     l10n?: LanguageListEnum,
-    isOpen?: Boolean,
+    isOpen?: boolean,
 }
