@@ -1,11 +1,11 @@
 import 'mocha';
 import * as assert from 'assert';
 import {TimeMs} from './time'
-import {ConferenceAccessAPI, ConferenceModifyAPI} from '../lib'
-import {APIKEY, CONFERENCE_ENDPOINT} from '../env'
-import {APIError, IAPIExpectFieldsErrorResponse} from "../lib/request";
-import {ErrorStatuses} from "../lib/statuses";
-import {ConferenceRolesEnum, IConferenceInfoInput} from "../lib/types/conference";
+import {ConferenceAccessAPI, ConferenceModifyAPI} from '../medme/lib'
+import {APIKEY, CONFERENCE_ENDPOINT} from '../medme/env'
+import {APIError, IAPIExpectFieldsErrorResponse} from "../medme/lib/request";
+import {ErrorStatuses} from "../medme/lib/statuses";
+import {ConferenceRolesEnum, IConferenceInfoInput} from "../medme/lib/types/conference";
 
 let confCounter = 1;
 const makeAppointmentId = () =>

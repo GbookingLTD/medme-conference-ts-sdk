@@ -1,13 +1,13 @@
 build: build_cjs build_umd build_amd
 
 build_cjs: clear_cjs
-	tsc -p tsconfig.json -m commonjs --outDir dist/cjs
+	tsc -p tsconfig.json -m commonjs --removeComments --outDir dist/cjs
 
 build_amd: clear_amd
-	tsc -p tsconfig.json -m amd --outfile dist/amd/index.js
+	tsc -p tsconfig.json -m amd --removeComments --outfile dist/amd/index.js
 
 build_umd: clear_umd
-	tsc -p tsconfig.json -m umd --outDir dist/umd
+	tsc -p tsconfig.json -m umd --removeComments --outDir dist/umd
 
 clear_amd:
 	rm -rf dist/amd/*

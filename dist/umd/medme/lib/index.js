@@ -1,6 +1,3 @@
-/*
- MedMe Audio/Video Conference API SDK
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -49,20 +46,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var request_1 = require("./request");
-    /**
-     * Содержит запросы на создание и изменение конференций.
-     */
-    var ConferenceModifyAPI = /** @class */ (function () {
+    var ConferenceModifyAPI = (function () {
         function ConferenceModifyAPI(baseUrl) {
             this.baseUrl = baseUrl;
         }
-        /**
-         * Запрос на создание конференции.
-         * @param apiKey
-         * @param userId
-         * @param userRole
-         * @param conferenceInfo
-         */
         ConferenceModifyAPI.prototype.create = function (apiKey, userId, userRole, conferenceInfo) {
             return __awaiter(this, void 0, void 0, function () {
                 var params;
@@ -73,84 +60,72 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                         user_role: userRole,
                         conference_info: conferenceInfo
                     };
-                    return [2 /*return*/, request_1.apiRequest('POST', this.baseUrl + '/create', params)];
+                    return [2, request_1.apiRequest('POST', this.baseUrl + '/create', params)];
                 });
             });
         };
         ConferenceModifyAPI.prototype.move = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/];
+                    return [2];
                 });
             });
         };
         ConferenceModifyAPI.prototype.resize = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/];
+                    return [2];
                 });
             });
         };
         ConferenceModifyAPI.prototype.updateInfo = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/];
+                    return [2];
                 });
             });
         };
         return ConferenceModifyAPI;
     }());
     exports.ConferenceModifyAPI = ConferenceModifyAPI;
-    /**
-     * Содержит запросы на получение данных по конференции, а также на управлением статусом и
-     * работой конференции.
-     */
-    var ConferenceAccessAPI = /** @class */ (function () {
+    var ConferenceAccessAPI = (function () {
         function ConferenceAccessAPI(baseUrl) {
             this.baseUrl = baseUrl;
         }
-        /**
-         * Возвращает ключ конференции по ключу доступа
-         * @param accessToken
-         */
         ConferenceAccessAPI.prototype.exchange = function (accessToken) {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/, request_1.apiRequest('POST', this.baseUrl + '/exchange', { access_token: accessToken })];
+                    return [2, request_1.apiRequest('POST', this.baseUrl + '/exchange', { access_token: accessToken })];
                 });
             });
         };
         ConferenceAccessAPI.prototype.otpSend = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/];
+                    return [2];
                 });
             });
         };
         ConferenceAccessAPI.prototype.otpVerify = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/];
+                    return [2];
                 });
             });
         };
-        /**
-         * Получение информации по конференции.
-         * @param accessToken
-         */
         ConferenceAccessAPI.prototype.getConferenceInfo = function (accessToken) {
             return __awaiter(this, void 0, void 0, function () {
                 var urlParams;
                 return __generator(this, function (_a) {
                     urlParams = new URLSearchParams({ access_token: accessToken });
-                    return [2 /*return*/, request_1.apiRequest('GET', this.baseUrl + '/info?' + urlParams)];
+                    return [2, request_1.apiRequest('GET', this.baseUrl + '/info?' + urlParams)];
                 });
             });
         };
         ConferenceAccessAPI.prototype.openForJoining = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/];
+                    return [2];
                 });
             });
         };

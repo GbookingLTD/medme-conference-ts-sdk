@@ -1,15 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- *
- */
 var AppointmentEnginesEnum;
 (function (AppointmentEnginesEnum) {
     AppointmentEnginesEnum["GBooking"] = "GBooking";
 })(AppointmentEnginesEnum || (AppointmentEnginesEnum = {}));
-/**
- *
- */
 var LanguageListEnum;
 (function (LanguageListEnum) {
     LanguageListEnum["EN_US"] = "en-us";
@@ -29,9 +23,6 @@ var LanguageListEnum;
     LanguageListEnum["UZ_UZ"] = "uz-uz";
     LanguageListEnum["AR_PS"] = "ar-ps";
 })(LanguageListEnum || (LanguageListEnum = {}));
-/**
- *
- */
 var ConferenceRolesEnum;
 (function (ConferenceRolesEnum) {
     ConferenceRolesEnum["Client"] = "CLIENT";

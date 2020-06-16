@@ -1,5 +1,6 @@
-///<reference path="../node_modules/cross-fetch/index.d.ts" />
-import fetch from 'cross-fetch';
+///<reference path="../../node_modules/cross-fetch/index.d.ts" />
+///<amd-module path="../../node_modules/cross-fetch/
+import {fetch, Request, Response} from 'cross-fetch';
 import {SuccessStatus, ErrorStatuses} from "./statuses";
 import {REQUEST_DEBUG} from "../env"
 
@@ -48,7 +49,7 @@ export class APIError extends Error {
  * @param res
  * @param text
  */
-const handleAPIError = (res, text) => {
+const handleAPIError = (res: Response, text: string) => {
     if (res.status >= 300) {
         let json;
         try {
@@ -88,8 +89,7 @@ export async function apiRequest(httpMethod: string, endpoint: string, params?: 
         opts.body = jsonRequest;
     }
 
-    // @ts-ignore
-    const res: fetch.Response = await fetch(endpoint, opts);
+    const res: Response = await fetch(endpoint, opts);
     const text = await res.text();
     REQUEST_DEBUG && console.debug('--> [' + new Date().toISOString() + '] ' + res.status)
     REQUEST_DEBUG && console.debug('    ' + text)

@@ -49,14 +49,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-///<reference path="../node_modules/cross-fetch/index.d.ts" />
 var cross_fetch_1 = require("cross-fetch");
 var statuses_1 = require("./statuses");
 var env_1 = require("../env");
-/**
- * Класс ошибки от API.
- */
-var APIError = /** @class */ (function (_super) {
+var APIError = (function (_super) {
     __extends(APIError, _super);
     function APIError(message, apiRes) {
         var _this = _super.call(this, message) || this;
@@ -75,13 +71,6 @@ var APIError = /** @class */ (function (_super) {
     return APIError;
 }(Error));
 exports.APIError = APIError;
-/**
- * Обработка ошибки HTTP запроса.
- * Для ошибки API выделены HTTP кода 4**. Если приходит такой код, то
- * пытаемся преобразовать к типу ошибки API. Иначе вызываем исключение Error с текстом ошибки.
- * @param res
- * @param text
- */
 var handleAPIError = function (res, text) {
     if (res.status >= 300) {
         var json = void 0;
@@ -97,13 +86,6 @@ var handleAPIError = function (res, text) {
             throw new Error("API respond an error with " + res.status + " HTTP status code and text " + text);
     }
 };
-/**
- * Возвращает результат GET или POST запроса.
- * Когда возвращается HTTP код 300 и выше, вызывается исключение Error или APIError.
- * @param httpMethod
- * @param endpoint
- * @param params
- */
 function apiRequest(httpMethod, endpoint, params) {
     return __awaiter(this, void 0, void 0, function () {
         var opts, jsonRequest, res, text, apiRes;
@@ -123,10 +105,10 @@ function apiRequest(httpMethod, endpoint, params) {
                         env_1.REQUEST_DEBUG && console.debug('    ' + jsonRequest);
                         opts.body = jsonRequest;
                     }
-                    return [4 /*yield*/, cross_fetch_1.default(endpoint, opts)];
+                    return [4, cross_fetch_1.fetch(endpoint, opts)];
                 case 1:
                     res = _a.sent();
-                    return [4 /*yield*/, res.text()];
+                    return [4, res.text()];
                 case 2:
                     text = _a.sent();
                     env_1.REQUEST_DEBUG && console.debug('--> [' + new Date().toISOString() + '] ' + res.status);
@@ -135,7 +117,7 @@ function apiRequest(httpMethod, endpoint, params) {
                     apiRes = JSON.parse(text);
                     if (apiRes.status !== statuses_1.SuccessStatus)
                         throw new APIError("APIError with 2** HTTP status code and text " + text, apiRes);
-                    return [2 /*return*/, apiRes];
+                    return [2, apiRes];
             }
         });
     });

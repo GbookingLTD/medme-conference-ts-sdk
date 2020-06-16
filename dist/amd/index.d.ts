@@ -1,11 +1,5 @@
-declare module "lib/statuses" {
-    /**
-     * Успешный статус запроса к API.
-     */
+declare module "medme/lib/statuses" {
     export const SuccessStatus: string;
-    /**
-     * Статус ошибки запроса к API.
-     */
     export enum ErrorStatuses {
         UnknownError = "UNKNOWN_ERROR",
         Unauthorized = "UNAUTHORIZED",
@@ -33,16 +27,13 @@ declare module "lib/statuses" {
         ConferenceWrongStatusChange = "CONFERENCE_WRONG_STATUS_CHANGE"
     }
 }
-declare module "env" {
+declare module "medme/env" {
     export const CONFERENCE_ENDPOINT: string;
     export const APIKEY: string;
     export const REQUEST_DEBUG: boolean;
 }
-declare module "lib/request" {
-    import { ErrorStatuses } from "lib/statuses";
-    /**
-     * Данные ошибки API.
-     */
+declare module "medme/lib/request" {
+    import { ErrorStatuses } from "medme/lib/statuses";
     export interface IAPIErrorResponse {
         status: ErrorStatuses;
         description: string;
@@ -58,33 +49,17 @@ declare module "lib/request" {
     export interface IAPIValidationErrorResponse extends IAPIErrorResponse {
         errors: IValidationError[];
     }
-    /**
-     * Класс ошибки от API.
-     */
     export class APIError extends Error {
         private readonly apiResponse;
         constructor(message: string, apiRes: IAPIErrorResponse);
         get response(): IAPIErrorResponse;
     }
-    /**
-     * Возвращает результат GET или POST запроса.
-     * Когда возвращается HTTP код 300 и выше, вызывается исключение Error или APIError.
-     * @param httpMethod
-     * @param endpoint
-     * @param params
-     */
     export function apiRequest(httpMethod: string, endpoint: string, params?: object): Promise<any>;
 }
-declare module "lib/types/conference" {
-    /**
-     *
-     */
+declare module "medme/lib/types/conference" {
     enum AppointmentEnginesEnum {
         GBooking = "GBooking"
     }
-    /**
-     *
-     */
     enum LanguageListEnum {
         EN_US = "en-us",
         RU_RU = "ru-ru",
@@ -103,9 +78,6 @@ declare module "lib/types/conference" {
         UZ_UZ = "uz-uz",
         AR_PS = "ar-ps"
     }
-    /**
-     *
-     */
     export enum ConferenceRolesEnum {
         Client = "CLIENT",
         Specialist = "SPECIALIST"
@@ -131,9 +103,6 @@ declare module "lib/types/conference" {
             text: string;
         }];
     }
-    /**
-     * Интерфейс данных конференции
-     */
     export interface IConferenceInfo {
         appointmentId: string;
         appointmentEngine: AppointmentEnginesEnum;
@@ -167,9 +136,6 @@ declare module "lib/types/conference" {
         l10n: LanguageListEnum;
         isOpen: boolean;
     }
-    /**
-     * Описание полей входящего для создания конференции.
-     */
     export interface IConferenceInfoInput {
         appointmentId: string;
         appointmentEngine?: AppointmentEnginesEnum;
@@ -194,60 +160,36 @@ declare module "lib/types/conference" {
         isOpen?: boolean;
     }
 }
-declare module "lib/index" {
-    import { ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput } from "lib/types/conference";
-    /**
-     * Описание ответа на запрос создания конференции.
-     * В ответ приходит поле access_token. По нему будет осуществляться доступ
-     * к другим действиям над конференцией.
-     */
+declare module "medme/lib/index" {
+    import { ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput } from "medme/lib/types/conference";
     export interface ICreateConferenceResponse {
         access_token: string;
     }
-    /**
-     * Описание ответа на запрос получения ключа конференции (conference_token).
-     * Этот ключ используется для перехода на страницу конференции.
-     */
     export interface IExchangeTokenResponse {
         conference_token: string;
     }
-    /**
-     * Содержит запросы на создание и изменение конференций.
-     */
     export class ConferenceModifyAPI {
         private readonly baseUrl;
         constructor(baseUrl: string);
-        /**
-         * Запрос на создание конференции.
-         * @param apiKey
-         * @param userId
-         * @param userRole
-         * @param conferenceInfo
-         */
         create(apiKey: string, userId: string, userRole: ConferenceRolesEnum, conferenceInfo: IConferenceInfoInput): Promise<ICreateConferenceResponse>;
         move(): Promise<void>;
         resize(): Promise<void>;
         updateInfo(): Promise<void>;
     }
-    /**
-     * Содержит запросы на получение данных по конференции, а также на управлением статусом и
-     * работой конференции.
-     */
     export class ConferenceAccessAPI {
         private readonly baseUrl;
         constructor(baseUrl: string);
-        /**
-         * Возвращает ключ конференции по ключу доступа
-         * @param accessToken
-         */
         exchange(accessToken: string): Promise<IExchangeTokenResponse>;
         otpSend(): Promise<void>;
         otpVerify(): Promise<void>;
-        /**
-         * Получение информации по конференции.
-         * @param accessToken
-         */
         getConferenceInfo(accessToken: string): Promise<IConferenceInfo>;
         openForJoining(): Promise<void>;
     }
+}
+/// <amd-module name="MedMe" />
+declare module "MedMe" {
+    import * as lib from "medme/lib/index";
+    export default lib;
+    export const conferenceModifyAPI: lib.ConferenceModifyAPI;
+    export const conferenceAccessAPI: lib.ConferenceAccessAPI;
 }

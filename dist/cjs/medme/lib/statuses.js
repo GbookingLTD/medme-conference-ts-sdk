@@ -1,12 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Успешный статус запроса к API.
- */
 exports.SuccessStatus = 'OK';
-/**
- * Статус ошибки запроса к API.
- */
 var ErrorStatuses;
 (function (ErrorStatuses) {
     ErrorStatuses["UnknownError"] = "UNKNOWN_ERROR";

@@ -1,12 +1,6 @@
-/**
- *
- */
 declare enum AppointmentEnginesEnum {
     GBooking = "GBooking"
 }
-/**
- *
- */
 declare enum LanguageListEnum {
     EN_US = "en-us",
     RU_RU = "ru-ru",
@@ -25,9 +19,6 @@ declare enum LanguageListEnum {
     UZ_UZ = "uz-uz",
     AR_PS = "ar-ps"
 }
-/**
- *
- */
 export declare enum ConferenceRolesEnum {
     Client = "CLIENT",
     Specialist = "SPECIALIST"
@@ -53,9 +44,6 @@ export interface IService {
         text: string;
     }];
 }
-/**
- * Интерфейс данных конференции
- */
 export interface IConferenceInfo {
     appointmentId: string;
     appointmentEngine: AppointmentEnginesEnum;
@@ -89,9 +77,6 @@ export interface IConferenceInfo {
     l10n: LanguageListEnum;
     isOpen: boolean;
 }
-/**
- * Описание полей входящего для создания конференции.
- */
 export interface IConferenceInfoInput {
     appointmentId: string;
     appointmentEngine?: AppointmentEnginesEnum;

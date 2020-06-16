@@ -1,10 +1,4 @@
-/**
- * Успешный статус запроса к API.
- */
 export declare const SuccessStatus: string;
-/**
- * Статус ошибки запроса к API.
- */
 export declare enum ErrorStatuses {
     UnknownError = "UNKNOWN_ERROR",
     Unauthorized = "UNAUTHORIZED",

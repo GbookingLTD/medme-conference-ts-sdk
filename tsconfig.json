@@ -5,12 +5,13 @@
     "newLine": "lf",
     "lib": [
       "ES2015.Promise",
-      "es2015.symbol.wellknown"
+      "es2015.symbol.wellknown",
+      "dom"
     ],
     "types": [ "node" ],
     "typeRoots": [ "../node_modules/@types" ]
   },
   "files": [
-    "lib/index.ts"
+    "index.ts"
   ]
 }
