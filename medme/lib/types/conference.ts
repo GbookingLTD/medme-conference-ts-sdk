@@ -3,14 +3,14 @@
 /**
  *
  */
-enum AppointmentEnginesEnum {
+export enum AppointmentEnginesEnum {
     GBooking = 'GBooking'
 }
 
 /**
  *
  */
-enum LanguageListEnum {
+export enum LanguageListEnum {
     EN_US = 'en-us',
     RU_RU = 'ru-ru',
     HE_IL = 'he-il',

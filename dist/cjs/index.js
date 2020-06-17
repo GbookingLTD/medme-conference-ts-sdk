@@ -2,6 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var lib = require("./medme/lib/index");
 var env = require("./medme/env");
+exports.env = env;
+var request = require("./medme/lib/request");
+exports.request = request;
+var statuses = require("./medme/lib/statuses");
+exports.statuses = statuses;
+var types = require("./medme/lib/types/index");
+exports.types = types;
 exports.default = lib;
 exports.conferenceModifyAPI = new lib.ConferenceModifyAPI(env.CONFERENCE_ENDPOINT);
 exports.conferenceAccessAPI = new lib.ConferenceAccessAPI(env.CONFERENCE_ENDPOINT);

@@ -1,7 +1,7 @@
-declare enum AppointmentEnginesEnum {
+export declare enum AppointmentEnginesEnum {
     GBooking = "GBooking"
 }
-declare enum LanguageListEnum {
+export declare enum LanguageListEnum {
     EN_US = "en-us",
     RU_RU = "ru-ru",
     HE_IL = "he-il",
@@ -100,4 +100,3 @@ export interface IConferenceInfoInput {
     l10n?: LanguageListEnum;
     isOpen?: boolean;
 }
-export {};

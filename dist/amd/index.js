@@ -167,7 +167,7 @@ define("medme/lib/types/conference", ["require", "exports"], function (require, 
     var AppointmentEnginesEnum;
     (function (AppointmentEnginesEnum) {
         AppointmentEnginesEnum["GBooking"] = "GBooking";
-    })(AppointmentEnginesEnum || (AppointmentEnginesEnum = {}));
+    })(AppointmentEnginesEnum = exports.AppointmentEnginesEnum || (exports.AppointmentEnginesEnum = {}));
     var LanguageListEnum;
     (function (LanguageListEnum) {
         LanguageListEnum["EN_US"] = "en-us";
@@ -186,7 +186,7 @@ define("medme/lib/types/conference", ["require", "exports"], function (require, 
         LanguageListEnum["GE_GE"] = "ge-ge";
         LanguageListEnum["UZ_UZ"] = "uz-uz";
         LanguageListEnum["AR_PS"] = "ar-ps";
-    })(LanguageListEnum || (LanguageListEnum = {}));
+    })(LanguageListEnum = exports.LanguageListEnum || (exports.LanguageListEnum = {}));
     var ConferenceRolesEnum;
     (function (ConferenceRolesEnum) {
         ConferenceRolesEnum["Client"] = "CLIENT";
@@ -283,9 +283,18 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
     }());
     exports.ConferenceAccessAPI = ConferenceAccessAPI;
 });
-define("MedMe", ["require", "exports", "medme/lib/index", "medme/env"], function (require, exports, lib, env) {
+define("medme/lib/types/index", ["require", "exports", "medme/lib/types/conference"], function (require, exports, conference) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.conference = conference;
+});
+define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/request", "medme/lib/statuses", "medme/lib/types/index"], function (require, exports, lib, env, request, statuses, types) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.env = env;
+    exports.request = request;
+    exports.statuses = statuses;
+    exports.types = types;
     exports.default = lib;
     exports.conferenceModifyAPI = new lib.ConferenceModifyAPI(env.CONFERENCE_ENDPOINT);
     exports.conferenceAccessAPI = new lib.ConferenceAccessAPI(env.CONFERENCE_ENDPOINT);

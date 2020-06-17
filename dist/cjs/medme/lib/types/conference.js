@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var AppointmentEnginesEnum;
 (function (AppointmentEnginesEnum) {
     AppointmentEnginesEnum["GBooking"] = "GBooking";
-})(AppointmentEnginesEnum || (AppointmentEnginesEnum = {}));
+})(AppointmentEnginesEnum = exports.AppointmentEnginesEnum || (exports.AppointmentEnginesEnum = {}));
 var LanguageListEnum;
 (function (LanguageListEnum) {
     LanguageListEnum["EN_US"] = "en-us";
@@ -22,7 +22,7 @@ var LanguageListEnum;
     LanguageListEnum["GE_GE"] = "ge-ge";
     LanguageListEnum["UZ_UZ"] = "uz-uz";
     LanguageListEnum["AR_PS"] = "ar-ps";
-})(LanguageListEnum || (LanguageListEnum = {}));
+})(LanguageListEnum = exports.LanguageListEnum || (exports.LanguageListEnum = {}));
 var ConferenceRolesEnum;
 (function (ConferenceRolesEnum) {
     ConferenceRolesEnum["Client"] = "CLIENT";

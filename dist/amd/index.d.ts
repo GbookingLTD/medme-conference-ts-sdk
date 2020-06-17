@@ -57,10 +57,10 @@ declare module "medme/lib/request" {
     export function apiRequest(httpMethod: string, endpoint: string, params?: object): Promise<any>;
 }
 declare module "medme/lib/types/conference" {
-    enum AppointmentEnginesEnum {
+    export enum AppointmentEnginesEnum {
         GBooking = "GBooking"
     }
-    enum LanguageListEnum {
+    export enum LanguageListEnum {
         EN_US = "en-us",
         RU_RU = "ru-ru",
         HE_IL = "he-il",
@@ -186,10 +186,19 @@ declare module "medme/lib/index" {
         openForJoining(): Promise<void>;
     }
 }
+declare module "medme/lib/types/index" {
+    import * as conference from "medme/lib/types/conference";
+    export { conference };
+}
 /// <amd-module name="MedMe" />
 declare module "MedMe" {
     import * as lib from "medme/lib/index";
+    import * as env from "medme/env";
+    import * as request from "medme/lib/request";
+    import * as statuses from "medme/lib/statuses";
+    import * as types from "medme/lib/types/index";
     export default lib;
+    export { env, request, statuses, types };
     export const conferenceModifyAPI: lib.ConferenceModifyAPI;
     export const conferenceAccessAPI: lib.ConferenceAccessAPI;
 }
