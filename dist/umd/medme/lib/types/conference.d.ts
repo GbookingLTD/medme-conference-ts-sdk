@@ -23,6 +23,16 @@ export declare enum ConferenceRolesEnum {
     Client = "CLIENT",
     Specialist = "SPECIALIST"
 }
+export declare enum ConferenceStatusesEnum {
+    Pending = "pending",
+    OpenForJoining = "open_for_joining",
+    Started = "started",
+    StartedAndWaiting = "started_and_waiting",
+    StartedAndPaused = "started_and_paused",
+    CancelledBeforeStart = "cancelled_before_start",
+    CancelledAfterStart = "cancelled_after_start",
+    Finished = "finished"
+}
 export interface ISpecialist {
     id: string;
     name: string;
@@ -76,6 +86,7 @@ export interface IConferenceInfo {
     scheduledDurationSeconds: number;
     l10n: LanguageListEnum;
     isOpen: boolean;
+    status: ConferenceStatusesEnum;
 }
 export interface IConferenceInfoInput {
     appointmentId: string;

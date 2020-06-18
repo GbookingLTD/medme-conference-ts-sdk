@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConferenceRolesEnum = exports.LanguageListEnum = exports.AppointmentEnginesEnum = void 0;
+exports.ConferenceStatusesEnum = exports.ConferenceRolesEnum = exports.LanguageListEnum = exports.AppointmentEnginesEnum = void 0;
 var AppointmentEnginesEnum;
 (function (AppointmentEnginesEnum) {
     AppointmentEnginesEnum["GBooking"] = "GBooking";
@@ -29,3 +29,14 @@ var ConferenceRolesEnum;
     ConferenceRolesEnum["Client"] = "CLIENT";
     ConferenceRolesEnum["Specialist"] = "SPECIALIST";
 })(ConferenceRolesEnum = exports.ConferenceRolesEnum || (exports.ConferenceRolesEnum = {}));
+var ConferenceStatusesEnum;
+(function (ConferenceStatusesEnum) {
+    ConferenceStatusesEnum["Pending"] = "pending";
+    ConferenceStatusesEnum["OpenForJoining"] = "open_for_joining";
+    ConferenceStatusesEnum["Started"] = "started";
+    ConferenceStatusesEnum["StartedAndWaiting"] = "started_and_waiting";
+    ConferenceStatusesEnum["StartedAndPaused"] = "started_and_paused";
+    ConferenceStatusesEnum["CancelledBeforeStart"] = "cancelled_before_start";
+    ConferenceStatusesEnum["CancelledAfterStart"] = "cancelled_after_start";
+    ConferenceStatusesEnum["Finished"] = "finished";
+})(ConferenceStatusesEnum = exports.ConferenceStatusesEnum || (exports.ConferenceStatusesEnum = {}));

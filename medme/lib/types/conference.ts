@@ -37,6 +37,20 @@ export enum ConferenceRolesEnum {
     Specialist = 'SPECIALIST'
 }
 
+/**
+ *
+ */
+export enum ConferenceStatusesEnum {
+    Pending = 'pending', // ожидание начала
+    OpenForJoining = 'open_for_joining', // открыта врачом, но еще не все присоединились
+    Started = 'started', // начата
+    StartedAndWaiting = 'started_and_waiting', // начата, но врач или пациент не присоединились или вышли
+    StartedAndPaused = 'started_and_paused', // начата, но врач поставил на паузу
+    CancelledBeforeStart = 'cancelled_before_start', // отменена до начала
+    CancelledAfterStart = 'cancelled_after_start', // отменена после начала (врач или пациент не пришли)
+    Finished = 'finished' // завершена
+}
+
 export interface ISpecialist {
     id: string;
     name: string;
@@ -96,6 +110,7 @@ export interface IConferenceInfo {
     scheduledDurationSeconds: number,
     l10n: LanguageListEnum,
     isOpen: boolean,
+    status: ConferenceStatusesEnum
 }
 
 /**
