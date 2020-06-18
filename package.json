@@ -2,7 +2,7 @@
   "name": "medme-conference-ts-sdk",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "./node_modules/.bin/mocha -r ts-node/register tests/index.ts"
   },

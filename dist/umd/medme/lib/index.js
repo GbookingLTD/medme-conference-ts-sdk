@@ -45,6 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = void 0;
     var request_1 = require("./request");
     var ConferenceModifyAPI = (function () {
         function ConferenceModifyAPI(baseUrl) {

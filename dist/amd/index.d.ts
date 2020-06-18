@@ -87,8 +87,8 @@ declare module "medme/lib/types/conference" {
         name: string;
         surname: string;
         middleName: string;
-        profession: string;
-        required: string;
+        profession?: string;
+        required?: boolean;
     }
     export interface IClient {
         id: string;
@@ -98,10 +98,10 @@ declare module "medme/lib/types/conference" {
     }
     export interface IService {
         id: string;
-        name: [{
+        name: {
             lang: LanguageListEnum;
             text: string;
-        }];
+        }[];
     }
     export interface IConferenceInfo {
         appointmentId: string;

@@ -49,6 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.apiRequest = exports.APIError = void 0;
 var cross_fetch_1 = require("cross-fetch");
 var statuses_1 = require("./statuses");
 var env_1 = require("../env");
@@ -65,7 +66,7 @@ var APIError = (function (_super) {
         get: function () {
             return this.apiResponse;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return APIError;

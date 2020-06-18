@@ -28,8 +28,8 @@ export interface ISpecialist {
     name: string;
     surname: string;
     middleName: string;
-    profession: string;
-    required: string;
+    profession?: string;
+    required?: boolean;
 }
 export interface IClient {
     id: string;
@@ -39,10 +39,10 @@ export interface IClient {
 }
 export interface IService {
     id: string;
-    name: [{
+    name: {
         lang: LanguageListEnum;
         text: string;
-    }];
+    }[];
 }
 export interface IConferenceInfo {
     appointmentId: string;

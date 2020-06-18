@@ -50,6 +50,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 define("medme/lib/statuses", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ErrorStatuses = exports.SuccessStatus = void 0;
     exports.SuccessStatus = 'OK';
     var ErrorStatuses;
     (function (ErrorStatuses) {
@@ -82,6 +83,7 @@ define("medme/lib/statuses", ["require", "exports"], function (require, exports)
 define("medme/env", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.REQUEST_DEBUG = exports.APIKEY = exports.CONFERENCE_ENDPOINT = void 0;
     exports.CONFERENCE_ENDPOINT = "http://localhost:3000/meets/v1";
     exports.APIKEY = "dfghdshrqweo5y23984wdrty5e3w4q";
     exports.REQUEST_DEBUG = true;
@@ -89,6 +91,7 @@ define("medme/env", ["require", "exports"], function (require, exports) {
 define("medme/lib/request", ["require", "exports", "cross-fetch", "medme/lib/statuses", "medme/env"], function (require, exports, cross_fetch_1, statuses_1, env_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.apiRequest = exports.APIError = void 0;
     var APIError = (function (_super) {
         __extends(APIError, _super);
         function APIError(message, apiRes) {
@@ -102,7 +105,7 @@ define("medme/lib/request", ["require", "exports", "cross-fetch", "medme/lib/sta
             get: function () {
                 return this.apiResponse;
             },
-            enumerable: true,
+            enumerable: false,
             configurable: true
         });
         return APIError;
@@ -164,6 +167,7 @@ define("medme/lib/request", ["require", "exports", "cross-fetch", "medme/lib/sta
 define("medme/lib/types/conference", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ConferenceRolesEnum = exports.LanguageListEnum = exports.AppointmentEnginesEnum = void 0;
     var AppointmentEnginesEnum;
     (function (AppointmentEnginesEnum) {
         AppointmentEnginesEnum["GBooking"] = "GBooking";
@@ -196,6 +200,7 @@ define("medme/lib/types/conference", ["require", "exports"], function (require, 
 define("medme/lib/index", ["require", "exports", "medme/lib/request"], function (require, exports, request_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = void 0;
     var ConferenceModifyAPI = (function () {
         function ConferenceModifyAPI(baseUrl) {
             this.baseUrl = baseUrl;
@@ -286,11 +291,13 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
 define("medme/lib/types/index", ["require", "exports", "medme/lib/types/conference"], function (require, exports, conference) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.conference = void 0;
     exports.conference = conference;
 });
 define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/request", "medme/lib/statuses", "medme/lib/types/index"], function (require, exports, lib, env, request, statuses, types) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.types = exports.statuses = exports.request = exports.env = void 0;
     exports.env = env;
     exports.request = request;
     exports.statuses = statuses;
