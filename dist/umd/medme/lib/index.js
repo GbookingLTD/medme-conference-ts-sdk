@@ -65,6 +65,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 });
             });
         };
+        ConferenceModifyAPI.prototype.openForJoin = function (accessToken) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2, request_1.apiRequest('POST', this.baseUrl + '/open_for_join', {
+                            access_token: accessToken
+                        })];
+                });
+            });
+        };
         ConferenceModifyAPI.prototype.move = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {

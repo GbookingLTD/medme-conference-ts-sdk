@@ -11,13 +11,14 @@ export interface IConferenceInfoSuccessResponse {
     role: ConferenceRolesEnum;
     conference_info: IConferenceInfo;
 }
-export interface IConferenceInfoErrorResponse {
-    status: ErrorStatuses;
+export interface IConferenceStatusResponse {
+    status: SuccessStatusEnum | ErrorStatuses;
 }
 export declare class ConferenceModifyAPI {
     private readonly baseUrl;
     constructor(baseUrl: string);
     create(apiKey: string, userId: string, userRole: ConferenceRolesEnum, conferenceInfo: IConferenceInfoInput): Promise<ICreateConferenceResponse>;
+    openForJoin(accessToken: string): Promise<IConferenceStatusResponse>;
     move(): Promise<void>;
     resize(): Promise<void>;
     updateInfo(): Promise<void>;

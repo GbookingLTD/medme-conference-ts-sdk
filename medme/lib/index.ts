@@ -30,8 +30,11 @@ export interface IConferenceInfoSuccessResponse {
     conference_info: IConferenceInfo;
 }
 
-export interface IConferenceInfoErrorResponse {
-    status: ErrorStatuses;
+/**
+ * Интерфейс ответа от сервера, содержащего единственное поле "статус"
+ */
+export interface IConferenceStatusResponse {
+    status: SuccessStatusEnum | ErrorStatuses;
 }
 
 /**
@@ -59,6 +62,16 @@ export class ConferenceModifyAPI {
             conference_info: conferenceInfo
         }
         return apiRequest('POST', this.baseUrl + '/create', params);
+    }
+
+    /**
+     * Запрос на открытие конференции.
+     * @param accessToken
+     */
+    public async openForJoin(accessToken: string): Promise<IConferenceStatusResponse> {
+        return apiRequest('POST', this.baseUrl + '/open_for_join', {
+            access_token: accessToken
+        });
     }
 
     public async move() {

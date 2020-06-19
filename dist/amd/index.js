@@ -234,6 +234,15 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
                 });
             });
         };
+        ConferenceModifyAPI.prototype.openForJoin = function (accessToken) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2, request_1.apiRequest('POST', this.baseUrl + '/open_for_join', {
+                            access_token: accessToken
+                        })];
+                });
+            });
+        };
         ConferenceModifyAPI.prototype.move = function () {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
