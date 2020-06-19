@@ -4,6 +4,7 @@
 
 import {apiRequest} from './request';
 import {ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput} from './types/conference'
+import {SuccessStatusEnum, ErrorStatuses} from "./statuses";
 
 /**
  * Описание ответа на запрос создания конференции.
@@ -20,6 +21,17 @@ export interface ICreateConferenceResponse {
  */
 export interface IExchangeTokenResponse {
     conference_token: string;
+}
+
+
+export interface IConferenceInfoSuccessResponse {
+    status: SuccessStatusEnum;
+    role: ConferenceRolesEnum;
+    conference_info: IConferenceInfo;
+}
+
+export interface IConferenceInfoErrorResponse {
+    status: ErrorStatuses;
 }
 
 /**
@@ -94,7 +106,7 @@ export class ConferenceAccessAPI {
      * Получение информации по конференции.
      * @param accessToken
      */
-    public async getConferenceInfo(accessToken: string): Promise<IConferenceInfo> {
+    public async getConferenceInfo(accessToken: string): Promise<IConferenceInfoSuccessResponse> {
         const urlParams = new URLSearchParams({access_token: accessToken});
         return apiRequest('GET', this.baseUrl + '/info?' + urlParams);
     }

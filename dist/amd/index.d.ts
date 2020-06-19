@@ -1,5 +1,8 @@
 declare module "medme/lib/statuses" {
     export const SuccessStatus: string;
+    export enum SuccessStatusEnum {
+        SuccessStatus = "OK"
+    }
     export enum ErrorStatuses {
         UnknownError = "UNKNOWN_ERROR",
         Unauthorized = "UNAUTHORIZED",
@@ -173,11 +176,20 @@ declare module "medme/lib/types/conference" {
 }
 declare module "medme/lib/index" {
     import { ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput } from "medme/lib/types/conference";
+    import { SuccessStatusEnum, ErrorStatuses } from "medme/lib/statuses";
     export interface ICreateConferenceResponse {
         access_token: string;
     }
     export interface IExchangeTokenResponse {
         conference_token: string;
+    }
+    export interface IConferenceInfoSuccessResponse {
+        status: SuccessStatusEnum;
+        role: ConferenceRolesEnum;
+        conference_info: IConferenceInfo;
+    }
+    export interface IConferenceInfoErrorResponse {
+        status: ErrorStatuses;
     }
     export class ConferenceModifyAPI {
         private readonly baseUrl;
@@ -193,7 +205,7 @@ declare module "medme/lib/index" {
         exchange(accessToken: string): Promise<IExchangeTokenResponse>;
         otpSend(): Promise<void>;
         otpVerify(): Promise<void>;
-        getConferenceInfo(accessToken: string): Promise<IConferenceInfo>;
+        getConferenceInfo(accessToken: string): Promise<IConferenceInfoSuccessResponse>;
         openForJoining(): Promise<void>;
     }
 }

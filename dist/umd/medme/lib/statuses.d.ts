@@ -1,4 +1,7 @@
 export declare const SuccessStatus: string;
+export declare enum SuccessStatusEnum {
+    SuccessStatus = "OK"
+}
 export declare enum ErrorStatuses {
     UnknownError = "UNKNOWN_ERROR",
     Unauthorized = "UNAUTHORIZED",

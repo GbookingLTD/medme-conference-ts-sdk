@@ -108,7 +108,7 @@ describe('ConferenceAccessAPI', () => {
             const {access_token} = await createSimpleConf();
             const {conference_token} = await accessAPI.exchange(access_token);
             assert(conference_token);
-            assert.strictEqual(conference_token.length, 256)
+            assert.strictEqual(conference_token.length, 32)
     });
     it('getConferenceInfoByAccessToken', () => {
 

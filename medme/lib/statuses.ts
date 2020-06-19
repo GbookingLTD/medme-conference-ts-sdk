@@ -3,6 +3,10 @@
  */
 export const SuccessStatus: string = 'OK';
 
+export enum SuccessStatusEnum {
+    SuccessStatus = 'OK'
+}
+
 /**
  * Статус ошибки запроса к API.
  */

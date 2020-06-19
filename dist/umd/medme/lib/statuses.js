@@ -9,8 +9,12 @@
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.ErrorStatuses = exports.SuccessStatus = void 0;
+    exports.ErrorStatuses = exports.SuccessStatusEnum = exports.SuccessStatus = void 0;
     exports.SuccessStatus = 'OK';
+    var SuccessStatusEnum;
+    (function (SuccessStatusEnum) {
+        SuccessStatusEnum["SuccessStatus"] = "OK";
+    })(SuccessStatusEnum = exports.SuccessStatusEnum || (exports.SuccessStatusEnum = {}));
     var ErrorStatuses;
     (function (ErrorStatuses) {
         ErrorStatuses["UnknownError"] = "UNKNOWN_ERROR";
