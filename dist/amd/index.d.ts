@@ -241,6 +241,7 @@ declare module "MedMe" {
     import * as types from "medme/lib/types/index";
     export default lib;
     export { env, request, statuses, types };
-    export const conferenceModifyAPI: lib.ConferenceModifyAPI;
-    export const conferenceAccessAPI: lib.ConferenceAccessAPI;
+    export let conferenceModifyAPI: lib.ConferenceModifyAPI;
+    export let conferenceAccessAPI: lib.ConferenceAccessAPI;
+    export function initHttpAPI(): void;
 }

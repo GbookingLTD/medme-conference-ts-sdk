@@ -359,12 +359,15 @@ define("medme/lib/types/index", ["require", "exports", "medme/lib/types/conferen
 define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index"], function (require, exports, lib, env, request, statuses, types) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.types = exports.statuses = exports.request = exports.env = void 0;
+    exports.initHttpAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.types = exports.statuses = exports.request = exports.env = void 0;
     exports.env = env;
     exports.request = request;
     exports.statuses = statuses;
     exports.types = types;
     exports.default = lib;
-    exports.conferenceModifyAPI = lib.ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
-    exports.conferenceAccessAPI = lib.ConferenceAccessAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
+    function initHttpAPI() {
+        exports.conferenceModifyAPI = lib.ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
+        exports.conferenceAccessAPI = lib.ConferenceAccessAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
+    }
+    exports.initHttpAPI = initHttpAPI;
 });
