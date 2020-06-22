@@ -95,7 +95,7 @@ define("medme/env", ["require", "exports"], function (require, exports) {
 define("medme/lib/request", ["require", "exports", "cross-fetch", "medme/lib/statuses", "medme/env"], function (require, exports, cross_fetch_1, statuses_1, env_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.apiRequest = exports.APIError = void 0;
+    exports.httpAPIRequest_ = exports.httpAPIRequest = exports.HttpMethodsAPIMap = exports.HttpMethodsForAPIEnum = exports.APIError = void 0;
     var APIError = (function (_super) {
         __extends(APIError, _super);
         function APIError(message, apiRes) {
@@ -130,7 +130,33 @@ define("medme/lib/request", ["require", "exports", "cross-fetch", "medme/lib/sta
                 throw new Error("API respond an error with " + res.status + " HTTP status code and text " + text);
         }
     };
-    function apiRequest(httpMethod, endpoint, params) {
+    var HttpMethodsForAPIEnum;
+    (function (HttpMethodsForAPIEnum) {
+        HttpMethodsForAPIEnum["Get"] = "GET";
+        HttpMethodsForAPIEnum["Post"] = "POST";
+    })(HttpMethodsForAPIEnum = exports.HttpMethodsForAPIEnum || (exports.HttpMethodsForAPIEnum = {}));
+    exports.HttpMethodsAPIMap = {
+        'exchange': HttpMethodsForAPIEnum.Post,
+        'info': HttpMethodsForAPIEnum.Get,
+        'create': HttpMethodsForAPIEnum.Post,
+        'open_for_join': HttpMethodsForAPIEnum.Post
+    };
+    function httpAPIRequest(method, params) {
+        return __awaiter(this, void 0, void 0, function () {
+            var thisIsCorrect, httpMethod;
+            return __generator(this, function (_a) {
+                thisIsCorrect = this && typeof this.baseUrl === 'string' && typeof this.httpMethod === 'object';
+                if (!thisIsCorrect)
+                    throw new TypeError('http api request should be bind to IHttpAPIRequestOwner instance [method=' +
+                        method + ', params=' + JSON.stringify(params) + ']');
+                httpMethod = this.httpMethod[method];
+                return [2, httpAPIRequest_(httpMethod, this.baseUrl + '/' + method +
+                        ((httpMethod === HttpMethodsForAPIEnum.Get) && params ? '?' + new URLSearchParams(params) : ''), (httpMethod === HttpMethodsForAPIEnum.Post ? params : {}))];
+            });
+        });
+    }
+    exports.httpAPIRequest = httpAPIRequest;
+    function httpAPIRequest_(httpMethod, endpoint, params) {
         return __awaiter(this, void 0, void 0, function () {
             var opts, jsonRequest, res, text, apiRes;
             return __generator(this, function (_a) {
@@ -166,7 +192,7 @@ define("medme/lib/request", ["require", "exports", "cross-fetch", "medme/lib/sta
             });
         });
     }
-    exports.apiRequest = apiRequest;
+    exports.httpAPIRequest_ = httpAPIRequest_;
 });
 define("medme/lib/types/conference", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -217,9 +243,16 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = void 0;
     var ConferenceModifyAPI = (function () {
-        function ConferenceModifyAPI(baseUrl) {
-            this.baseUrl = baseUrl;
+        function ConferenceModifyAPI(apiRequest) {
+            this.apiRequest = apiRequest;
         }
+        ConferenceModifyAPI.createHttpAPI = function (baseUrl) {
+            var reqOwner = {
+                baseUrl: baseUrl,
+                httpMethod: request_1.HttpMethodsAPIMap
+            };
+            return new ConferenceModifyAPI(request_1.httpAPIRequest.bind(reqOwner));
+        };
         ConferenceModifyAPI.prototype.create = function (apiKey, userId, userRole, conferenceInfo) {
             return __awaiter(this, void 0, void 0, function () {
                 var params;
@@ -230,14 +263,14 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
                         user_role: userRole,
                         conference_info: conferenceInfo
                     };
-                    return [2, request_1.apiRequest('POST', this.baseUrl + '/create', params)];
+                    return [2, this.apiRequest('create', params)];
                 });
             });
         };
         ConferenceModifyAPI.prototype.openForJoin = function (accessToken) {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2, request_1.apiRequest('POST', this.baseUrl + '/open_for_join', {
+                    return [2, this.apiRequest('open_for_join', {
                             access_token: accessToken
                         })];
                 });
@@ -268,13 +301,20 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
     }());
     exports.ConferenceModifyAPI = ConferenceModifyAPI;
     var ConferenceAccessAPI = (function () {
-        function ConferenceAccessAPI(baseUrl) {
-            this.baseUrl = baseUrl;
+        function ConferenceAccessAPI(apiRequest) {
+            this.apiRequest = apiRequest;
         }
+        ConferenceAccessAPI.createHttpAPI = function (baseUrl) {
+            var reqOwner = {
+                baseUrl: baseUrl,
+                httpMethod: request_1.HttpMethodsAPIMap
+            };
+            return new ConferenceAccessAPI(request_1.httpAPIRequest.bind(reqOwner));
+        };
         ConferenceAccessAPI.prototype.exchange = function (accessToken) {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2, request_1.apiRequest('POST', this.baseUrl + '/exchange', { access_token: accessToken })];
+                    return [2, this.apiRequest('exchange', { access_token: accessToken })];
                 });
             });
         };
@@ -294,10 +334,8 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
         };
         ConferenceAccessAPI.prototype.getConferenceInfo = function (accessToken) {
             return __awaiter(this, void 0, void 0, function () {
-                var urlParams;
                 return __generator(this, function (_a) {
-                    urlParams = new URLSearchParams({ access_token: accessToken });
-                    return [2, request_1.apiRequest('GET', this.baseUrl + '/info?' + urlParams)];
+                    return [2, this.apiRequest('info', { access_token: accessToken })];
                 });
             });
         };
@@ -327,6 +365,6 @@ define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/li
     exports.statuses = statuses;
     exports.types = types;
     exports.default = lib;
-    exports.conferenceModifyAPI = new lib.ConferenceModifyAPI(env.CONFERENCE_ENDPOINT);
-    exports.conferenceAccessAPI = new lib.ConferenceAccessAPI(env.CONFERENCE_ENDPOINT);
+    exports.conferenceModifyAPI = lib.ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
+    exports.conferenceAccessAPI = lib.ConferenceAccessAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
 });

@@ -39,9 +39,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = void 0;
 var request_1 = require("./request");
 var ConferenceModifyAPI = (function () {
-    function ConferenceModifyAPI(baseUrl) {
-        this.baseUrl = baseUrl;
+    function ConferenceModifyAPI(apiRequest) {
+        this.apiRequest = apiRequest;
     }
+    ConferenceModifyAPI.createHttpAPI = function (baseUrl) {
+        var reqOwner = {
+            baseUrl: baseUrl,
+            httpMethod: request_1.HttpMethodsAPIMap
+        };
+        return new ConferenceModifyAPI(request_1.httpAPIRequest.bind(reqOwner));
+    };
     ConferenceModifyAPI.prototype.create = function (apiKey, userId, userRole, conferenceInfo) {
         return __awaiter(this, void 0, void 0, function () {
             var params;
@@ -52,14 +59,14 @@ var ConferenceModifyAPI = (function () {
                     user_role: userRole,
                     conference_info: conferenceInfo
                 };
-                return [2, request_1.apiRequest('POST', this.baseUrl + '/create', params)];
+                return [2, this.apiRequest('create', params)];
             });
         });
     };
     ConferenceModifyAPI.prototype.openForJoin = function (accessToken) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2, request_1.apiRequest('POST', this.baseUrl + '/open_for_join', {
+                return [2, this.apiRequest('open_for_join', {
                         access_token: accessToken
                     })];
             });
@@ -90,13 +97,20 @@ var ConferenceModifyAPI = (function () {
 }());
 exports.ConferenceModifyAPI = ConferenceModifyAPI;
 var ConferenceAccessAPI = (function () {
-    function ConferenceAccessAPI(baseUrl) {
-        this.baseUrl = baseUrl;
+    function ConferenceAccessAPI(apiRequest) {
+        this.apiRequest = apiRequest;
     }
+    ConferenceAccessAPI.createHttpAPI = function (baseUrl) {
+        var reqOwner = {
+            baseUrl: baseUrl,
+            httpMethod: request_1.HttpMethodsAPIMap
+        };
+        return new ConferenceAccessAPI(request_1.httpAPIRequest.bind(reqOwner));
+    };
     ConferenceAccessAPI.prototype.exchange = function (accessToken) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2, request_1.apiRequest('POST', this.baseUrl + '/exchange', { access_token: accessToken })];
+                return [2, this.apiRequest('exchange', { access_token: accessToken })];
             });
         });
     };
@@ -116,10 +130,8 @@ var ConferenceAccessAPI = (function () {
     };
     ConferenceAccessAPI.prototype.getConferenceInfo = function (accessToken) {
         return __awaiter(this, void 0, void 0, function () {
-            var urlParams;
             return __generator(this, function (_a) {
-                urlParams = new URLSearchParams({ access_token: accessToken });
-                return [2, request_1.apiRequest('GET', this.baseUrl + '/info?' + urlParams)];
+                return [2, this.apiRequest('info', { access_token: accessToken })];
             });
         });
     };

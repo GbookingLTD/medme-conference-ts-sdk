@@ -15,6 +15,6 @@ export {
     types
 }
 
-export const conferenceModifyAPI: lib.ConferenceModifyAPI = new lib.ConferenceModifyAPI(env.CONFERENCE_ENDPOINT);
-export const conferenceAccessAPI: lib.ConferenceAccessAPI = new lib.ConferenceAccessAPI(env.CONFERENCE_ENDPOINT);
+export const conferenceModifyAPI: lib.ConferenceModifyAPI = lib.ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
+export const conferenceAccessAPI: lib.ConferenceAccessAPI = lib.ConferenceAccessAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
 

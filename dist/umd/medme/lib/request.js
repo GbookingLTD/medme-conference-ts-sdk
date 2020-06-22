@@ -58,7 +58,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.apiRequest = exports.APIError = void 0;
+    exports.httpAPIRequest_ = exports.httpAPIRequest = exports.HttpMethodsAPIMap = exports.HttpMethodsForAPIEnum = exports.APIError = void 0;
     var cross_fetch_1 = require("cross-fetch");
     var statuses_1 = require("./statuses");
     var env_1 = require("../env");
@@ -96,7 +96,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 throw new Error("API respond an error with " + res.status + " HTTP status code and text " + text);
         }
     };
-    function apiRequest(httpMethod, endpoint, params) {
+    var HttpMethodsForAPIEnum;
+    (function (HttpMethodsForAPIEnum) {
+        HttpMethodsForAPIEnum["Get"] = "GET";
+        HttpMethodsForAPIEnum["Post"] = "POST";
+    })(HttpMethodsForAPIEnum = exports.HttpMethodsForAPIEnum || (exports.HttpMethodsForAPIEnum = {}));
+    exports.HttpMethodsAPIMap = {
+        'exchange': HttpMethodsForAPIEnum.Post,
+        'info': HttpMethodsForAPIEnum.Get,
+        'create': HttpMethodsForAPIEnum.Post,
+        'open_for_join': HttpMethodsForAPIEnum.Post
+    };
+    function httpAPIRequest(method, params) {
+        return __awaiter(this, void 0, void 0, function () {
+            var thisIsCorrect, httpMethod;
+            return __generator(this, function (_a) {
+                thisIsCorrect = this && typeof this.baseUrl === 'string' && typeof this.httpMethod === 'object';
+                if (!thisIsCorrect)
+                    throw new TypeError('http api request should be bind to IHttpAPIRequestOwner instance [method=' +
+                        method + ', params=' + JSON.stringify(params) + ']');
+                httpMethod = this.httpMethod[method];
+                return [2, httpAPIRequest_(httpMethod, this.baseUrl + '/' + method +
+                        ((httpMethod === HttpMethodsForAPIEnum.Get) && params ? '?' + new URLSearchParams(params) : ''), (httpMethod === HttpMethodsForAPIEnum.Post ? params : {}))];
+            });
+        });
+    }
+    exports.httpAPIRequest = httpAPIRequest;
+    function httpAPIRequest_(httpMethod, endpoint, params) {
         return __awaiter(this, void 0, void 0, function () {
             var opts, jsonRequest, res, text, apiRes;
             return __generator(this, function (_a) {
@@ -132,5 +158,5 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             });
         });
     }
-    exports.apiRequest = apiRequest;
+    exports.httpAPIRequest_ = httpAPIRequest_;
 });

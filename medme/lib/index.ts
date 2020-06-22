@@ -2,9 +2,14 @@
  MedMe Audio/Video Conference API SDK
  */
 
-import {apiRequest} from './request';
+import {httpAPIRequest, HttpMethodsAPIMap, IHttpAPIRequestOwner} from './request';
 import {ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput} from './types/conference'
 import {SuccessStatusEnum, ErrorStatuses} from "./statuses";
+
+/**
+ * Тип функции выполнения запроса к API.
+ */
+type APIRequestFn = (method: string, params?: object) => Promise<any>
 
 /**
  * Описание ответа на запрос создания конференции.
@@ -23,7 +28,9 @@ export interface IExchangeTokenResponse {
     conference_token: string;
 }
 
-
+/**
+ *
+ */
 export interface IConferenceInfoSuccessResponse {
     status: SuccessStatusEnum;
     role: ConferenceRolesEnum;
@@ -41,10 +48,23 @@ export interface IConferenceStatusResponse {
  * Содержит запросы на создание и изменение конференций.
  */
 export class ConferenceModifyAPI {
-    private readonly baseUrl: string;
+    /**
+     * Возвращает объект ConferenceModifyAPI, инициализированный функцией запроса к HTTP API.
+     * @param baseUrl
+     */
+    public static createHttpAPI(baseUrl: string) {
+        const reqOwner: IHttpAPIRequestOwner = {
+            baseUrl: baseUrl,
+            httpMethod: HttpMethodsAPIMap
+        }
 
-    public constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+        return new ConferenceModifyAPI(httpAPIRequest.bind(reqOwner))
+    }
+
+    private readonly apiRequest: APIRequestFn;
+
+    public constructor(apiRequest: APIRequestFn) {
+        this.apiRequest = apiRequest;
     }
 
     /**
@@ -61,7 +81,7 @@ export class ConferenceModifyAPI {
             user_role: userRole,
             conference_info: conferenceInfo
         }
-        return apiRequest('POST', this.baseUrl + '/create', params);
+        return this.apiRequest('create', params);
     }
 
     /**
@@ -69,7 +89,7 @@ export class ConferenceModifyAPI {
      * @param accessToken
      */
     public async openForJoin(accessToken: string): Promise<IConferenceStatusResponse> {
-        return apiRequest('POST', this.baseUrl + '/open_for_join', {
+        return this.apiRequest('open_for_join', {
             access_token: accessToken
         });
     }
@@ -92,10 +112,23 @@ export class ConferenceModifyAPI {
  * работой конференции.
  */
 export class ConferenceAccessAPI {
-    private readonly baseUrl: string;
+    /**
+     * Возвращает объект ConferenceAccessAPI, инициализированный функцией запроса к HTTP API.
+     * @param baseUrl
+     */
+    public static createHttpAPI(baseUrl: string) {
+        const reqOwner: IHttpAPIRequestOwner = {
+            baseUrl: baseUrl,
+            httpMethod: HttpMethodsAPIMap
+        }
 
-    public constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+        return new ConferenceAccessAPI(httpAPIRequest.bind(reqOwner))
+    }
+
+    private readonly apiRequest: APIRequestFn;
+
+    public constructor(apiRequest: APIRequestFn) {
+        this.apiRequest = apiRequest;
     }
 
     /**
@@ -103,8 +136,7 @@ export class ConferenceAccessAPI {
      * @param accessToken
      */
     public async exchange(accessToken: string): Promise<IExchangeTokenResponse> {
-        return apiRequest('POST', this.baseUrl + '/exchange',
-            {access_token: accessToken});
+        return this.apiRequest('exchange', {access_token: accessToken});
     }
 
     public async otpSend() {
@@ -120,8 +152,7 @@ export class ConferenceAccessAPI {
      * @param accessToken
      */
     public async getConferenceInfo(accessToken: string): Promise<IConferenceInfoSuccessResponse> {
-        const urlParams = new URLSearchParams({access_token: accessToken});
-        return apiRequest('GET', this.baseUrl + '/info?' + urlParams);
+        return this.apiRequest('info', {access_token: accessToken});
     }
 
     public async openForJoining() {

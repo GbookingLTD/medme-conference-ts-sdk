@@ -57,7 +57,22 @@ declare module "medme/lib/request" {
         constructor(message: string, apiRes: IAPIErrorResponse);
         get response(): IAPIErrorResponse;
     }
-    export function apiRequest(httpMethod: string, endpoint: string, params?: object): Promise<any>;
+    export enum HttpMethodsForAPIEnum {
+        Get = "GET",
+        Post = "POST"
+    }
+    export type HttpMethodsAPIMap = {
+        [url: string]: HttpMethodsForAPIEnum;
+    };
+    export interface IHttpAPIRequestOwner {
+        baseUrl: string;
+        httpMethod: HttpMethodsAPIMap;
+    }
+    export const HttpMethodsAPIMap: HttpMethodsAPIMap;
+    export function httpAPIRequest(method: string, params?: {
+        [key: string]: any;
+    }): Promise<any>;
+    export function httpAPIRequest_(httpMethod: string, endpoint: string, params?: object): Promise<any>;
 }
 declare module "medme/lib/types/conference" {
     export enum AppointmentEnginesEnum {
@@ -177,6 +192,7 @@ declare module "medme/lib/types/conference" {
 declare module "medme/lib/index" {
     import { ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput } from "medme/lib/types/conference";
     import { SuccessStatusEnum, ErrorStatuses } from "medme/lib/statuses";
+    type APIRequestFn = (method: string, params?: object) => Promise<any>;
     export interface ICreateConferenceResponse {
         access_token: string;
     }
@@ -192,8 +208,9 @@ declare module "medme/lib/index" {
         status: SuccessStatusEnum | ErrorStatuses;
     }
     export class ConferenceModifyAPI {
-        private readonly baseUrl;
-        constructor(baseUrl: string);
+        static createHttpAPI(baseUrl: string): ConferenceModifyAPI;
+        private readonly apiRequest;
+        constructor(apiRequest: APIRequestFn);
         create(apiKey: string, userId: string, userRole: ConferenceRolesEnum, conferenceInfo: IConferenceInfoInput): Promise<ICreateConferenceResponse>;
         openForJoin(accessToken: string): Promise<IConferenceStatusResponse>;
         move(): Promise<void>;
@@ -201,8 +218,9 @@ declare module "medme/lib/index" {
         updateInfo(): Promise<void>;
     }
     export class ConferenceAccessAPI {
-        private readonly baseUrl;
-        constructor(baseUrl: string);
+        static createHttpAPI(baseUrl: string): ConferenceAccessAPI;
+        private readonly apiRequest;
+        constructor(apiRequest: APIRequestFn);
         exchange(accessToken: string): Promise<IExchangeTokenResponse>;
         otpSend(): Promise<void>;
         otpVerify(): Promise<void>;

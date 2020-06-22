@@ -20,5 +20,20 @@ export declare class APIError extends Error {
     constructor(message: string, apiRes: IAPIErrorResponse);
     get response(): IAPIErrorResponse;
 }
-export declare function apiRequest(httpMethod: string, endpoint: string, params?: object): Promise<any>;
+export declare enum HttpMethodsForAPIEnum {
+    Get = "GET",
+    Post = "POST"
+}
+export declare type HttpMethodsAPIMap = {
+    [url: string]: HttpMethodsForAPIEnum;
+};
+export interface IHttpAPIRequestOwner {
+    baseUrl: string;
+    httpMethod: HttpMethodsAPIMap;
+}
+export declare const HttpMethodsAPIMap: HttpMethodsAPIMap;
+export declare function httpAPIRequest(method: string, params?: {
+    [key: string]: any;
+}): Promise<any>;
+export declare function httpAPIRequest_(httpMethod: string, endpoint: string, params?: object): Promise<any>;
 export {};

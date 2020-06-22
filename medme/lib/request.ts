@@ -65,6 +65,39 @@ const handleAPIError = (res: Response, text: string) => {
     }
 }
 
+export enum HttpMethodsForAPIEnum {
+    Get = 'GET',
+    Post = 'POST'
+}
+
+export type HttpMethodsAPIMap = {
+    [url: string]: HttpMethodsForAPIEnum
+}
+
+export interface IHttpAPIRequestOwner {
+    baseUrl: string;
+    httpMethod: HttpMethodsAPIMap
+}
+
+export const HttpMethodsAPIMap: HttpMethodsAPIMap = {
+    'exchange': HttpMethodsForAPIEnum.Post,
+    'info': HttpMethodsForAPIEnum.Get,
+    'create': HttpMethodsForAPIEnum.Post,
+    'open_for_join': HttpMethodsForAPIEnum.Post
+};
+
+export async function httpAPIRequest(method: string, params?: {[key: string]: any}): Promise<any> {
+    const thisIsCorrect = this && typeof this.baseUrl === 'string' && typeof this.httpMethod === 'object';
+    if (!thisIsCorrect)
+        throw new TypeError('http api request should be bind to IHttpAPIRequestOwner instance [method=' +
+            method + ', params=' + JSON.stringify(params) + ']');
+
+    const httpMethod = this.httpMethod[method];
+    return httpAPIRequest_(httpMethod, this.baseUrl + '/' + method +
+        ((httpMethod === HttpMethodsForAPIEnum.Get) && params ? '?' + new URLSearchParams(params) : ''),
+        (httpMethod === HttpMethodsForAPIEnum.Post ? params : {}));
+}
+
 /**
  * Возвращает результат GET или POST запроса.
  * Когда возвращается HTTP код 300 и выше, вызывается исключение Error или APIError.
@@ -72,7 +105,7 @@ const handleAPIError = (res: Response, text: string) => {
  * @param endpoint
  * @param params
  */
-export async function apiRequest(httpMethod: string, endpoint: string, params?: object): Promise<any> {
+export async function httpAPIRequest_(httpMethod: string, endpoint: string, params?: object): Promise<any> {
     const opts = {
         method: httpMethod.toUpperCase(),
         headers: {
