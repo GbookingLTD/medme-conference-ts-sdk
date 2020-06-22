@@ -92,7 +92,7 @@ define("medme/env", ["require", "exports"], function (require, exports) {
     exports.APIKEY = "dfghdshrqweo5y23984wdrty5e3w4q";
     exports.REQUEST_DEBUG = true;
 });
-define("medme/lib/request", ["require", "exports", "cross-fetch", "medme/lib/statuses", "medme/env"], function (require, exports, cross_fetch_1, statuses_1, env_1) {
+define("medme/lib/httpRequest", ["require", "exports", "cross-fetch", "medme/lib/statuses", "medme/env"], function (require, exports, cross_fetch_1, statuses_1, env_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.httpAPIRequest_ = exports.httpAPIRequest = exports.HttpMethodsAPIMap = exports.HttpMethodsForAPIEnum = exports.APIError = void 0;
@@ -238,7 +238,7 @@ define("medme/lib/types/conference", ["require", "exports"], function (require, 
         ConferenceStatusesEnum["Finished"] = "finished";
     })(ConferenceStatusesEnum = exports.ConferenceStatusesEnum || (exports.ConferenceStatusesEnum = {}));
 });
-define("medme/lib/index", ["require", "exports", "medme/lib/request"], function (require, exports, request_1) {
+define("medme/lib/index", ["require", "exports", "medme/lib/httpRequest"], function (require, exports, httpRequest_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = void 0;
@@ -249,9 +249,9 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
         ConferenceModifyAPI.createHttpAPI = function (baseUrl) {
             var reqOwner = {
                 baseUrl: baseUrl,
-                httpMethod: request_1.HttpMethodsAPIMap
+                httpMethod: httpRequest_1.HttpMethodsAPIMap
             };
-            return new ConferenceModifyAPI(request_1.httpAPIRequest.bind(reqOwner));
+            return new ConferenceModifyAPI(httpRequest_1.httpAPIRequest.bind(reqOwner));
         };
         ConferenceModifyAPI.prototype.create = function (apiKey, userId, userRole, conferenceInfo) {
             return __awaiter(this, void 0, void 0, function () {
@@ -307,9 +307,9 @@ define("medme/lib/index", ["require", "exports", "medme/lib/request"], function 
         ConferenceAccessAPI.createHttpAPI = function (baseUrl) {
             var reqOwner = {
                 baseUrl: baseUrl,
-                httpMethod: request_1.HttpMethodsAPIMap
+                httpMethod: httpRequest_1.HttpMethodsAPIMap
             };
-            return new ConferenceAccessAPI(request_1.httpAPIRequest.bind(reqOwner));
+            return new ConferenceAccessAPI(httpRequest_1.httpAPIRequest.bind(reqOwner));
         };
         ConferenceAccessAPI.prototype.exchange = function (accessToken) {
             return __awaiter(this, void 0, void 0, function () {
@@ -356,7 +356,7 @@ define("medme/lib/types/index", ["require", "exports", "medme/lib/types/conferen
     exports.conference = void 0;
     exports.conference = conference;
 });
-define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/request", "medme/lib/statuses", "medme/lib/types/index"], function (require, exports, lib, env, request, statuses, types) {
+define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index"], function (require, exports, lib, env, request, statuses, types) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.types = exports.statuses = exports.request = exports.env = void 0;

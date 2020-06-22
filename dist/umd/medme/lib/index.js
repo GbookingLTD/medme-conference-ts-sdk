@@ -40,13 +40,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./request"], factory);
+        define(["require", "exports", "./httpRequest"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = void 0;
-    var request_1 = require("./request");
+    var httpRequest_1 = require("./httpRequest");
     var ConferenceModifyAPI = (function () {
         function ConferenceModifyAPI(apiRequest) {
             this.apiRequest = apiRequest;
@@ -54,9 +54,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         ConferenceModifyAPI.createHttpAPI = function (baseUrl) {
             var reqOwner = {
                 baseUrl: baseUrl,
-                httpMethod: request_1.HttpMethodsAPIMap
+                httpMethod: httpRequest_1.HttpMethodsAPIMap
             };
-            return new ConferenceModifyAPI(request_1.httpAPIRequest.bind(reqOwner));
+            return new ConferenceModifyAPI(httpRequest_1.httpAPIRequest.bind(reqOwner));
         };
         ConferenceModifyAPI.prototype.create = function (apiKey, userId, userRole, conferenceInfo) {
             return __awaiter(this, void 0, void 0, function () {
@@ -112,9 +112,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         ConferenceAccessAPI.createHttpAPI = function (baseUrl) {
             var reqOwner = {
                 baseUrl: baseUrl,
-                httpMethod: request_1.HttpMethodsAPIMap
+                httpMethod: httpRequest_1.HttpMethodsAPIMap
             };
-            return new ConferenceAccessAPI(request_1.httpAPIRequest.bind(reqOwner));
+            return new ConferenceAccessAPI(httpRequest_1.httpAPIRequest.bind(reqOwner));
         };
         ConferenceAccessAPI.prototype.exchange = function (accessToken) {
             return __awaiter(this, void 0, void 0, function () {

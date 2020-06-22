@@ -2,7 +2,7 @@
 
 import * as lib from './medme/lib/index'
 import * as env from './medme/env'
-import * as request from './medme/lib/request'
+import * as request from './medme/lib/httpRequest'
 import * as statuses from './medme/lib/statuses'
 import * as types from './medme/lib/types/index'
 

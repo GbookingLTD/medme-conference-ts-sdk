@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define("MedMe", ["require", "exports", "./medme/lib/index", "./medme/env", "./medme/lib/request", "./medme/lib/statuses", "./medme/lib/types/index"], factory);
+        define("MedMe", ["require", "exports", "./medme/lib/index", "./medme/env", "./medme/lib/httpRequest", "./medme/lib/statuses", "./medme/lib/types/index"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -13,7 +13,7 @@
     var lib = require("./medme/lib/index");
     var env = require("./medme/env");
     exports.env = env;
-    var request = require("./medme/lib/request");
+    var request = require("./medme/lib/httpRequest");
     exports.request = request;
     var statuses = require("./medme/lib/statuses");
     exports.statuses = statuses;

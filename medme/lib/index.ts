@@ -2,7 +2,7 @@
  MedMe Audio/Video Conference API SDK
  */
 
-import {httpAPIRequest, HttpMethodsAPIMap, IHttpAPIRequestOwner} from './request';
+import {httpAPIRequest, HttpMethodsAPIMap, IHttpAPIRequestOwner} from './httpRequest';
 import {ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput} from './types/conference'
 import {SuccessStatusEnum, ErrorStatuses} from "./statuses";
 
