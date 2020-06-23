@@ -26,5 +26,6 @@ export declare enum ErrorStatuses {
     ConferenceCannotBeOpenedForJoin = "CONFERENCE_CANNOT_BE_OPENED_FOR_JOIN",
     ConferenceCannotBeEdited = "CONFERENCE_CANNOT_BE_EDITED",
     UserShouldBeInConference = "USER_SHOULD_BE_IN_CONFERENCE",
-    ConferenceWrongStatusChange = "CONFERENCE_WRONG_STATUS_CHANGE"
+    ConferenceWrongStatusChange = "CONFERENCE_WRONG_STATUS_CHANGE",
+    RestoreFastTimedOut = "RESTORE_FAST_TIMED_OUT"
 }

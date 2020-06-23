@@ -98,7 +98,12 @@ exports.HttpMethodsAPIMap = {
     'create': HttpMethodsForAPIEnum.Post,
     'open_for_join': HttpMethodsForAPIEnum.Post,
     'join': HttpMethodsForAPIEnum.Post,
-    'leave': HttpMethodsForAPIEnum.Post
+    'leave': HttpMethodsForAPIEnum.Post,
+    'finish': HttpMethodsForAPIEnum.Post,
+    'cancel': HttpMethodsForAPIEnum.Post,
+    'pause': HttpMethodsForAPIEnum.Post,
+    'resume': HttpMethodsForAPIEnum.Post,
+    'restore_terminated_fast': HttpMethodsForAPIEnum.Post,
 };
 function httpAPIRequest(method, params) {
     return __awaiter(this, void 0, void 0, function () {

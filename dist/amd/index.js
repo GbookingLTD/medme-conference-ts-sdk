@@ -82,6 +82,7 @@ define("medme/lib/statuses", ["require", "exports"], function (require, exports)
         ErrorStatuses["ConferenceCannotBeEdited"] = "CONFERENCE_CANNOT_BE_EDITED";
         ErrorStatuses["UserShouldBeInConference"] = "USER_SHOULD_BE_IN_CONFERENCE";
         ErrorStatuses["ConferenceWrongStatusChange"] = "CONFERENCE_WRONG_STATUS_CHANGE";
+        ErrorStatuses["RestoreFastTimedOut"] = "RESTORE_FAST_TIMED_OUT";
     })(ErrorStatuses = exports.ErrorStatuses || (exports.ErrorStatuses = {}));
 });
 define("medme/env", ["require", "exports"], function (require, exports) {
@@ -141,7 +142,12 @@ define("medme/lib/httpRequest", ["require", "exports", "cross-fetch", "medme/lib
         'create': HttpMethodsForAPIEnum.Post,
         'open_for_join': HttpMethodsForAPIEnum.Post,
         'join': HttpMethodsForAPIEnum.Post,
-        'leave': HttpMethodsForAPIEnum.Post
+        'leave': HttpMethodsForAPIEnum.Post,
+        'finish': HttpMethodsForAPIEnum.Post,
+        'cancel': HttpMethodsForAPIEnum.Post,
+        'pause': HttpMethodsForAPIEnum.Post,
+        'resume': HttpMethodsForAPIEnum.Post,
+        'restore_terminated_fast': HttpMethodsForAPIEnum.Post,
     };
     function httpAPIRequest(method, params) {
         return __awaiter(this, void 0, void 0, function () {
@@ -240,10 +246,26 @@ define("medme/lib/types/conference", ["require", "exports"], function (require, 
         ConferenceStatusesEnum["Finished"] = "finished";
     })(ConferenceStatusesEnum = exports.ConferenceStatusesEnum || (exports.ConferenceStatusesEnum = {}));
 });
-define("medme/lib/index", ["require", "exports", "medme/lib/httpRequest"], function (require, exports, httpRequest_1) {
+define("medme/lib/time", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = void 0;
+    exports.TimeMs = void 0;
+    var MinuteMs = 60 * 1000;
+    var TimeMs = (function () {
+        function TimeMs() {
+        }
+        TimeMs.Minute = MinuteMs;
+        TimeMs.Hour = 60 * TimeMs.Minute;
+        TimeMs.Day = 24 * TimeMs.Hour;
+        TimeMs.Week = 24 * TimeMs.Day;
+        return TimeMs;
+    }());
+    exports.TimeMs = TimeMs;
+});
+define("medme/lib/index", ["require", "exports", "medme/lib/httpRequest", "medme/lib/types/conference", "medme/lib/time"], function (require, exports, httpRequest_1, conference_1, time_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ConferenceAccessAPI = exports.RestoreFastDelayMinutes = exports.ConferenceModifyAPI = void 0;
     var ConferenceModifyAPI = (function () {
         function ConferenceModifyAPI(apiRequest) {
             this.apiRequest = apiRequest;
@@ -293,6 +315,7 @@ define("medme/lib/index", ["require", "exports", "medme/lib/httpRequest"], funct
         return ConferenceModifyAPI;
     }());
     exports.ConferenceModifyAPI = ConferenceModifyAPI;
+    exports.RestoreFastDelayMinutes = 3;
     var ConferenceAccessAPI = (function () {
         function ConferenceAccessAPI(apiRequest) {
             this.apiRequest = apiRequest;
@@ -353,7 +376,7 @@ define("medme/lib/index", ["require", "exports", "medme/lib/httpRequest"], funct
         ConferenceAccessAPI.prototype.leave = function (accessToken) {
             return __awaiter(this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2, this.apiRequest('join', {
+                    return [2, this.apiRequest('leave', {
                             access_token: accessToken
                         })];
                 });
@@ -394,6 +417,21 @@ define("medme/lib/index", ["require", "exports", "medme/lib/httpRequest"], funct
                         })];
                 });
             });
+        };
+        ConferenceAccessAPI.prototype.restoreTerminatedFast = function (accessToken) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2, this.apiRequest('restore_terminated_fast', {
+                            access_token: accessToken
+                        })];
+                });
+            });
+        };
+        ConferenceAccessAPI.prototype.canRestore = function (conf) {
+            var delayMs = (conf.status === conference_1.ConferenceStatusesEnum.CancelledBeforeStart) ?
+                Date.now() - Date.parse(conf.cancelledAt) :
+                Date.now() - Date.parse(conf.finishedAt);
+            return delayMs <= exports.RestoreFastDelayMinutes * time_1.TimeMs.Minute;
         };
         return ConferenceAccessAPI;
     }());

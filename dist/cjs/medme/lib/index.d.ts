@@ -24,6 +24,7 @@ export declare class ConferenceModifyAPI {
     resize(): Promise<void>;
     updateInfo(): Promise<void>;
 }
+export declare const RestoreFastDelayMinutes = 3;
 export declare class ConferenceAccessAPI {
     static createHttpAPI(baseUrl: string): ConferenceAccessAPI;
     private readonly apiRequest;
@@ -39,5 +40,7 @@ export declare class ConferenceAccessAPI {
     cancel(accessToken: string): Promise<IConferenceStatusResponse>;
     pause(accessToken: string): Promise<IConferenceStatusResponse>;
     resume(accessToken: string): Promise<IConferenceStatusResponse>;
+    restoreTerminatedFast(accessToken: string): Promise<IConferenceStatusResponse>;
+    canRestore(conf: IConferenceInfo): boolean;
 }
 export {};

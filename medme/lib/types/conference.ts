@@ -81,7 +81,9 @@ export interface IService {
 export interface IConferenceInfo {
     appointmentId: string,
     appointmentEngine: AppointmentEnginesEnum,
-    createdAt: Date,
+    createdAt: string, // Date
+    cancelledAt?: string, // Date
+    finishedAt?: string, // Date
     createdBy: {
         id: string,
         role: ConferenceRolesEnum,

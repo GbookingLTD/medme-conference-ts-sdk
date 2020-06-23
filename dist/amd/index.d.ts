@@ -27,7 +27,8 @@ declare module "medme/lib/statuses" {
         ConferenceCannotBeOpenedForJoin = "CONFERENCE_CANNOT_BE_OPENED_FOR_JOIN",
         ConferenceCannotBeEdited = "CONFERENCE_CANNOT_BE_EDITED",
         UserShouldBeInConference = "USER_SHOULD_BE_IN_CONFERENCE",
-        ConferenceWrongStatusChange = "CONFERENCE_WRONG_STATUS_CHANGE"
+        ConferenceWrongStatusChange = "CONFERENCE_WRONG_STATUS_CHANGE",
+        RestoreFastTimedOut = "RESTORE_FAST_TIMED_OUT"
     }
 }
 declare module "medme/env" {
@@ -134,7 +135,9 @@ declare module "medme/lib/types/conference" {
     export interface IConferenceInfo {
         appointmentId: string;
         appointmentEngine: AppointmentEnginesEnum;
-        createdAt: Date;
+        createdAt: string;
+        cancelledAt?: string;
+        finishedAt?: string;
         createdBy: {
             id: string;
             role: ConferenceRolesEnum;
@@ -189,6 +192,14 @@ declare module "medme/lib/types/conference" {
         isOpen?: boolean;
     }
 }
+declare module "medme/lib/time" {
+    export class TimeMs {
+        static readonly Minute: number;
+        static readonly Hour: number;
+        static readonly Day: number;
+        static readonly Week: number;
+    }
+}
 declare module "medme/lib/index" {
     import { ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput } from "medme/lib/types/conference";
     import { SuccessStatusEnum, ErrorStatuses } from "medme/lib/statuses";
@@ -216,6 +227,7 @@ declare module "medme/lib/index" {
         resize(): Promise<void>;
         updateInfo(): Promise<void>;
     }
+    export const RestoreFastDelayMinutes = 3;
     export class ConferenceAccessAPI {
         static createHttpAPI(baseUrl: string): ConferenceAccessAPI;
         private readonly apiRequest;
@@ -231,6 +243,8 @@ declare module "medme/lib/index" {
         cancel(accessToken: string): Promise<IConferenceStatusResponse>;
         pause(accessToken: string): Promise<IConferenceStatusResponse>;
         resume(accessToken: string): Promise<IConferenceStatusResponse>;
+        restoreTerminatedFast(accessToken: string): Promise<IConferenceStatusResponse>;
+        canRestore(conf: IConferenceInfo): boolean;
     }
 }
 declare module "medme/lib/types/index" {

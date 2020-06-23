@@ -3,8 +3,9 @@
  */
 
 import {httpAPIRequest, HttpMethodsAPIMap, IHttpAPIRequestOwner} from './httpRequest';
-import {ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput} from './types/conference'
+import {ConferenceRolesEnum, ConferenceStatusesEnum, IConferenceInfo, IConferenceInfoInput} from './types/conference'
 import {SuccessStatusEnum, ErrorStatuses} from "./statuses";
+import {TimeMs} from "./time";
 
 /**
  * Тип функции выполнения запроса к API.
@@ -97,6 +98,8 @@ export class ConferenceModifyAPI {
     }
 }
 
+export const RestoreFastDelayMinutes = 3;
+
 /**
  * Содержит запросы на получение данных по конференции, а также на управлением статусом и
  * работой конференции.
@@ -170,7 +173,7 @@ export class ConferenceAccessAPI {
      * @param accessToken
      */
     public async leave(accessToken: string): Promise<IConferenceStatusResponse> {
-        return this.apiRequest('join', {
+        return this.apiRequest('leave', {
             access_token: accessToken
         });
     }
@@ -215,4 +218,17 @@ export class ConferenceAccessAPI {
         })
     }
 
+    public async restoreTerminatedFast(accessToken: string): Promise<IConferenceStatusResponse> {
+        return this.apiRequest('restore_terminated_fast', {
+            access_token: accessToken
+        })
+    }
+
+    public canRestore(conf: IConferenceInfo) {
+        const delayMs = (conf.status === ConferenceStatusesEnum.CancelledBeforeStart) ?
+            Date.now() - Date.parse(conf.cancelledAt) :
+            Date.now() - Date.parse(conf.finishedAt);
+
+        return delayMs <= RestoreFastDelayMinutes * TimeMs.Minute;
+    }
 }

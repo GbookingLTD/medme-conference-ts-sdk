@@ -32,4 +32,5 @@ var ErrorStatuses;
     ErrorStatuses["ConferenceCannotBeEdited"] = "CONFERENCE_CANNOT_BE_EDITED";
     ErrorStatuses["UserShouldBeInConference"] = "USER_SHOULD_BE_IN_CONFERENCE";
     ErrorStatuses["ConferenceWrongStatusChange"] = "CONFERENCE_WRONG_STATUS_CHANGE";
+    ErrorStatuses["RestoreFastTimedOut"] = "RESTORE_FAST_TIMED_OUT";
 })(ErrorStatuses = exports.ErrorStatuses || (exports.ErrorStatuses = {}));
