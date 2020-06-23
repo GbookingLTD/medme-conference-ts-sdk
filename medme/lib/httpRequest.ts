@@ -83,7 +83,9 @@ export const HttpMethodsAPIMap: HttpMethodsAPIMap = {
     'exchange': HttpMethodsForAPIEnum.Post,
     'info': HttpMethodsForAPIEnum.Get,
     'create': HttpMethodsForAPIEnum.Post,
-    'open_for_join': HttpMethodsForAPIEnum.Post
+    'open_for_join': HttpMethodsForAPIEnum.Post,
+    'join': HttpMethodsForAPIEnum.Post,
+    'leave': HttpMethodsForAPIEnum.Post
 };
 
 export async function httpAPIRequest(method: string, params?: {[key: string]: any}): Promise<any> {

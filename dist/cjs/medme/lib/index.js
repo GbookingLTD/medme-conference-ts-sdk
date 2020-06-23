@@ -63,15 +63,6 @@ var ConferenceModifyAPI = (function () {
             });
         });
     };
-    ConferenceModifyAPI.prototype.openForJoin = function (accessToken) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2, this.apiRequest('open_for_join', {
-                        access_token: accessToken
-                    })];
-            });
-        });
-    };
     ConferenceModifyAPI.prototype.move = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -135,10 +126,66 @@ var ConferenceAccessAPI = (function () {
             });
         });
     };
-    ConferenceAccessAPI.prototype.openForJoining = function () {
+    ConferenceAccessAPI.prototype.openForJoin = function (accessToken) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2];
+                return [2, this.apiRequest('open_for_join', {
+                        access_token: accessToken
+                    })];
+            });
+        });
+    };
+    ConferenceAccessAPI.prototype.join = function (accessToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2, this.apiRequest('join', {
+                        access_token: accessToken
+                    })];
+            });
+        });
+    };
+    ConferenceAccessAPI.prototype.leave = function (accessToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2, this.apiRequest('join', {
+                        access_token: accessToken
+                    })];
+            });
+        });
+    };
+    ConferenceAccessAPI.prototype.finish = function (accessToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2, this.apiRequest('finish', {
+                        access_token: accessToken
+                    })];
+            });
+        });
+    };
+    ConferenceAccessAPI.prototype.cancel = function (accessToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2, this.apiRequest('cancel', {
+                        access_token: accessToken
+                    })];
+            });
+        });
+    };
+    ConferenceAccessAPI.prototype.pause = function (accessToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2, this.apiRequest('pause', {
+                        access_token: accessToken
+                    })];
+            });
+        });
+    };
+    ConferenceAccessAPI.prototype.resume = function (accessToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2, this.apiRequest('resume', {
+                        access_token: accessToken
+                    })];
             });
         });
     };

@@ -96,7 +96,9 @@ exports.HttpMethodsAPIMap = {
     'exchange': HttpMethodsForAPIEnum.Post,
     'info': HttpMethodsForAPIEnum.Get,
     'create': HttpMethodsForAPIEnum.Post,
-    'open_for_join': HttpMethodsForAPIEnum.Post
+    'open_for_join': HttpMethodsForAPIEnum.Post,
+    'join': HttpMethodsForAPIEnum.Post,
+    'leave': HttpMethodsForAPIEnum.Post
 };
 function httpAPIRequest(method, params) {
     return __awaiter(this, void 0, void 0, function () {

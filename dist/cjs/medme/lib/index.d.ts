@@ -20,7 +20,6 @@ export declare class ConferenceModifyAPI {
     private readonly apiRequest;
     constructor(apiRequest: APIRequestFn);
     create(apiKey: string, userId: string, userRole: ConferenceRolesEnum, conferenceInfo: IConferenceInfoInput): Promise<ICreateConferenceResponse>;
-    openForJoin(accessToken: string): Promise<IConferenceStatusResponse>;
     move(): Promise<void>;
     resize(): Promise<void>;
     updateInfo(): Promise<void>;
@@ -33,6 +32,12 @@ export declare class ConferenceAccessAPI {
     otpSend(): Promise<void>;
     otpVerify(): Promise<void>;
     getConferenceInfo(accessToken: string): Promise<IConferenceInfoSuccessResponse>;
-    openForJoining(): Promise<void>;
+    openForJoin(accessToken: string): Promise<IConferenceStatusResponse>;
+    join(accessToken: string): Promise<IConferenceStatusResponse>;
+    leave(accessToken: string): Promise<IConferenceStatusResponse>;
+    finish(accessToken: string): Promise<IConferenceStatusResponse>;
+    cancel(accessToken: string): Promise<IConferenceStatusResponse>;
+    pause(accessToken: string): Promise<IConferenceStatusResponse>;
+    resume(accessToken: string): Promise<IConferenceStatusResponse>;
 }
 export {};

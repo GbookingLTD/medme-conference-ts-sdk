@@ -84,16 +84,6 @@ export class ConferenceModifyAPI {
         return this.apiRequest('create', params);
     }
 
-    /**
-     * Запрос на открытие конференции.
-     * @param accessToken
-     */
-    public async openForJoin(accessToken: string): Promise<IConferenceStatusResponse> {
-        return this.apiRequest('open_for_join', {
-            access_token: accessToken
-        });
-    }
-
     public async move() {
 
     }
@@ -155,7 +145,74 @@ export class ConferenceAccessAPI {
         return this.apiRequest('info', {access_token: accessToken});
     }
 
-    public async openForJoining() {
-
+    /**
+     * Запрос на открытие конференции.
+     * @param accessToken
+     */
+    public async openForJoin(accessToken: string): Promise<IConferenceStatusResponse> {
+        return this.apiRequest('open_for_join', {
+            access_token: accessToken
+        });
     }
+
+    /**
+     * Запрос на присоединение к конференции.
+     * @param accessToken
+     */
+    public async join(accessToken: string): Promise<IConferenceStatusResponse> {
+        return this.apiRequest('join', {
+            access_token: accessToken
+        });
+    }
+
+    /**
+     * Запрос на отсоединение от конференции.
+     * @param accessToken
+     */
+    public async leave(accessToken: string): Promise<IConferenceStatusResponse> {
+        return this.apiRequest('join', {
+            access_token: accessToken
+        });
+    }
+
+    /**
+     * Запрос на завершение конференции.
+     * @param accessToken
+     */
+    public async finish(accessToken: string): Promise<IConferenceStatusResponse> {
+        return this.apiRequest('finish', {
+            access_token: accessToken
+        })
+    }
+
+    /**
+     * Запрос на отмену конференции.
+     * @param accessToken
+     */
+    public async cancel(accessToken: string): Promise<IConferenceStatusResponse> {
+        return this.apiRequest('cancel', {
+            access_token: accessToken
+        })
+    }
+
+    /**
+     * Запрос на остановку конференции.
+     * @param accessToken
+     */
+    public async pause(accessToken: string): Promise<IConferenceStatusResponse> {
+        return this.apiRequest('pause', {
+            access_token: accessToken
+        })
+    }
+
+    /**
+     * Запрос на возобновление конференции.
+     * @param accessToken
+     */
+    public async resume(accessToken: string): Promise<IConferenceStatusResponse> {
+        return this.apiRequest('resume', {
+            access_token: accessToken
+        })
+    }
+
 }
