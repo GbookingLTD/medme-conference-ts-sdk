@@ -278,6 +278,7 @@ declare module "medme/lib/ux" {
         subject: string;
         displayName: string;
     }
+    type BlockType = (ILanguagesBlock | IConferenceInfoBlock | IJitsiMeetBlock) & IBlock;
     export enum ScreenEnum {
         _4xx = "4xx",
         PendingClient = "pending-client",
@@ -290,7 +291,7 @@ declare module "medme/lib/ux" {
     }
     export interface IScreen {
         name: ScreenEnum;
-        availableBlocks: IBlock[];
+        availableBlocks: BlockType[];
     }
     export interface I4xxScreen extends IScreen {
         status: number;

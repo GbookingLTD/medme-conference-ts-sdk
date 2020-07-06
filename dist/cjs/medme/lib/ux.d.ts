@@ -24,6 +24,7 @@ export interface IJitsiMeetBlock extends IBlock {
     subject: string;
     displayName: string;
 }
+declare type BlockType = (ILanguagesBlock | IConferenceInfoBlock | IJitsiMeetBlock) & IBlock;
 export declare enum ScreenEnum {
     _4xx = "4xx",
     PendingClient = "pending-client",
@@ -36,7 +37,7 @@ export declare enum ScreenEnum {
 }
 export interface IScreen {
     name: ScreenEnum;
-    availableBlocks: IBlock[];
+    availableBlocks: BlockType[];
 }
 export interface I4xxScreen extends IScreen {
     status: number;
