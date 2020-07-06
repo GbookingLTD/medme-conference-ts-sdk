@@ -443,14 +443,109 @@ define("medme/lib/types/index", ["require", "exports", "medme/lib/types/conferen
     exports.conference = void 0;
     exports.conference = conference;
 });
-define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index"], function (require, exports, lib, env, request, statuses, types) {
+define("medme/lib/ux", ["require", "exports", "medme/lib/httpRequest", "medme/lib/statuses"], function (require, exports, httpRequest_2, statuses_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.initHttpAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.types = exports.statuses = exports.request = exports.env = void 0;
+    exports._make4xxScreen = exports.createUX = exports.ScreenEnum = exports.BlockEnum = void 0;
+    var BlockEnum;
+    (function (BlockEnum) {
+        BlockEnum["Languages"] = "langs";
+        BlockEnum["ConferenceInfo"] = "conference-info";
+        BlockEnum["JitsiMeet"] = "jitsi-meet";
+        BlockEnum["SpecialistHelp"] = "specialist-help";
+    })(BlockEnum = exports.BlockEnum || (exports.BlockEnum = {}));
+    var ScreenEnum;
+    (function (ScreenEnum) {
+        ScreenEnum["_4xx"] = "4xx";
+        ScreenEnum["PendingClient"] = "pending-client";
+        ScreenEnum["PendingSpecialist"] = "pending-specialist";
+        ScreenEnum["JoinClient"] = "join-client";
+        ScreenEnum["JoinSpecialist"] = "join-specialist";
+        ScreenEnum["Cancelled"] = "cancelled";
+        ScreenEnum["Finish"] = "finish";
+        ScreenEnum["Started"] = "started";
+    })(ScreenEnum = exports.ScreenEnum || (exports.ScreenEnum = {}));
+    function createUX(accessAPI, at) {
+        return __awaiter(this, void 0, void 0, function () {
+            var exchangeRes, confRes, err_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!at)
+                            return [2, _make4xxScreen(404)];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4, accessAPI.exchange(at)];
+                    case 2:
+                        exchangeRes = _a.sent();
+                        return [4, accessAPI.getConferenceInfo(at)];
+                    case 3:
+                        confRes = _a.sent();
+                        return [2, new UX(confRes.conference_info, exchangeRes.conference_token)];
+                    case 4:
+                        err_1 = _a.sent();
+                        if (err_1 instanceof httpRequest_2.APIError &&
+                            [
+                                statuses_2.ErrorStatuses.Unauthorized,
+                                statuses_2.ErrorStatuses.ExpiredToken,
+                                statuses_2.ErrorStatuses.ExpectConferenceToken,
+                            ].indexOf(err_1.response.status) >= 0)
+                            return [2, _make4xxScreen(401)];
+                        if (err_1 instanceof httpRequest_2.APIError &&
+                            [
+                                statuses_2.ErrorStatuses.AccessTokenNotFound,
+                                statuses_2.ErrorStatuses.ExpectAccessToken,
+                            ].indexOf(err_1.response.status) >= 0)
+                            return [2, _make4xxScreen(404)];
+                        throw err_1;
+                    case 5: return [2];
+                }
+            });
+        });
+    }
+    exports.createUX = createUX;
+    function _make4xxScreen(status) {
+        console.assert(status === 401 || status === 404);
+        return new UXTrivial({
+            name: ScreenEnum._4xx,
+            availableBlocks: [{ type: BlockEnum.Languages }],
+            status: status
+        });
+    }
+    exports._make4xxScreen = _make4xxScreen;
+    var UXTrivial = (function () {
+        function UXTrivial(screen) {
+        }
+        UXTrivial.prototype.getCurrentPage = function () {
+            return this.screen_;
+        };
+        return UXTrivial;
+    }());
+    var UX = (function () {
+        function UX(confInfo, confToken) {
+            if (confToken === void 0) { confToken = null; }
+            this.conferenceInfo_ = confInfo;
+            this.conferenceToken_ = confToken;
+        }
+        UX.prototype.getCurrentPage = function () {
+            return {
+                name: ScreenEnum._4xx,
+                availableBlocks: [{ type: BlockEnum.Languages }]
+            };
+        };
+        return UX;
+    }());
+});
+define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/ux"], function (require, exports, lib, env, request, statuses, types, ux) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.initHttpAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.ux = exports.types = exports.statuses = exports.request = exports.env = void 0;
     exports.env = env;
     exports.request = request;
     exports.statuses = statuses;
     exports.types = types;
+    exports.ux = ux;
     exports.default = lib;
     function initHttpAPI() {
         exports.conferenceModifyAPI = lib.ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);

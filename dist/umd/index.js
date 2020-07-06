@@ -4,12 +4,12 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define("MedMe", ["require", "exports", "./medme/lib/index", "./medme/env", "./medme/lib/httpRequest", "./medme/lib/statuses", "./medme/lib/types/index"], factory);
+        define("MedMe", ["require", "exports", "./medme/lib/index", "./medme/env", "./medme/lib/httpRequest", "./medme/lib/statuses", "./medme/lib/types/index", "./medme/lib/ux"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.initHttpAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.types = exports.statuses = exports.request = exports.env = void 0;
+    exports.initHttpAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.ux = exports.types = exports.statuses = exports.request = exports.env = void 0;
     var lib = require("./medme/lib/index");
     var env = require("./medme/env");
     exports.env = env;
@@ -19,6 +19,8 @@
     exports.statuses = statuses;
     var types = require("./medme/lib/types/index");
     exports.types = types;
+    var ux = require("./medme/lib/ux");
+    exports.ux = ux;
     exports.default = lib;
     function initHttpAPI() {
         exports.conferenceModifyAPI = lib.ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
