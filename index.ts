@@ -5,6 +5,7 @@ import * as env from './medme/env'
 import * as request from './medme/lib/httpRequest'
 import * as statuses from './medme/lib/statuses'
 import * as types from './medme/lib/types/index'
+import * as ux from './medme/lib/ux'
 
 export default lib
 
@@ -12,7 +13,8 @@ export {
     env,
     request,
     statuses,
-    types
+    types,
+    ux
 }
 
 export let conferenceModifyAPI: lib.ConferenceModifyAPI;
