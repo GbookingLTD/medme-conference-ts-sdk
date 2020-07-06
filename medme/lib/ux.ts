@@ -70,6 +70,8 @@ export interface IJitsiMeetBlock extends IBlock {
     displayName: string;
 }
 
+type BlockType = (ILanguagesBlock | IConferenceInfoBlock | IJitsiMeetBlock) & IBlock;
+
 /*
  * Страницы интерфейса
  */
@@ -98,7 +100,7 @@ export enum ScreenEnum {
  */
 export interface IScreen {
     name: ScreenEnum;
-    availableBlocks: IBlock[];
+    availableBlocks: BlockType[];
 }
 
 /**
