@@ -36,7 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._make4xxScreen = exports.createUX = exports.ScreenEnum = exports.BlockEnum = void 0;
+exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
+var conference_1 = require("./types/conference");
 var httpRequest_1 = require("./httpRequest");
 var statuses_1 = require("./statuses");
 var BlockEnum;
@@ -46,6 +47,19 @@ var BlockEnum;
     BlockEnum["JitsiMeet"] = "jitsi-meet";
     BlockEnum["SpecialistHelp"] = "specialist-help";
 })(BlockEnum = exports.BlockEnum || (exports.BlockEnum = {}));
+function createConferenceInfoBlock(userRole, confInfo) {
+    return {
+        userRole: userRole,
+        finishPauseControl: userRole === conference_1.ConferenceRolesEnum.Specialist &&
+            confInfo.status === conference_1.ConferenceStatusesEnum.Started,
+        leaveClientControl: userRole === conference_1.ConferenceRolesEnum.Client &&
+            (confInfo.status === conference_1.ConferenceStatusesEnum.Started ||
+                confInfo.status === conference_1.ConferenceStatusesEnum.StartedAndWaiting ||
+                confInfo.status === conference_1.ConferenceStatusesEnum.StartedAndPaused),
+        conference: confInfo
+    };
+}
+exports.createConferenceInfoBlock = createConferenceInfoBlock;
 var ScreenEnum;
 (function (ScreenEnum) {
     ScreenEnum["_4xx"] = "4xx";
@@ -57,7 +71,32 @@ var ScreenEnum;
     ScreenEnum["Finish"] = "finish";
     ScreenEnum["Started"] = "started";
 })(ScreenEnum = exports.ScreenEnum || (exports.ScreenEnum = {}));
-function createUX(accessAPI, at) {
+function createLanguagesBlock() {
+    return {
+        type: BlockEnum.Languages,
+        currentLanguage: conference_1.LanguageListEnum.RU_RU,
+        availableLanguages: [conference_1.LanguageListEnum.RU_RU, conference_1.LanguageListEnum.EN_US]
+    };
+}
+exports.createLanguagesBlock = createLanguagesBlock;
+function createSpecialistHelpBlock(userRole) {
+    return {
+        type: BlockEnum.SpecialistHelp,
+        userRole: userRole
+    };
+}
+exports.createSpecialistHelpBlock = createSpecialistHelpBlock;
+function _make4xxScreen(status) {
+    console.assert(status === 401 || status === 404);
+    return {
+        name: ScreenEnum._4xx,
+        availableBlocks: [BlockEnum.Languages],
+        langBlock: createLanguagesBlock(),
+        status: status
+    };
+}
+exports._make4xxScreen = _make4xxScreen;
+function createScreen(api, at) {
     return __awaiter(this, void 0, void 0, function () {
         var exchangeRes, confRes, err_1;
         return __generator(this, function (_a) {
@@ -68,13 +107,13 @@ function createUX(accessAPI, at) {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 4, , 5]);
-                    return [4, accessAPI.exchange(at)];
+                    return [4, api.exchange(at)];
                 case 2:
                     exchangeRes = _a.sent();
-                    return [4, accessAPI.getConferenceInfo(at)];
+                    return [4, api.getConferenceInfo(at)];
                 case 3:
                     confRes = _a.sent();
-                    return [2, new UX(confRes.conference_info, exchangeRes.conference_token)];
+                    return [2, createConferenceScreen(api, confRes.role, confRes.conference_info, at, exchangeRes.conference_token)];
                 case 4:
                     err_1 = _a.sent();
                     if (err_1 instanceof httpRequest_1.APIError &&
@@ -96,35 +135,75 @@ function createUX(accessAPI, at) {
         });
     });
 }
-exports.createUX = createUX;
-function _make4xxScreen(status) {
-    console.assert(status === 401 || status === 404);
-    return new UXTrivial({
-        name: ScreenEnum._4xx,
-        availableBlocks: [{ type: BlockEnum.Languages }],
-        status: status
-    });
-}
-exports._make4xxScreen = _make4xxScreen;
-var UXTrivial = (function () {
-    function UXTrivial(screen) {
-    }
-    UXTrivial.prototype.getCurrentPage = function () {
-        return this.screen_;
-    };
-    return UXTrivial;
-}());
-var UX = (function () {
-    function UX(confInfo, confToken) {
-        if (confToken === void 0) { confToken = null; }
-        this.conferenceInfo_ = confInfo;
-        this.conferenceToken_ = confToken;
-    }
-    UX.prototype.getCurrentPage = function () {
+exports.createScreen = createScreen;
+function createConferenceScreen(api, userRole, confInfo, at, confToken) {
+    if (userRole === conference_1.ConferenceRolesEnum.Client &&
+        confInfo.status === conference_1.ConferenceStatusesEnum.Pending)
         return {
-            name: ScreenEnum._4xx,
-            availableBlocks: [{ type: BlockEnum.Languages }]
+            name: ScreenEnum.PendingClient,
+            availableBlocks: [BlockEnum.ConferenceInfo],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
         };
+    if (userRole === conference_1.ConferenceRolesEnum.Specialist &&
+        confInfo.status === conference_1.ConferenceStatusesEnum.Pending)
+        return {
+            name: ScreenEnum.PendingSpecialist,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+        };
+    if (userRole === conference_1.ConferenceRolesEnum.Client &&
+        confInfo.status === conference_1.ConferenceStatusesEnum.OpenForJoining)
+        return {
+            name: ScreenEnum.JoinClient,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+        };
+    if (userRole === conference_1.ConferenceRolesEnum.Specialist &&
+        confInfo.status === conference_1.ConferenceStatusesEnum.OpenForJoining)
+        return {
+            name: ScreenEnum.JoinSpecialist,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+        };
+    if (confInfo.status === conference_1.ConferenceStatusesEnum.CancelledBeforeStart)
+        return {
+            name: ScreenEnum.Cancelled,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+            showClientHint: userRole === conference_1.ConferenceRolesEnum.Client,
+            restoreControls: userRole === conference_1.ConferenceRolesEnum.Specialist,
+            canRestore: api.canRestore(confInfo)
+        };
+    if (confInfo.status === conference_1.ConferenceStatusesEnum.CancelledAfterStart ||
+        confInfo.status === conference_1.ConferenceStatusesEnum.Finished)
+        return {
+            name: ScreenEnum.Finish,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+            restoreControls: userRole === conference_1.ConferenceRolesEnum.Specialist,
+            canRestore: api.canRestore(confInfo)
+        };
+    return {
+        name: ScreenEnum.Started,
+        userRole: userRole,
+        availableBlocks: [BlockEnum.ConferenceInfo],
+        conference: confInfo,
+        conferenceToken: confToken,
+        accessToken: at,
+        langBlock: createLanguagesBlock(),
+        confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+        specialistHelpBlock: createSpecialistHelpBlock(userRole),
+        jitsiMeetBlock: {
+            type: BlockEnum.JitsiMeet,
+            conferenceToken: confToken,
+            subject: 'Первичный прием, Вт. 12 Мар. 2020, 12:45',
+            displayName: 'Врач педиатр, Александр Иванович Синицын',
+        }
     };
-    return UX;
-}());
+}

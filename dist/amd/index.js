@@ -443,10 +443,10 @@ define("medme/lib/types/index", ["require", "exports", "medme/lib/types/conferen
     exports.conference = void 0;
     exports.conference = conference;
 });
-define("medme/lib/ux", ["require", "exports", "medme/lib/httpRequest", "medme/lib/statuses"], function (require, exports, httpRequest_2, statuses_2) {
+define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "medme/lib/httpRequest", "medme/lib/statuses"], function (require, exports, conference_2, httpRequest_2, statuses_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports._make4xxScreen = exports.createUX = exports.ScreenEnum = exports.BlockEnum = void 0;
+    exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
     var BlockEnum;
     (function (BlockEnum) {
         BlockEnum["Languages"] = "langs";
@@ -454,6 +454,19 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/httpRequest", "medme/li
         BlockEnum["JitsiMeet"] = "jitsi-meet";
         BlockEnum["SpecialistHelp"] = "specialist-help";
     })(BlockEnum = exports.BlockEnum || (exports.BlockEnum = {}));
+    function createConferenceInfoBlock(userRole, confInfo) {
+        return {
+            userRole: userRole,
+            finishPauseControl: userRole === conference_2.ConferenceRolesEnum.Specialist &&
+                confInfo.status === conference_2.ConferenceStatusesEnum.Started,
+            leaveClientControl: userRole === conference_2.ConferenceRolesEnum.Client &&
+                (confInfo.status === conference_2.ConferenceStatusesEnum.Started ||
+                    confInfo.status === conference_2.ConferenceStatusesEnum.StartedAndWaiting ||
+                    confInfo.status === conference_2.ConferenceStatusesEnum.StartedAndPaused),
+            conference: confInfo
+        };
+    }
+    exports.createConferenceInfoBlock = createConferenceInfoBlock;
     var ScreenEnum;
     (function (ScreenEnum) {
         ScreenEnum["_4xx"] = "4xx";
@@ -465,7 +478,32 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/httpRequest", "medme/li
         ScreenEnum["Finish"] = "finish";
         ScreenEnum["Started"] = "started";
     })(ScreenEnum = exports.ScreenEnum || (exports.ScreenEnum = {}));
-    function createUX(accessAPI, at) {
+    function createLanguagesBlock() {
+        return {
+            type: BlockEnum.Languages,
+            currentLanguage: conference_2.LanguageListEnum.RU_RU,
+            availableLanguages: [conference_2.LanguageListEnum.RU_RU, conference_2.LanguageListEnum.EN_US]
+        };
+    }
+    exports.createLanguagesBlock = createLanguagesBlock;
+    function createSpecialistHelpBlock(userRole) {
+        return {
+            type: BlockEnum.SpecialistHelp,
+            userRole: userRole
+        };
+    }
+    exports.createSpecialistHelpBlock = createSpecialistHelpBlock;
+    function _make4xxScreen(status) {
+        console.assert(status === 401 || status === 404);
+        return {
+            name: ScreenEnum._4xx,
+            availableBlocks: [BlockEnum.Languages],
+            langBlock: createLanguagesBlock(),
+            status: status
+        };
+    }
+    exports._make4xxScreen = _make4xxScreen;
+    function createScreen(api, at) {
         return __awaiter(this, void 0, void 0, function () {
             var exchangeRes, confRes, err_1;
             return __generator(this, function (_a) {
@@ -476,13 +514,13 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/httpRequest", "medme/li
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 4, , 5]);
-                        return [4, accessAPI.exchange(at)];
+                        return [4, api.exchange(at)];
                     case 2:
                         exchangeRes = _a.sent();
-                        return [4, accessAPI.getConferenceInfo(at)];
+                        return [4, api.getConferenceInfo(at)];
                     case 3:
                         confRes = _a.sent();
-                        return [2, new UX(confRes.conference_info, exchangeRes.conference_token)];
+                        return [2, createConferenceScreen(api, confRes.role, confRes.conference_info, at, exchangeRes.conference_token)];
                     case 4:
                         err_1 = _a.sent();
                         if (err_1 instanceof httpRequest_2.APIError &&
@@ -504,48 +542,88 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/httpRequest", "medme/li
             });
         });
     }
-    exports.createUX = createUX;
-    function _make4xxScreen(status) {
-        console.assert(status === 401 || status === 404);
-        return new UXTrivial({
-            name: ScreenEnum._4xx,
-            availableBlocks: [{ type: BlockEnum.Languages }],
-            status: status
-        });
-    }
-    exports._make4xxScreen = _make4xxScreen;
-    var UXTrivial = (function () {
-        function UXTrivial(screen) {
-        }
-        UXTrivial.prototype.getCurrentPage = function () {
-            return this.screen_;
-        };
-        return UXTrivial;
-    }());
-    var UX = (function () {
-        function UX(confInfo, confToken) {
-            if (confToken === void 0) { confToken = null; }
-            this.conferenceInfo_ = confInfo;
-            this.conferenceToken_ = confToken;
-        }
-        UX.prototype.getCurrentPage = function () {
+    exports.createScreen = createScreen;
+    function createConferenceScreen(api, userRole, confInfo, at, confToken) {
+        if (userRole === conference_2.ConferenceRolesEnum.Client &&
+            confInfo.status === conference_2.ConferenceStatusesEnum.Pending)
             return {
-                name: ScreenEnum._4xx,
-                availableBlocks: [{ type: BlockEnum.Languages }]
+                name: ScreenEnum.PendingClient,
+                availableBlocks: [BlockEnum.ConferenceInfo],
+                conference: confInfo,
+                confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
+        if (userRole === conference_2.ConferenceRolesEnum.Specialist &&
+            confInfo.status === conference_2.ConferenceStatusesEnum.Pending)
+            return {
+                name: ScreenEnum.PendingSpecialist,
+                availableBlocks: [],
+                conference: confInfo,
+                confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+            };
+        if (userRole === conference_2.ConferenceRolesEnum.Client &&
+            confInfo.status === conference_2.ConferenceStatusesEnum.OpenForJoining)
+            return {
+                name: ScreenEnum.JoinClient,
+                availableBlocks: [],
+                conference: confInfo,
+                confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+            };
+        if (userRole === conference_2.ConferenceRolesEnum.Specialist &&
+            confInfo.status === conference_2.ConferenceStatusesEnum.OpenForJoining)
+            return {
+                name: ScreenEnum.JoinSpecialist,
+                availableBlocks: [],
+                conference: confInfo,
+                confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+            };
+        if (confInfo.status === conference_2.ConferenceStatusesEnum.CancelledBeforeStart)
+            return {
+                name: ScreenEnum.Cancelled,
+                availableBlocks: [],
+                conference: confInfo,
+                confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+                showClientHint: userRole === conference_2.ConferenceRolesEnum.Client,
+                restoreControls: userRole === conference_2.ConferenceRolesEnum.Specialist,
+                canRestore: api.canRestore(confInfo)
+            };
+        if (confInfo.status === conference_2.ConferenceStatusesEnum.CancelledAfterStart ||
+            confInfo.status === conference_2.ConferenceStatusesEnum.Finished)
+            return {
+                name: ScreenEnum.Finish,
+                availableBlocks: [],
+                conference: confInfo,
+                confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+                restoreControls: userRole === conference_2.ConferenceRolesEnum.Specialist,
+                canRestore: api.canRestore(confInfo)
+            };
+        return {
+            name: ScreenEnum.Started,
+            userRole: userRole,
+            availableBlocks: [BlockEnum.ConferenceInfo],
+            conference: confInfo,
+            conferenceToken: confToken,
+            accessToken: at,
+            langBlock: createLanguagesBlock(),
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+            specialistHelpBlock: createSpecialistHelpBlock(userRole),
+            jitsiMeetBlock: {
+                type: BlockEnum.JitsiMeet,
+                conferenceToken: confToken,
+                subject: 'Первичный прием, Вт. 12 Мар. 2020, 12:45',
+                displayName: 'Врач педиатр, Александр Иванович Синицын',
+            }
         };
-        return UX;
-    }());
+    }
 });
-define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/ux"], function (require, exports, lib, env, request, statuses, types, ux) {
+define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/ux"], function (require, exports, lib, env, request, statuses, types, UX) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.initHttpAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.ux = exports.types = exports.statuses = exports.request = exports.env = void 0;
+    exports.initHttpAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.UX = exports.types = exports.statuses = exports.request = exports.env = void 0;
     exports.env = env;
     exports.request = request;
     exports.statuses = statuses;
     exports.types = types;
-    exports.ux = ux;
+    exports.UX = UX;
     exports.default = lib;
     function initHttpAPI() {
         exports.conferenceModifyAPI = lib.ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);

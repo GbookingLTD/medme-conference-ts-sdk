@@ -273,12 +273,16 @@ declare module "medme/lib/ux" {
         leaveClientControl: boolean;
         conference: IConferenceInfo;
     }
+    export function createConferenceInfoBlock(userRole: ConferenceRolesEnum, confInfo: IConferenceInfo): IConferenceInfoBlock;
+    export interface ISpecialistHelpBlock extends IBlock {
+        userRole: ConferenceRolesEnum;
+    }
     export interface IJitsiMeetBlock extends IBlock {
         conferenceToken: string;
         subject: string;
         displayName: string;
     }
-    type BlockType = (ILanguagesBlock | IConferenceInfoBlock | IJitsiMeetBlock) & IBlock;
+    export type BlockType = (ILanguagesBlock | IConferenceInfoBlock | ISpecialistHelpBlock | IJitsiMeetBlock) & IBlock;
     export enum ScreenEnum {
         _4xx = "4xx",
         PendingClient = "pending-client",
@@ -291,31 +295,66 @@ declare module "medme/lib/ux" {
     }
     export interface IScreen {
         name: ScreenEnum;
-        availableBlocks: BlockType[];
+        availableBlocks: BlockEnum[];
+        langBlock: ILanguagesBlock;
     }
     export interface I4xxScreen extends IScreen {
         status: number;
     }
     export interface IPendingClientScreen extends IScreen {
+        conference: IConferenceInfo;
+        userRole: ConferenceRolesEnum;
+        confInfoBlock: IConferenceInfoBlock;
+        specialistHelpBlock: ISpecialistHelpBlock;
     }
     export interface IPendingSpecialistScreen extends IScreen {
+        conference: IConferenceInfo;
+        userRole: ConferenceRolesEnum;
+        confInfoBlock: IConferenceInfoBlock;
+        specialistHelpBlock: ISpecialistHelpBlock;
     }
     export interface IJoinClientScreen extends IScreen {
+        conference: IConferenceInfo;
+        userRole: ConferenceRolesEnum;
+        confInfoBlock: IConferenceInfoBlock;
+        specialistHelpBlock: ISpecialistHelpBlock;
     }
     export interface IJoinSpecialistScreen extends IScreen {
+        conference: IConferenceInfo;
+        userRole: ConferenceRolesEnum;
+        confInfoBlock: IConferenceInfoBlock;
+        specialistHelpBlock: ISpecialistHelpBlock;
     }
     export interface ICancelledScreen extends IScreen {
+        conference: IConferenceInfo;
+        userRole: ConferenceRolesEnum;
+        confInfoBlock: IConferenceInfoBlock;
+        specialistHelpBlock: ISpecialistHelpBlock;
+        showClientHint: boolean;
+        restoreControls: boolean;
+        canRestore: boolean;
     }
     export interface IFinishScreen extends IScreen {
+        conference: IConferenceInfo;
+        userRole: ConferenceRolesEnum;
+        confInfoBlock: IConferenceInfoBlock;
+        specialistHelpBlock: ISpecialistHelpBlock;
+        restoreControls: boolean;
+        canRestore: boolean;
     }
     export interface IStartedScreen extends IScreen {
+        conference: IConferenceInfo;
+        userRole: ConferenceRolesEnum;
+        confInfoBlock: IConferenceInfoBlock;
+        specialistHelpBlock: ISpecialistHelpBlock;
+        jitsiMeetBlock: IJitsiMeetBlock;
+        conferenceToken: string;
     }
-    export function createUX(accessAPI: ConferenceAccessAPI, at: string): Promise<IUX>;
     type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen | IJoinClientScreen | IJoinSpecialistScreen | ICancelledScreen | IFinishScreen | IStartedScreen) & IScreen;
-    export function _make4xxScreen(status: number): IUX;
-    export interface IUX {
-        getCurrentPage(): ScreenType;
-    }
+    export function createLanguagesBlock(): ILanguagesBlock;
+    export function createSpecialistHelpBlock(userRole: ConferenceRolesEnum): ISpecialistHelpBlock;
+    export function _make4xxScreen(status: number): ScreenType;
+    export function createScreen(api: ConferenceAccessAPI, at: string): Promise<ScreenType>;
 }
 /// <amd-module name="MedMe" />
 declare module "MedMe" {
@@ -324,9 +363,9 @@ declare module "MedMe" {
     import * as request from "medme/lib/httpRequest";
     import * as statuses from "medme/lib/statuses";
     import * as types from "medme/lib/types/index";
-    import * as ux from "medme/lib/ux";
+    import * as UX from "medme/lib/ux";
     export default lib;
-    export { env, request, statuses, types, ux };
+    export { env, request, statuses, types, UX };
     export let conferenceModifyAPI: lib.ConferenceModifyAPI;
     export let conferenceAccessAPI: lib.ConferenceAccessAPI;
     export function initHttpAPI(): void;

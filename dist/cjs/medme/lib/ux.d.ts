@@ -19,12 +19,16 @@ export interface IConferenceInfoBlock extends IBlock {
     leaveClientControl: boolean;
     conference: IConferenceInfo;
 }
+export declare function createConferenceInfoBlock(userRole: ConferenceRolesEnum, confInfo: IConferenceInfo): IConferenceInfoBlock;
+export interface ISpecialistHelpBlock extends IBlock {
+    userRole: ConferenceRolesEnum;
+}
 export interface IJitsiMeetBlock extends IBlock {
     conferenceToken: string;
     subject: string;
     displayName: string;
 }
-declare type BlockType = (ILanguagesBlock | IConferenceInfoBlock | IJitsiMeetBlock) & IBlock;
+export declare type BlockType = (ILanguagesBlock | IConferenceInfoBlock | ISpecialistHelpBlock | IJitsiMeetBlock) & IBlock;
 export declare enum ScreenEnum {
     _4xx = "4xx",
     PendingClient = "pending-client",
@@ -37,29 +41,64 @@ export declare enum ScreenEnum {
 }
 export interface IScreen {
     name: ScreenEnum;
-    availableBlocks: BlockType[];
+    availableBlocks: BlockEnum[];
+    langBlock: ILanguagesBlock;
 }
 export interface I4xxScreen extends IScreen {
     status: number;
 }
 export interface IPendingClientScreen extends IScreen {
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
 }
 export interface IPendingSpecialistScreen extends IScreen {
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
 }
 export interface IJoinClientScreen extends IScreen {
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
 }
 export interface IJoinSpecialistScreen extends IScreen {
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
 }
 export interface ICancelledScreen extends IScreen {
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
+    showClientHint: boolean;
+    restoreControls: boolean;
+    canRestore: boolean;
 }
 export interface IFinishScreen extends IScreen {
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
+    restoreControls: boolean;
+    canRestore: boolean;
 }
 export interface IStartedScreen extends IScreen {
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
+    jitsiMeetBlock: IJitsiMeetBlock;
+    conferenceToken: string;
 }
-export declare function createUX(accessAPI: ConferenceAccessAPI, at: string): Promise<IUX>;
 declare type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen | IJoinClientScreen | IJoinSpecialistScreen | ICancelledScreen | IFinishScreen | IStartedScreen) & IScreen;
-export declare function _make4xxScreen(status: number): IUX;
-export interface IUX {
-    getCurrentPage(): ScreenType;
-}
+export declare function createLanguagesBlock(): ILanguagesBlock;
+export declare function createSpecialistHelpBlock(userRole: ConferenceRolesEnum): ISpecialistHelpBlock;
+export declare function _make4xxScreen(status: number): ScreenType;
+export declare function createScreen(api: ConferenceAccessAPI, at: string): Promise<ScreenType>;
 export {};
