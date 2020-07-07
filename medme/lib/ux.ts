@@ -2,13 +2,8 @@
 MedMe Conference UX logic
  */
 
-import {ConferenceRolesEnum, IConferenceInfo, LanguageListEnum} from "./types/conference";
-import {
-    ConferenceAccessAPI,
-    IConferenceInfoSuccessResponse,
-    IConferenceStatusResponse,
-    IExchangeTokenResponse
-} from "./index";
+import {ConferenceRolesEnum, ConferenceStatusesEnum, IConferenceInfo, LanguageListEnum} from "./types/conference";
+import {ConferenceAccessAPI, IConferenceInfoSuccessResponse, IExchangeTokenResponse} from "./index";
 import {APIError} from "./httpRequest";
 import {ErrorStatuses} from "./statuses";
 
@@ -32,6 +27,7 @@ export enum BlockEnum {
 export interface IBlock {
     // тип блока интерфейса
     type: BlockEnum;
+
 }
 
 /**
@@ -59,6 +55,33 @@ export interface IConferenceInfoBlock extends IBlock {
 }
 
 /**
+ * Создает и возвращает блок с информацией о приёме исходя из данных из API, переданных в качестве параметров.
+ * @param userRole
+ * @param confInfo
+ */
+export function createConferenceInfoBlock(userRole: ConferenceRolesEnum, confInfo: IConferenceInfo): IConferenceInfoBlock {
+    return {
+        userRole,
+        finishPauseControl: userRole === ConferenceRolesEnum.Specialist &&
+            confInfo.status === ConferenceStatusesEnum.Started,
+        leaveClientControl: userRole === ConferenceRolesEnum.Client &&
+            (
+                confInfo.status === ConferenceStatusesEnum.Started ||
+                confInfo.status === ConferenceStatusesEnum.StartedAndWaiting ||
+                confInfo.status === ConferenceStatusesEnum.StartedAndPaused
+            ),
+        conference: confInfo
+    } as IConferenceInfoBlock
+}
+
+/**
+ *
+ */
+export interface ISpecialistHelpBlock extends IBlock {
+    userRole: ConferenceRolesEnum;
+}
+
+/**
  * Блок интерфейса Jitsi Meet
  */
 export interface IJitsiMeetBlock extends IBlock {
@@ -70,7 +93,7 @@ export interface IJitsiMeetBlock extends IBlock {
     displayName: string;
 }
 
-type BlockType = (ILanguagesBlock | IConferenceInfoBlock | IJitsiMeetBlock) & IBlock;
+export type BlockType = (ILanguagesBlock | IConferenceInfoBlock | ISpecialistHelpBlock | IJitsiMeetBlock) & IBlock;
 
 /*
  * Страницы интерфейса
@@ -100,7 +123,8 @@ export enum ScreenEnum {
  */
 export interface IScreen {
     name: ScreenEnum;
-    availableBlocks: BlockType[];
+    availableBlocks: BlockEnum[];
+    langBlock: ILanguagesBlock;
 }
 
 /**
@@ -114,66 +138,128 @@ export interface I4xxScreen extends IScreen {
  * Страница ожидания начала конференции для клиента.
  */
 export interface IPendingClientScreen extends IScreen {
-
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
 }
 
 /**
  *
  */
 export interface IPendingSpecialistScreen extends IScreen {
-
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
 }
 
 /**
  *
  */
 export interface IJoinClientScreen extends IScreen {
-
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
 }
 
 /**
  *
  */
 export interface IJoinSpecialistScreen extends IScreen {
-
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
 }
 
 /**
  *
  */
 export interface ICancelledScreen extends IScreen {
-
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
+    showClientHint: boolean;
+    restoreControls: boolean;
+    canRestore: boolean;
 }
 
 /**
  *
  */
 export interface IFinishScreen extends IScreen {
-
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
+    restoreControls: boolean;
+    canRestore: boolean;
 }
 
 /**
  *
  */
 export interface IStartedScreen extends IScreen {
+    conference: IConferenceInfo;
+    userRole: ConferenceRolesEnum;
+    confInfoBlock: IConferenceInfoBlock;
+    specialistHelpBlock: ISpecialistHelpBlock;
+    jitsiMeetBlock: IJitsiMeetBlock;
+    conferenceToken: string;
+}
 
+type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen |
+    IJoinClientScreen | IJoinSpecialistScreen | ICancelledScreen |
+    IFinishScreen | IStartedScreen) & IScreen;
+
+// TODO Load languages from conference info
+export function createLanguagesBlock(): ILanguagesBlock {
+    return {
+        type: BlockEnum.Languages,
+        currentLanguage: LanguageListEnum.RU_RU,
+        availableLanguages: [LanguageListEnum.RU_RU, LanguageListEnum.EN_US]
+    } as ILanguagesBlock
+}
+
+export function createSpecialistHelpBlock(userRole: ConferenceRolesEnum) {
+    return {
+        type: BlockEnum.SpecialistHelp,
+        userRole: userRole
+    } as ISpecialistHelpBlock
+}
+
+export function _make4xxScreen(status: number): ScreenType {
+    console.assert(status === 401 || status === 404);
+    return {
+        name: ScreenEnum._4xx,
+        availableBlocks: [BlockEnum.Languages],
+        langBlock: createLanguagesBlock(),
+        status: status
+    } as I4xxScreen;
 }
 
 /**
  * Создаёт объект класса UX, поместив туда данные, полученные из API.
- * @param accessAPI
+ * @param api
  * @param at
  */
-export async function createUX(accessAPI:ConferenceAccessAPI, at: string): Promise<IUX> {
+export async function createScreen(api: ConferenceAccessAPI, at: string): Promise<ScreenType> {
     if (!at)
         return _make4xxScreen(404);
 
     try {
-        // если нужно получить доступ к Jitsi Meet используем этот метод
-        let exchangeRes: IExchangeTokenResponse = await accessAPI.exchange(at);
-        let confRes: IConferenceInfoSuccessResponse = await accessAPI.getConferenceInfo(at);
+        // получаем ключ к конференции по ключу доступа (как название для jitsi конференции)
+        // получаем данные конференции по ключу доступа
 
-        return new UX(confRes.conference_info, exchangeRes.conference_token);
+        // если нужно получить доступ к Jitsi Meet используем этот метод
+        let exchangeRes: IExchangeTokenResponse = await api.exchange(at);
+        let confRes: IConferenceInfoSuccessResponse = await api.getConferenceInfo(at);
+
+        return createConferenceScreen(api, confRes.role, confRes.conference_info, at,
+            exchangeRes.conference_token);
     } catch (err) {
         if (err instanceof APIError &&
             [
@@ -194,60 +280,85 @@ export async function createUX(accessAPI:ConferenceAccessAPI, at: string): Promi
     }
 }
 
-type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen |
-    IJoinClientScreen | IJoinSpecialistScreen | ICancelledScreen |
-    IFinishScreen | IStartedScreen) & IScreen;
-
-export function _make4xxScreen(status: number): IUX {
-    console.assert(status === 401 || status === 404);
-    return new UXTrivial({
-        name: ScreenEnum._4xx,
-        availableBlocks: [{type: BlockEnum.Languages} as ILanguagesBlock],
-        status: status
-    } as I4xxScreen);
-}
-
 /**
- * Интерфейс, предоставляющий логику управления интерфейсом  (UX).
+ * Вернуть текущую страницу конференции в зависимости от статуса конференции и роли пользователя
  */
-export interface IUX {
-    getCurrentPage(): ScreenType;
-}
-
-/**
- * Класс, предоставляющий логику управления интерфейсом инициализированную напрямую.
- */
-class UXTrivial {
-    private screen_: ScreenType;
-    constructor(screen: ScreenType) {
-    }
-
-    getCurrentPage(): ScreenType {
-        return this.screen_;
-    }
-}
-
-/**
- * Класс, предоставляющий логику управления интерфейсом  (UX).
- * Здесь логика вычисляется исходя из переданных значений
- */
-class UX {
-    private readonly conferenceToken_?: string;
-    private readonly conferenceInfo_: IConferenceInfo;
-
-    constructor(confInfo: IConferenceInfo, confToken: string = null) {
-        this.conferenceInfo_ = confInfo;
-        this.conferenceToken_ = confToken;
-    }
-
-    /**
-     * Вернуть текущую страницу
-     */
-    getCurrentPage(): ScreenType {
+function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRolesEnum, confInfo: IConferenceInfo, at: string,
+                                confToken: string): ScreenType {
+    if (userRole === ConferenceRolesEnum.Client &&
+        confInfo.status === ConferenceStatusesEnum.Pending)
         return {
-            name: ScreenEnum._4xx,
-            availableBlocks: [{type: BlockEnum.Languages} as ILanguagesBlock]
-        } as IPendingSpecialistScreen;
-    }
-}
+            name: ScreenEnum.PendingClient,
+            availableBlocks: [BlockEnum.ConferenceInfo],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
 
+        } as IPendingClientScreen;
+
+    if (userRole === ConferenceRolesEnum.Specialist &&
+        confInfo.status === ConferenceStatusesEnum.Pending)
+        return {
+            name: ScreenEnum.PendingSpecialist,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+        } as IPendingSpecialistScreen
+
+    if (userRole === ConferenceRolesEnum.Client &&
+        confInfo.status === ConferenceStatusesEnum.OpenForJoining)
+        return {
+            name: ScreenEnum.JoinClient,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+        } as IJoinClientScreen
+
+    if (userRole === ConferenceRolesEnum.Specialist &&
+        confInfo.status === ConferenceStatusesEnum.OpenForJoining)
+        return {
+            name: ScreenEnum.JoinSpecialist,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+        } as IJoinSpecialistScreen
+
+    if (confInfo.status === ConferenceStatusesEnum.CancelledBeforeStart)
+        return {
+            name: ScreenEnum.Cancelled,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+            showClientHint: userRole === ConferenceRolesEnum.Client,
+            restoreControls: userRole === ConferenceRolesEnum.Specialist,
+            canRestore: api.canRestore(confInfo)
+        } as ICancelledScreen
+
+    if (confInfo.status === ConferenceStatusesEnum.CancelledAfterStart ||
+        confInfo.status === ConferenceStatusesEnum.Finished)
+        return {
+            name: ScreenEnum.Finish,
+            availableBlocks: [],
+            conference: confInfo,
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+            restoreControls: userRole === ConferenceRolesEnum.Specialist,
+            canRestore: api.canRestore(confInfo)
+        } as IFinishScreen
+
+    return {
+        name: ScreenEnum.Started,
+        userRole: userRole,
+        availableBlocks: [BlockEnum.ConferenceInfo],
+        conference: confInfo,
+        conferenceToken: confToken,
+        accessToken: at,
+        langBlock: createLanguagesBlock(),
+        confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+        specialistHelpBlock: createSpecialistHelpBlock(userRole),
+        jitsiMeetBlock: {
+            type: BlockEnum.JitsiMeet,
+            conferenceToken: confToken,
+            subject: 'Первичный прием, Вт. 12 Мар. 2020, 12:45',
+            displayName: 'Врач педиатр, Александр Иванович Синицын',
+        } as IJitsiMeetBlock
+    } as IStartedScreen
+}
