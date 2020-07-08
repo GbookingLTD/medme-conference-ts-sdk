@@ -259,7 +259,7 @@ export async function createScreen(api: ConferenceAccessAPI, at: string): Promis
         let confRes: IConferenceInfoSuccessResponse = await api.getConferenceInfo(at);
 
         return createConferenceScreen(api, confRes.role, confRes.conference_info, at,
-            exchangeRes.conference_token);
+            exchangeRes.conference_token, confRes.user_id);
     } catch (err) {
         if (err instanceof APIError &&
             [
@@ -283,8 +283,8 @@ export async function createScreen(api: ConferenceAccessAPI, at: string): Promis
 /**
  * Вернуть текущую страницу конференции в зависимости от статуса конференции и роли пользователя
  */
-function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRolesEnum, confInfo: IConferenceInfo, at: string,
-                                confToken: string): ScreenType {
+function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRolesEnum, confInfo: IConferenceInfo,
+                                at: string, confToken: string, userId: string): ScreenType {
     if (userRole === ConferenceRolesEnum.Client &&
         confInfo.status === ConferenceStatusesEnum.Pending)
         return {
@@ -355,6 +355,7 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
         userRole: userRole,
         availableBlocks: [BlockEnum.ConferenceInfo],
         conference: confInfo,
+        userId: userId,
         conferenceToken: confToken,
         accessToken: at,
         langBlock: createLanguagesBlock(),
