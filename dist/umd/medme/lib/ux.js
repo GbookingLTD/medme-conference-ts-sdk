@@ -151,6 +151,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return {
                 name: ScreenEnum.PendingClient,
                 availableBlocks: [BlockEnum.ConferenceInfo],
+                userRole: conference_1.ConferenceRolesEnum.Client,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
@@ -159,6 +160,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return {
                 name: ScreenEnum.PendingSpecialist,
                 availableBlocks: [],
+                userRole: conference_1.ConferenceRolesEnum.Specialist,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
@@ -167,6 +169,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return {
                 name: ScreenEnum.JoinClient,
                 availableBlocks: [],
+                userRole: conference_1.ConferenceRolesEnum.Client,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
@@ -175,6 +178,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return {
                 name: ScreenEnum.JoinSpecialist,
                 availableBlocks: [],
+                userRole: conference_1.ConferenceRolesEnum.Specialist,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
@@ -182,6 +186,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return {
                 name: ScreenEnum.Cancelled,
                 availableBlocks: [],
+                userRole: userRole,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
                 showClientHint: userRole === conference_1.ConferenceRolesEnum.Client,
@@ -193,6 +198,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             return {
                 name: ScreenEnum.Finish,
                 availableBlocks: [],
+                userRole: userRole,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
                 restoreControls: userRole === conference_1.ConferenceRolesEnum.Specialist,

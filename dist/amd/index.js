@@ -549,6 +549,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
             return {
                 name: ScreenEnum.PendingClient,
                 availableBlocks: [BlockEnum.ConferenceInfo],
+                userRole: conference_2.ConferenceRolesEnum.Client,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
@@ -557,6 +558,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
             return {
                 name: ScreenEnum.PendingSpecialist,
                 availableBlocks: [],
+                userRole: conference_2.ConferenceRolesEnum.Specialist,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
@@ -565,6 +567,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
             return {
                 name: ScreenEnum.JoinClient,
                 availableBlocks: [],
+                userRole: conference_2.ConferenceRolesEnum.Client,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
@@ -573,6 +576,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
             return {
                 name: ScreenEnum.JoinSpecialist,
                 availableBlocks: [],
+                userRole: conference_2.ConferenceRolesEnum.Specialist,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             };
@@ -580,6 +584,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
             return {
                 name: ScreenEnum.Cancelled,
                 availableBlocks: [],
+                userRole: userRole,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
                 showClientHint: userRole === conference_2.ConferenceRolesEnum.Client,
@@ -591,6 +596,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
             return {
                 name: ScreenEnum.Finish,
                 availableBlocks: [],
+                userRole: userRole,
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
                 restoreControls: userRole === conference_2.ConferenceRolesEnum.Specialist,
