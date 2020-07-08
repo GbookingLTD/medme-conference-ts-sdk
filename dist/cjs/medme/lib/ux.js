@@ -113,7 +113,7 @@ function createScreen(api, at) {
                     return [4, api.getConferenceInfo(at)];
                 case 3:
                     confRes = _a.sent();
-                    return [2, createConferenceScreen(api, confRes.role, confRes.conference_info, at, exchangeRes.conference_token)];
+                    return [2, createConferenceScreen(api, confRes.role, confRes.conference_info, at, exchangeRes.conference_token, confRes.user_id)];
                 case 4:
                     err_1 = _a.sent();
                     if (err_1 instanceof httpRequest_1.APIError &&
@@ -136,7 +136,7 @@ function createScreen(api, at) {
     });
 }
 exports.createScreen = createScreen;
-function createConferenceScreen(api, userRole, confInfo, at, confToken) {
+function createConferenceScreen(api, userRole, confInfo, at, confToken, userId) {
     if (userRole === conference_1.ConferenceRolesEnum.Client &&
         confInfo.status === conference_1.ConferenceStatusesEnum.Pending)
         return {
@@ -200,6 +200,7 @@ function createConferenceScreen(api, userRole, confInfo, at, confToken) {
         userRole: userRole,
         availableBlocks: [BlockEnum.ConferenceInfo],
         conference: confInfo,
+        userId: userId,
         conferenceToken: confToken,
         accessToken: at,
         langBlock: createLanguagesBlock(),

@@ -520,7 +520,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
                         return [4, api.getConferenceInfo(at)];
                     case 3:
                         confRes = _a.sent();
-                        return [2, createConferenceScreen(api, confRes.role, confRes.conference_info, at, exchangeRes.conference_token)];
+                        return [2, createConferenceScreen(api, confRes.role, confRes.conference_info, at, exchangeRes.conference_token, confRes.user_id)];
                     case 4:
                         err_1 = _a.sent();
                         if (err_1 instanceof httpRequest_2.APIError &&
@@ -543,7 +543,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
         });
     }
     exports.createScreen = createScreen;
-    function createConferenceScreen(api, userRole, confInfo, at, confToken) {
+    function createConferenceScreen(api, userRole, confInfo, at, confToken, userId) {
         if (userRole === conference_2.ConferenceRolesEnum.Client &&
             confInfo.status === conference_2.ConferenceStatusesEnum.Pending)
             return {
@@ -607,6 +607,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
             userRole: userRole,
             availableBlocks: [BlockEnum.ConferenceInfo],
             conference: confInfo,
+            userId: userId,
             conferenceToken: confToken,
             accessToken: at,
             langBlock: createLanguagesBlock(),

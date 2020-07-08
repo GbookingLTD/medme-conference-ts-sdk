@@ -213,6 +213,7 @@ declare module "medme/lib/index" {
     export interface IConferenceInfoSuccessResponse {
         status: SuccessStatusEnum;
         role: ConferenceRolesEnum;
+        user_id: string;
         conference_info: IConferenceInfo;
     }
     export interface IConferenceStatusResponse {
