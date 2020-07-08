@@ -290,6 +290,7 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
         return {
             name: ScreenEnum.PendingClient,
             availableBlocks: [BlockEnum.ConferenceInfo],
+            userRole: ConferenceRolesEnum.Client,
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
 
@@ -300,6 +301,7 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
         return {
             name: ScreenEnum.PendingSpecialist,
             availableBlocks: [],
+            userRole: ConferenceRolesEnum.Specialist,
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
         } as IPendingSpecialistScreen
@@ -309,6 +311,7 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
         return {
             name: ScreenEnum.JoinClient,
             availableBlocks: [],
+            userRole: ConferenceRolesEnum.Client,
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
         } as IJoinClientScreen
@@ -318,6 +321,7 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
         return {
             name: ScreenEnum.JoinSpecialist,
             availableBlocks: [],
+            userRole: ConferenceRolesEnum.Specialist,
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
         } as IJoinSpecialistScreen
@@ -326,6 +330,7 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
         return {
             name: ScreenEnum.Cancelled,
             availableBlocks: [],
+            userRole: userRole,
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             showClientHint: userRole === ConferenceRolesEnum.Client,
@@ -338,6 +343,7 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
         return {
             name: ScreenEnum.Finish,
             availableBlocks: [],
+            userRole: userRole,
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             restoreControls: userRole === ConferenceRolesEnum.Specialist,
