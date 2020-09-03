@@ -136,7 +136,7 @@ declare module "medme/lib/types/conference" {
         appointmentId: string;
         appointmentEngine: AppointmentEnginesEnum;
         createdAt: string;
-        cancelledAt?: string;
+        startedAt?: string;
         finishedAt?: string;
         createdBy: {
             id: string;
@@ -219,6 +219,13 @@ declare module "medme/lib/index" {
     export interface IConferenceStatusResponse {
         status: SuccessStatusEnum | ErrorStatuses;
     }
+    export interface IConferenceDurations {
+        status: SuccessStatusEnum | ErrorStatuses;
+        expectedEndAt: String;
+        scheduledDurationSeconds: number;
+        netDurationSeconds: number;
+        dirtyDurationSeconds: number;
+    }
     export class ConferenceModifyAPI {
         static createHttpAPI(baseUrl: string): ConferenceModifyAPI;
         private readonly apiRequest;
@@ -246,6 +253,7 @@ declare module "medme/lib/index" {
         resume(accessToken: string): Promise<IConferenceStatusResponse>;
         restoreTerminatedFast(accessToken: string): Promise<IConferenceStatusResponse>;
         canRestore(conf: IConferenceInfo): boolean;
+        durations(accessToken: string): Promise<IConferenceDurations>;
     }
 }
 declare module "medme/lib/types/index" {
@@ -254,7 +262,7 @@ declare module "medme/lib/types/index" {
 }
 declare module "medme/lib/ux" {
     import { ConferenceRolesEnum, IConferenceInfo, LanguageListEnum } from "medme/lib/types/conference";
-    import { ConferenceAccessAPI } from "medme/lib/index";
+    import { ConferenceAccessAPI, IConferenceDurations } from "medme/lib/index";
     export enum BlockEnum {
         Languages = "langs",
         ConferenceInfo = "conference-info",
@@ -334,6 +342,7 @@ declare module "medme/lib/ux" {
         showClientHint: boolean;
         restoreControls: boolean;
         canRestore: boolean;
+        timerBlock: IConferenceDurations;
     }
     export interface IFinishScreen extends IScreen {
         conference: IConferenceInfo;
@@ -342,6 +351,7 @@ declare module "medme/lib/ux" {
         specialistHelpBlock: ISpecialistHelpBlock;
         restoreControls: boolean;
         canRestore: boolean;
+        timerBlock: IConferenceDurations;
     }
     export interface IStartedScreen extends IScreen {
         conference: IConferenceInfo;
@@ -350,12 +360,29 @@ declare module "medme/lib/ux" {
         specialistHelpBlock: ISpecialistHelpBlock;
         jitsiMeetBlock: IJitsiMeetBlock;
         conferenceToken: string;
+        timerBlock: IConferenceDurations;
     }
     type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen | IJoinClientScreen | IJoinSpecialistScreen | ICancelledScreen | IFinishScreen | IStartedScreen) & IScreen;
     export function createLanguagesBlock(): ILanguagesBlock;
     export function createSpecialistHelpBlock(userRole: ConferenceRolesEnum): ISpecialistHelpBlock;
     export function _make4xxScreen(status: number): ScreenType;
     export function createScreen(api: ConferenceAccessAPI, at: string): Promise<ScreenType>;
+    export function timer(confInfo: any, timer: any): {
+        updateTime: () => {
+            hours: number;
+            minutes: number;
+            seconds: number;
+            timerDelay: number;
+            totalRemainSeconds: number;
+        };
+        getCurrent: () => {
+            hours: number;
+            minutes: number;
+            seconds: number;
+            timerDelay: number;
+            totalRemainSeconds: number;
+        };
+    };
 }
 /// <amd-module name="MedMe" />
 declare module "MedMe" {

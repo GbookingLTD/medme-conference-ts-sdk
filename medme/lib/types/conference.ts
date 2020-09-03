@@ -82,7 +82,7 @@ export interface IConferenceInfo {
     appointmentId: string,
     appointmentEngine: AppointmentEnginesEnum,
     createdAt: string, // Date
-    cancelledAt?: string, // Date
+    startedAt?: string, // Date
     finishedAt?: string, // Date
     createdBy: {
         id: string,

@@ -1,5 +1,5 @@
 import { ConferenceRolesEnum, IConferenceInfo, LanguageListEnum } from "./types/conference";
-import { ConferenceAccessAPI } from "./index";
+import { ConferenceAccessAPI, IConferenceDurations } from "./index";
 export declare enum BlockEnum {
     Languages = "langs",
     ConferenceInfo = "conference-info",
@@ -79,6 +79,7 @@ export interface ICancelledScreen extends IScreen {
     showClientHint: boolean;
     restoreControls: boolean;
     canRestore: boolean;
+    timerBlock: IConferenceDurations;
 }
 export interface IFinishScreen extends IScreen {
     conference: IConferenceInfo;
@@ -87,6 +88,7 @@ export interface IFinishScreen extends IScreen {
     specialistHelpBlock: ISpecialistHelpBlock;
     restoreControls: boolean;
     canRestore: boolean;
+    timerBlock: IConferenceDurations;
 }
 export interface IStartedScreen extends IScreen {
     conference: IConferenceInfo;
@@ -95,10 +97,27 @@ export interface IStartedScreen extends IScreen {
     specialistHelpBlock: ISpecialistHelpBlock;
     jitsiMeetBlock: IJitsiMeetBlock;
     conferenceToken: string;
+    timerBlock: IConferenceDurations;
 }
 declare type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen | IJoinClientScreen | IJoinSpecialistScreen | ICancelledScreen | IFinishScreen | IStartedScreen) & IScreen;
 export declare function createLanguagesBlock(): ILanguagesBlock;
 export declare function createSpecialistHelpBlock(userRole: ConferenceRolesEnum): ISpecialistHelpBlock;
 export declare function _make4xxScreen(status: number): ScreenType;
 export declare function createScreen(api: ConferenceAccessAPI, at: string): Promise<ScreenType>;
+export declare function timer(confInfo: any, timer: any): {
+    updateTime: () => {
+        hours: number;
+        minutes: number;
+        seconds: number;
+        timerDelay: number;
+        totalRemainSeconds: number;
+    };
+    getCurrent: () => {
+        hours: number;
+        minutes: number;
+        seconds: number;
+        timerDelay: number;
+        totalRemainSeconds: number;
+    };
+};
 export {};

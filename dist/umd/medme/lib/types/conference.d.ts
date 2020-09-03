@@ -58,7 +58,7 @@ export interface IConferenceInfo {
     appointmentId: string;
     appointmentEngine: AppointmentEnginesEnum;
     createdAt: string;
-    cancelledAt?: string;
+    startedAt?: string;
     finishedAt?: string;
     createdBy: {
         id: string;

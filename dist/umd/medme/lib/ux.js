@@ -45,7 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
+    exports.timer = exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
     var conference_1 = require("./types/conference");
     var httpRequest_1 = require("./httpRequest");
     var statuses_1 = require("./statuses");
@@ -107,7 +107,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     exports._make4xxScreen = _make4xxScreen;
     function createScreen(api, at) {
         return __awaiter(this, void 0, void 0, function () {
-            var exchangeRes, confRes, err_1;
+            var exchangeRes, confRes, durations, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -115,15 +115,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             return [2, _make4xxScreen(404)];
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 4, , 5]);
+                        _a.trys.push([1, 5, , 6]);
                         return [4, api.exchange(at)];
                     case 2:
                         exchangeRes = _a.sent();
                         return [4, api.getConferenceInfo(at)];
                     case 3:
                         confRes = _a.sent();
-                        return [2, createConferenceScreen(api, confRes.role, confRes.conference_info, at, exchangeRes.conference_token, confRes.user_id)];
+                        return [4, api.durations(at)];
                     case 4:
+                        durations = _a.sent();
+                        return [2, createConferenceScreen(api, confRes.role, confRes.conference_info, at, exchangeRes.conference_token, confRes.user_id, durations)];
+                    case 5:
                         err_1 = _a.sent();
                         if (err_1 instanceof httpRequest_1.APIError &&
                             [
@@ -139,13 +142,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                             ].indexOf(err_1.response.status) >= 0)
                             return [2, _make4xxScreen(404)];
                         throw err_1;
-                    case 5: return [2];
+                    case 6: return [2];
                 }
             });
         });
     }
     exports.createScreen = createScreen;
-    function createConferenceScreen(api, userRole, confInfo, at, confToken, userId) {
+    function createConferenceScreen(api, userRole, confInfo, at, confToken, userId, durations) {
         if (userRole === conference_1.ConferenceRolesEnum.Client &&
             confInfo.status === conference_1.ConferenceStatusesEnum.Pending)
             return {
@@ -153,7 +156,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 availableBlocks: [BlockEnum.ConferenceInfo],
                 userRole: conference_1.ConferenceRolesEnum.Client,
                 conference: confInfo,
-                confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
+                confInfoBlock: createConferenceInfoBlock(userRole, confInfo)
             };
         if (userRole === conference_1.ConferenceRolesEnum.Specialist &&
             confInfo.status === conference_1.ConferenceStatusesEnum.Pending)
@@ -191,7 +194,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
                 showClientHint: userRole === conference_1.ConferenceRolesEnum.Client,
                 restoreControls: userRole === conference_1.ConferenceRolesEnum.Specialist,
-                canRestore: api.canRestore(confInfo)
+                canRestore: api.canRestore(confInfo),
+                timerBlock: durations
             };
         if (confInfo.status === conference_1.ConferenceStatusesEnum.CancelledAfterStart ||
             confInfo.status === conference_1.ConferenceStatusesEnum.Finished)
@@ -202,7 +206,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 conference: confInfo,
                 confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
                 restoreControls: userRole === conference_1.ConferenceRolesEnum.Specialist,
-                canRestore: api.canRestore(confInfo)
+                canRestore: api.canRestore(confInfo),
+                timerBlock: durations
             };
         return {
             name: ScreenEnum.Started,
@@ -220,7 +225,52 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 conferenceToken: confToken,
                 subject: 'Первичный прием, Вт. 12 Мар. 2020, 12:45',
                 displayName: 'Врач педиатр, Александр Иванович Синицын',
-            }
+            },
+            timerBlock: durations
         };
     }
+    function timer(confInfo, timer) {
+        var firstUpdateNowSeconds;
+        var conferenceScheduledDurationSeconds;
+        var netDurationSeconds;
+        firstUpdateNowSeconds = Date.now() / 1000;
+        conferenceScheduledDurationSeconds = confInfo.scheduledDurationSeconds;
+        var delta = (Date.now() - new Date(timer.now).getTime()) / 1000;
+        netDurationSeconds = timer.netDurationSeconds + delta;
+        var totalRemainSeconds = 0;
+        var hours = 0;
+        var minutes = 0;
+        var seconds = 0;
+        var timerDelay = 1000;
+        var updateTime = function () {
+            var now = Date.now() / 1000;
+            var deltaSeconds = now - firstUpdateNowSeconds;
+            totalRemainSeconds = Math.max(0, conferenceScheduledDurationSeconds - deltaSeconds - netDurationSeconds);
+            hours = Math.floor(totalRemainSeconds / 3600);
+            var newMinutes = Math.floor(totalRemainSeconds / 60) % 3600;
+            if (newMinutes === minutes)
+                timerDelay = 100;
+            else
+                timerDelay = 1000;
+            minutes = newMinutes;
+            seconds = Math.floor(totalRemainSeconds % 60);
+        };
+        var _this = {
+            updateTime: function () {
+                updateTime();
+                return _this.getCurrent();
+            },
+            getCurrent: function () {
+                return {
+                    hours: hours,
+                    minutes: minutes,
+                    seconds: seconds,
+                    timerDelay: timerDelay,
+                    totalRemainSeconds: totalRemainSeconds
+                };
+            }
+        };
+        return _this;
+    }
+    exports.timer = timer;
 });

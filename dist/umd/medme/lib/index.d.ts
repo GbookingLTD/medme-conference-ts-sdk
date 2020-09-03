@@ -16,6 +16,13 @@ export interface IConferenceInfoSuccessResponse {
 export interface IConferenceStatusResponse {
     status: SuccessStatusEnum | ErrorStatuses;
 }
+export interface IConferenceDurations {
+    status: SuccessStatusEnum | ErrorStatuses;
+    expectedEndAt: String;
+    scheduledDurationSeconds: number;
+    netDurationSeconds: number;
+    dirtyDurationSeconds: number;
+}
 export declare class ConferenceModifyAPI {
     static createHttpAPI(baseUrl: string): ConferenceModifyAPI;
     private readonly apiRequest;
@@ -43,5 +50,6 @@ export declare class ConferenceAccessAPI {
     resume(accessToken: string): Promise<IConferenceStatusResponse>;
     restoreTerminatedFast(accessToken: string): Promise<IConferenceStatusResponse>;
     canRestore(conf: IConferenceInfo): boolean;
+    durations(accessToken: string): Promise<IConferenceDurations>;
 }
 export {};

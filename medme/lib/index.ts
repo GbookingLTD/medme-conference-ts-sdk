@@ -46,6 +46,14 @@ export interface IConferenceStatusResponse {
     status: SuccessStatusEnum | ErrorStatuses;
 }
 
+export interface IConferenceDurations {
+    status: SuccessStatusEnum | ErrorStatuses;
+    expectedEndAt: String; // Date
+    scheduledDurationSeconds: number;
+    netDurationSeconds: number;
+    dirtyDurationSeconds: number;
+}
+
 /**
  * Содержит запросы на создание и изменение конференций.
  */
@@ -226,10 +234,14 @@ export class ConferenceAccessAPI {
     }
 
     public canRestore(conf: IConferenceInfo) {
-        const delayMs = (conf.status === ConferenceStatusesEnum.CancelledBeforeStart) ?
-            Date.now() - Date.parse(conf.cancelledAt) :
-            Date.now() - Date.parse(conf.finishedAt);
+        const delayMs = Date.now() - Date.parse(conf.finishedAt);
 
         return delayMs <= RestoreFastDelayMinutes * TimeMs.Minute;
+    }
+
+    public async durations(accessToken: string): Promise<IConferenceDurations> {
+        return this.apiRequest('durations', {
+            access_token: accessToken
+        })
     }
 }

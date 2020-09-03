@@ -3,7 +3,12 @@ MedMe Conference UX logic
  */
 
 import {ConferenceRolesEnum, ConferenceStatusesEnum, IConferenceInfo, LanguageListEnum} from "./types/conference";
-import {ConferenceAccessAPI, IConferenceInfoSuccessResponse, IExchangeTokenResponse} from "./index";
+import {
+    ConferenceAccessAPI,
+    IConferenceDurations,
+    IConferenceInfoSuccessResponse,
+    IExchangeTokenResponse
+} from "./index";
 import {APIError} from "./httpRequest";
 import {ErrorStatuses} from "./statuses";
 
@@ -185,6 +190,7 @@ export interface ICancelledScreen extends IScreen {
     showClientHint: boolean;
     restoreControls: boolean;
     canRestore: boolean;
+    timerBlock: IConferenceDurations;
 }
 
 /**
@@ -197,6 +203,7 @@ export interface IFinishScreen extends IScreen {
     specialistHelpBlock: ISpecialistHelpBlock;
     restoreControls: boolean;
     canRestore: boolean;
+    timerBlock: IConferenceDurations;
 }
 
 /**
@@ -209,6 +216,7 @@ export interface IStartedScreen extends IScreen {
     specialistHelpBlock: ISpecialistHelpBlock;
     jitsiMeetBlock: IJitsiMeetBlock;
     conferenceToken: string;
+    timerBlock: IConferenceDurations;
 }
 
 type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen |
@@ -257,9 +265,10 @@ export async function createScreen(api: ConferenceAccessAPI, at: string): Promis
         // если нужно получить доступ к Jitsi Meet используем этот метод
         let exchangeRes: IExchangeTokenResponse = await api.exchange(at);
         let confRes: IConferenceInfoSuccessResponse = await api.getConferenceInfo(at);
+        let durations: IConferenceDurations = await api.durations(at);
 
         return createConferenceScreen(api, confRes.role, confRes.conference_info, at,
-            exchangeRes.conference_token, confRes.user_id);
+            exchangeRes.conference_token, confRes.user_id, durations);
     } catch (err) {
         if (err instanceof APIError &&
             [
@@ -284,7 +293,7 @@ export async function createScreen(api: ConferenceAccessAPI, at: string): Promis
  * Вернуть текущую страницу конференции в зависимости от статуса конференции и роли пользователя
  */
 function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRolesEnum, confInfo: IConferenceInfo,
-                                at: string, confToken: string, userId: string): ScreenType {
+                                at: string, confToken: string, userId: string, durations: IConferenceDurations): ScreenType {
     if (userRole === ConferenceRolesEnum.Client &&
         confInfo.status === ConferenceStatusesEnum.Pending)
         return {
@@ -292,8 +301,7 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
             availableBlocks: [BlockEnum.ConferenceInfo],
             userRole: ConferenceRolesEnum.Client,
             conference: confInfo,
-            confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
-
+            confInfoBlock: createConferenceInfoBlock(userRole, confInfo)
         } as IPendingClientScreen;
 
     if (userRole === ConferenceRolesEnum.Specialist &&
@@ -335,7 +343,8 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             showClientHint: userRole === ConferenceRolesEnum.Client,
             restoreControls: userRole === ConferenceRolesEnum.Specialist,
-            canRestore: api.canRestore(confInfo)
+            canRestore: api.canRestore(confInfo),
+            timerBlock: durations
         } as ICancelledScreen
 
     if (confInfo.status === ConferenceStatusesEnum.CancelledAfterStart ||
@@ -347,7 +356,8 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
             restoreControls: userRole === ConferenceRolesEnum.Specialist,
-            canRestore: api.canRestore(confInfo)
+            canRestore: api.canRestore(confInfo),
+            timerBlock: durations
         } as IFinishScreen
 
     return {
@@ -366,6 +376,58 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
             conferenceToken: confToken,
             subject: 'Первичный прием, Вт. 12 Мар. 2020, 12:45',
             displayName: 'Врач педиатр, Александр Иванович Синицын',
-        } as IJitsiMeetBlock
+        } as IJitsiMeetBlock,
+        timerBlock: durations
     } as IStartedScreen
+}
+
+export function timer(confInfo, timer) {
+    let firstUpdateNowSeconds;
+    let conferenceScheduledDurationSeconds;
+    let netDurationSeconds;
+
+    firstUpdateNowSeconds = Date.now() / 1000;
+
+    conferenceScheduledDurationSeconds = confInfo.scheduledDurationSeconds;
+    const delta = (Date.now() - new Date(timer.now).getTime()) / 1000;
+    netDurationSeconds = timer.netDurationSeconds + delta;
+
+    let totalRemainSeconds = 0;
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+    let timerDelay = 1000;
+
+    const updateTime = function () {
+        const now = Date.now() / 1000;
+        const deltaSeconds = now - firstUpdateNowSeconds;
+        totalRemainSeconds = Math.max(0, conferenceScheduledDurationSeconds - deltaSeconds - netDurationSeconds);
+
+        hours = Math.floor(totalRemainSeconds / 3600);
+        const newMinutes = Math.floor(totalRemainSeconds / 60) % 3600;
+        if (newMinutes === minutes)
+            timerDelay = 100;
+        else
+            timerDelay = 1000;
+        minutes = newMinutes;
+        seconds = Math.floor(totalRemainSeconds % 60);
+    };
+
+    const _this = {
+        updateTime: function() {
+            updateTime();
+            return _this.getCurrent();
+        },
+        getCurrent: function() {
+            return {
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                timerDelay: timerDelay,
+                totalRemainSeconds: totalRemainSeconds
+            }
+        }
+    }
+
+    return _this;
 }

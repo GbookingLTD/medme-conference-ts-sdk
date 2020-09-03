@@ -91,6 +91,7 @@ export const HttpMethodsAPIMap: HttpMethodsAPIMap = {
     'pause': HttpMethodsForAPIEnum.Post,
     'resume': HttpMethodsForAPIEnum.Post,
     'restore_terminated_fast': HttpMethodsForAPIEnum.Post,
+    'durations': HttpMethodsForAPIEnum.Post
 };
 
 export async function httpAPIRequest(method: string, params?: {[key: string]: any}): Promise<any> {

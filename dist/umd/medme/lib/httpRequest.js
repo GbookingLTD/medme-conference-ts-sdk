@@ -113,6 +113,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         'pause': HttpMethodsForAPIEnum.Post,
         'resume': HttpMethodsForAPIEnum.Post,
         'restore_terminated_fast': HttpMethodsForAPIEnum.Post,
+        'durations': HttpMethodsForAPIEnum.Post
     };
     function httpAPIRequest(method, params) {
         return __awaiter(this, void 0, void 0, function () {

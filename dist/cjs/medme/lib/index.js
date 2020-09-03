@@ -38,7 +38,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConferenceAccessAPI = exports.RestoreFastDelayMinutes = exports.ConferenceModifyAPI = void 0;
 var httpRequest_1 = require("./httpRequest");
-var conference_1 = require("./types/conference");
 var time_1 = require("./time");
 var ConferenceModifyAPI = (function () {
     function ConferenceModifyAPI(apiRequest) {
@@ -202,10 +201,17 @@ var ConferenceAccessAPI = (function () {
         });
     };
     ConferenceAccessAPI.prototype.canRestore = function (conf) {
-        var delayMs = (conf.status === conference_1.ConferenceStatusesEnum.CancelledBeforeStart) ?
-            Date.now() - Date.parse(conf.cancelledAt) :
-            Date.now() - Date.parse(conf.finishedAt);
+        var delayMs = Date.now() - Date.parse(conf.finishedAt);
         return delayMs <= exports.RestoreFastDelayMinutes * time_1.TimeMs.Minute;
+    };
+    ConferenceAccessAPI.prototype.durations = function (accessToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2, this.apiRequest('durations', {
+                        access_token: accessToken
+                    })];
+            });
+        });
     };
     return ConferenceAccessAPI;
 }());
