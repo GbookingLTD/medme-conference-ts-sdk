@@ -225,6 +225,7 @@ declare module "medme/lib/index" {
         scheduledDurationSeconds: number;
         netDurationSeconds: number;
         dirtyDurationSeconds: number;
+        realDurationSeconds: number;
     }
     export class ConferenceModifyAPI {
         static createHttpAPI(baseUrl: string): ConferenceModifyAPI;
@@ -280,6 +281,7 @@ declare module "medme/lib/ux" {
         userRole: ConferenceRolesEnum;
         finishPauseControl: boolean;
         leaveClientControl: boolean;
+        showRealTimes: boolean;
         conference: IConferenceInfo;
     }
     export function createConferenceInfoBlock(userRole: ConferenceRolesEnum, confInfo: IConferenceInfo): IConferenceInfoBlock;

@@ -55,6 +55,8 @@ export interface IConferenceInfoBlock extends IBlock {
     finishPauseControl: boolean;
     // Показывать панель с кнопкой "покинуть"
     leaveClientControl: boolean;
+    // Показывать реальные время начала и окончания
+    showRealTimes: boolean;
     // Информация о конференции
     conference: IConferenceInfo;
 }
@@ -75,6 +77,12 @@ export function createConferenceInfoBlock(userRole: ConferenceRolesEnum, confInf
                 confInfo.status === ConferenceStatusesEnum.StartedAndWaiting ||
                 confInfo.status === ConferenceStatusesEnum.StartedAndPaused
             ),
+        showRealTimes: (
+            // confInfo.status === ConferenceStatusesEnum.CancelledAfterStart ||
+            // confInfo.status === ConferenceStatusesEnum.CancelledBeforeStart ||
+            confInfo.status === ConferenceStatusesEnum.Finished
+
+        ),
         conference: confInfo
     } as IConferenceInfoBlock
 }

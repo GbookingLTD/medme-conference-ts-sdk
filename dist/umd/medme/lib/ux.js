@@ -65,6 +65,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                 (confInfo.status === conference_1.ConferenceStatusesEnum.Started ||
                     confInfo.status === conference_1.ConferenceStatusesEnum.StartedAndWaiting ||
                     confInfo.status === conference_1.ConferenceStatusesEnum.StartedAndPaused),
+            showRealTimes: (confInfo.status === conference_1.ConferenceStatusesEnum.Finished),
             conference: confInfo
         };
     }

@@ -52,6 +52,7 @@ export interface IConferenceDurations {
     scheduledDurationSeconds: number;
     netDurationSeconds: number;
     dirtyDurationSeconds: number;
+    realDurationSeconds: number;
 }
 
 /**

@@ -22,6 +22,7 @@ export interface IConferenceDurations {
     scheduledDurationSeconds: number;
     netDurationSeconds: number;
     dirtyDurationSeconds: number;
+    realDurationSeconds: number;
 }
 export declare class ConferenceModifyAPI {
     static createHttpAPI(baseUrl: string): ConferenceModifyAPI;

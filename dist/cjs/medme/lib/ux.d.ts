@@ -17,6 +17,7 @@ export interface IConferenceInfoBlock extends IBlock {
     userRole: ConferenceRolesEnum;
     finishPauseControl: boolean;
     leaveClientControl: boolean;
+    showRealTimes: boolean;
     conference: IConferenceInfo;
 }
 export declare function createConferenceInfoBlock(userRole: ConferenceRolesEnum, confInfo: IConferenceInfo): IConferenceInfoBlock;
