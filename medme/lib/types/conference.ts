@@ -113,6 +113,8 @@ export interface IConferenceInfo {
     l10n: LanguageListEnum,
     isOpen: boolean,
     status: ConferenceStatusesEnum
+    joinedSpecialists: ISpecialist[],
+    joinedClients: IClient[],
 }
 
 /**

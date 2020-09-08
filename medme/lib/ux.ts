@@ -322,8 +322,14 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
         } as IPendingSpecialistScreen
 
-    if (userRole === ConferenceRolesEnum.Client &&
-        confInfo.status === ConferenceStatusesEnum.OpenForJoining)
+    if (userRole === ConferenceRolesEnum.Client && (
+            confInfo.status === ConferenceStatusesEnum.OpenForJoining ||
+            [
+                ConferenceStatusesEnum.Started,
+                ConferenceStatusesEnum.StartedAndPaused,
+                ConferenceStatusesEnum.StartedAndWaiting
+            ].indexOf(confInfo.status) >= 0 && !confInfo.joinedClients.find((item) => item.id === userId)
+        ))
         return {
             name: ScreenEnum.JoinClient,
             availableBlocks: [],
@@ -332,8 +338,14 @@ function createConferenceScreen(api: ConferenceAccessAPI, userRole: ConferenceRo
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
         } as IJoinClientScreen
 
-    if (userRole === ConferenceRolesEnum.Specialist &&
-        confInfo.status === ConferenceStatusesEnum.OpenForJoining)
+    if (userRole === ConferenceRolesEnum.Specialist && (
+            confInfo.status === ConferenceStatusesEnum.OpenForJoining ||
+            [
+                ConferenceStatusesEnum.Started,
+                ConferenceStatusesEnum.StartedAndPaused,
+                ConferenceStatusesEnum.StartedAndWaiting
+            ].indexOf(confInfo.status) >= 0 && !confInfo.joinedSpecialists.find((item) => item.id === userId)
+        ))
         return {
             name: ScreenEnum.JoinSpecialist,
             availableBlocks: [],

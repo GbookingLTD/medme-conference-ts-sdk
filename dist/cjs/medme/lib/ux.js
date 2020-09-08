@@ -159,8 +159,12 @@ function createConferenceScreen(api, userRole, confInfo, at, confToken, userId, 
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
         };
-    if (userRole === conference_1.ConferenceRolesEnum.Client &&
-        confInfo.status === conference_1.ConferenceStatusesEnum.OpenForJoining)
+    if (userRole === conference_1.ConferenceRolesEnum.Client && (confInfo.status === conference_1.ConferenceStatusesEnum.OpenForJoining ||
+        [
+            conference_1.ConferenceStatusesEnum.Started,
+            conference_1.ConferenceStatusesEnum.StartedAndPaused,
+            conference_1.ConferenceStatusesEnum.StartedAndWaiting
+        ].indexOf(confInfo.status) >= 0 && !confInfo.joinedClients.find(function (item) { return item.id === userId; })))
         return {
             name: ScreenEnum.JoinClient,
             availableBlocks: [],
@@ -168,8 +172,12 @@ function createConferenceScreen(api, userRole, confInfo, at, confToken, userId, 
             conference: confInfo,
             confInfoBlock: createConferenceInfoBlock(userRole, confInfo),
         };
-    if (userRole === conference_1.ConferenceRolesEnum.Specialist &&
-        confInfo.status === conference_1.ConferenceStatusesEnum.OpenForJoining)
+    if (userRole === conference_1.ConferenceRolesEnum.Specialist && (confInfo.status === conference_1.ConferenceStatusesEnum.OpenForJoining ||
+        [
+            conference_1.ConferenceStatusesEnum.Started,
+            conference_1.ConferenceStatusesEnum.StartedAndPaused,
+            conference_1.ConferenceStatusesEnum.StartedAndWaiting
+        ].indexOf(confInfo.status) >= 0 && !confInfo.joinedSpecialists.find(function (item) { return item.id === userId; })))
         return {
             name: ScreenEnum.JoinSpecialist,
             availableBlocks: [],
