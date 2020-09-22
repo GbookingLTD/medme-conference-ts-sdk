@@ -1,4 +1,4 @@
-import { ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput } from './types/conference';
+import { ConferenceRolesEnum, ConferenceStatusesEnum, IConferenceInfo, IConferenceInfoInput } from './types/conference';
 import { SuccessStatusEnum, ErrorStatuses } from "./statuses";
 declare type APIRequestFn = (method: string, params?: object) => Promise<any>;
 export interface ICreateConferenceResponse {
@@ -15,6 +15,7 @@ export interface IConferenceInfoSuccessResponse {
 }
 export interface IConferenceStatusResponse {
     status: SuccessStatusEnum | ErrorStatuses;
+    newConferenceStatus: ConferenceStatusesEnum;
 }
 export interface IConferenceDurations {
     status: SuccessStatusEnum | ErrorStatuses;

@@ -9,9 +9,10 @@ export interface IConferenceSock {
 
 export class ConferenceSock
     implements IConferenceSock {
-    private ws_: WebSocket;
-    private at_: string;
-    private changeConferenceStatusCallback_: ChangeConferenceStatusCallback;
+    private readonly wsUri: string;
+    private ws_?: WebSocket;
+    private at_?: string;
+    private changeConferenceStatusCallback_?: ChangeConferenceStatusCallback;
 
     private write_(msg) {
         console.info('[%s] ConferenceWS', (new Date).toISOString(), this.at_, msg)
@@ -25,11 +26,11 @@ export class ConferenceSock
         }));
     }
 
-    private onMessage_(data) {
-        this.write_("MESSAGE: " + data);
-        const json = JSON.parse(data);
+    private onMessage_(msg) {
+        this.write_("RECEIVE: " + msg.data);
+        const json = JSON.parse(msg.data);
         if (json.path === 'change_status_callback')
-            this.changeConferenceStatusCallback_(json.newStatus);
+            this.changeConferenceStatusCallback_.call(this, json.newStatus);
     }
 
     private doSend_(message) {
@@ -37,10 +38,18 @@ export class ConferenceSock
         this.ws_.send(message);
     }
 
-    constructor(wsUri: string, at: string, changeStatusCb: ChangeConferenceStatusCallback = null) {
-        this.ws_ = new WebSocket(wsUri);
+    constructor(wsUri: string) {
+        this.wsUri = wsUri;
+    }
+
+    accessToken(at: string) {
         this.at_ = at;
-        this.changeConferenceStatusCallback_ = changeStatusCb;
+        return this;
+    }
+
+    connect(at: string) {
+        this.ws_ = new WebSocket(this.wsUri);
+        this.at_ = at;
 
         this.ws_.onopen = this.onOpen_.bind(this);
         this.ws_.onmessage = this.onMessage_.bind(this);

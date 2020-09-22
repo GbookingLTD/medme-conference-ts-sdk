@@ -33,6 +33,7 @@ declare module "medme/lib/statuses" {
 }
 declare module "medme/env" {
     export const CONFERENCE_ENDPOINT: string;
+    export const CONFERENCE_WS_ENDPOINT: string;
     export const APIKEY: string;
     export const REQUEST_DEBUG: boolean;
 }
@@ -203,7 +204,7 @@ declare module "medme/lib/time" {
     }
 }
 declare module "medme/lib/index" {
-    import { ConferenceRolesEnum, IConferenceInfo, IConferenceInfoInput } from "medme/lib/types/conference";
+    import { ConferenceRolesEnum, ConferenceStatusesEnum, IConferenceInfo, IConferenceInfoInput } from "medme/lib/types/conference";
     import { SuccessStatusEnum, ErrorStatuses } from "medme/lib/statuses";
     type APIRequestFn = (method: string, params?: object) => Promise<any>;
     export interface ICreateConferenceResponse {
@@ -220,6 +221,7 @@ declare module "medme/lib/index" {
     }
     export interface IConferenceStatusResponse {
         status: SuccessStatusEnum | ErrorStatuses;
+        newConferenceStatus: ConferenceStatusesEnum;
     }
     export interface IConferenceDurations {
         status: SuccessStatusEnum | ErrorStatuses;
@@ -262,6 +264,29 @@ declare module "medme/lib/index" {
 declare module "medme/lib/types/index" {
     import * as conference from "medme/lib/types/conference";
     export { conference };
+}
+declare module "medme/lib/sock" {
+    import { ConferenceStatusesEnum } from "medme/lib/types/conference";
+    export type ChangeConferenceStatusCallback = (newStatus: string) => {};
+    export interface IConferenceSock {
+        changeConferenceStatus(newStatus: ConferenceStatusesEnum): any;
+        changeConferenceStatusCallback(cb: ChangeConferenceStatusCallback): any;
+    }
+    export class ConferenceSock implements IConferenceSock {
+        private readonly wsUri;
+        private ws_?;
+        private at_?;
+        private changeConferenceStatusCallback_?;
+        private write_;
+        private onOpen_;
+        private onMessage_;
+        private doSend_;
+        constructor(wsUri: string);
+        accessToken(at: string): this;
+        connect(at: string): void;
+        changeConferenceStatus(newStatus: ConferenceStatusesEnum): void;
+        changeConferenceStatusCallback(cb: ChangeConferenceStatusCallback): this;
+    }
 }
 declare module "medme/lib/ux" {
     import { ConferenceRolesEnum, IConferenceInfo, LanguageListEnum } from "medme/lib/types/conference";
@@ -395,10 +420,13 @@ declare module "MedMe" {
     import * as request from "medme/lib/httpRequest";
     import * as statuses from "medme/lib/statuses";
     import * as types from "medme/lib/types/index";
+    import * as sock from "medme/lib/sock";
     import * as UX from "medme/lib/ux";
     export default lib;
-    export { env, request, statuses, types, UX };
+    export { env, request, statuses, types, sock, UX };
     export let conferenceModifyAPI: lib.ConferenceModifyAPI;
     export let conferenceAccessAPI: lib.ConferenceAccessAPI;
+    export let conferenceWebSocketAPI: sock.ConferenceSock;
     export function initHttpAPI(): void;
+    export function initWebSocketAPI(): void;
 }

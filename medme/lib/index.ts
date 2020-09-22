@@ -44,6 +44,7 @@ export interface IConferenceInfoSuccessResponse {
  */
 export interface IConferenceStatusResponse {
     status: SuccessStatusEnum | ErrorStatuses;
+    newConferenceStatus: ConferenceStatusesEnum;
 }
 
 export interface IConferenceDurations {

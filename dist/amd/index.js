@@ -88,8 +88,9 @@ define("medme/lib/statuses", ["require", "exports"], function (require, exports)
 define("medme/env", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.REQUEST_DEBUG = exports.APIKEY = exports.CONFERENCE_ENDPOINT = void 0;
+    exports.REQUEST_DEBUG = exports.APIKEY = exports.CONFERENCE_WS_ENDPOINT = exports.CONFERENCE_ENDPOINT = void 0;
     exports.CONFERENCE_ENDPOINT = "http://localhost:3000/meets/v1";
+    exports.CONFERENCE_WS_ENDPOINT = "ws://localhost:3333";
     exports.APIKEY = "dfghdshrqweo5y23984wdrty5e3w4q";
     exports.REQUEST_DEBUG = true;
 });
@@ -451,6 +452,59 @@ define("medme/lib/types/index", ["require", "exports", "medme/lib/types/conferen
     exports.conference = void 0;
     exports.conference = conference;
 });
+define("medme/lib/sock", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ConferenceSock = void 0;
+    var ConferenceSock = (function () {
+        function ConferenceSock(wsUri) {
+            this.wsUri = wsUri;
+        }
+        ConferenceSock.prototype.write_ = function (msg) {
+            console.info('[%s] ConferenceWS', (new Date).toISOString(), this.at_, msg);
+        };
+        ConferenceSock.prototype.onOpen_ = function () {
+            this.write_("CONNECTED");
+            this.doSend_(JSON.stringify({
+                path: 'handshake',
+                at: this.at_
+            }));
+        };
+        ConferenceSock.prototype.onMessage_ = function (msg) {
+            this.write_("RECEIVE: " + msg.data);
+            var json = JSON.parse(msg.data);
+            if (json.path === 'change_status_callback')
+                this.changeConferenceStatusCallback_.call(this, json.newStatus);
+        };
+        ConferenceSock.prototype.doSend_ = function (message) {
+            this.write_("SENT: " + message);
+            this.ws_.send(message);
+        };
+        ConferenceSock.prototype.accessToken = function (at) {
+            this.at_ = at;
+            return this;
+        };
+        ConferenceSock.prototype.connect = function (at) {
+            this.ws_ = new WebSocket(this.wsUri);
+            this.at_ = at;
+            this.ws_.onopen = this.onOpen_.bind(this);
+            this.ws_.onmessage = this.onMessage_.bind(this);
+        };
+        ConferenceSock.prototype.changeConferenceStatus = function (newStatus) {
+            this.doSend_(JSON.stringify({
+                path: 'change_status',
+                at: this.at_,
+                newStatus: newStatus
+            }));
+        };
+        ConferenceSock.prototype.changeConferenceStatusCallback = function (cb) {
+            this.changeConferenceStatusCallback_ = cb;
+            return this;
+        };
+        return ConferenceSock;
+    }());
+    exports.ConferenceSock = ConferenceSock;
+});
 define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "medme/lib/httpRequest", "medme/lib/statuses"], function (require, exports, conference_1, httpRequest_2, statuses_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -689,14 +743,15 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
     }
     exports.timer = timer;
 });
-define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/ux"], function (require, exports, lib, env, request, statuses, types, UX) {
+define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/sock", "medme/lib/ux", "medme/lib/sock"], function (require, exports, lib, env, request, statuses, types, sock, UX, sock_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.initHttpAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.UX = exports.types = exports.statuses = exports.request = exports.env = void 0;
+    exports.initWebSocketAPI = exports.initHttpAPI = exports.conferenceWebSocketAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.UX = exports.sock = exports.types = exports.statuses = exports.request = exports.env = void 0;
     exports.env = env;
     exports.request = request;
     exports.statuses = statuses;
     exports.types = types;
+    exports.sock = sock;
     exports.UX = UX;
     exports.default = lib;
     function initHttpAPI() {
@@ -704,4 +759,8 @@ define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/li
         exports.conferenceAccessAPI = lib.ConferenceAccessAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
     }
     exports.initHttpAPI = initHttpAPI;
+    function initWebSocketAPI() {
+        exports.conferenceWebSocketAPI = new sock_1.ConferenceSock(env.CONFERENCE_WS_ENDPOINT);
+    }
+    exports.initWebSocketAPI = initWebSocketAPI;
 });
