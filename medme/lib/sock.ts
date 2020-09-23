@@ -33,6 +33,14 @@ export class ConferenceSock
             this.changeConferenceStatusCallback_.call(this, json.newStatus);
     }
 
+    private onClose_(evt: CloseEvent) {
+        this.write_("CLOSED: " + evt.code + " " + evt.reason)
+    }
+
+    private onError_(err) {
+        this.write_("ERROR: " + (err.message || err));
+    }
+
     private doSend_(message) {
         this.write_("SENT: " + message);
         this.ws_.send(message);
@@ -53,6 +61,8 @@ export class ConferenceSock
 
         this.ws_.onopen = this.onOpen_.bind(this);
         this.ws_.onmessage = this.onMessage_.bind(this);
+        this.ws_.onclose = this.onClose_.bind(this);
+        this.ws_.onerror = this.onError_.bind(this);
     }
 
     changeConferenceStatus(newStatus: ConferenceStatusesEnum) {

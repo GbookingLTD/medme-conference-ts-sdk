@@ -280,6 +280,8 @@ declare module "medme/lib/sock" {
         private write_;
         private onOpen_;
         private onMessage_;
+        private onClose_;
+        private onError_;
         private doSend_;
         constructor(wsUri: string);
         accessToken(at: string): this;
