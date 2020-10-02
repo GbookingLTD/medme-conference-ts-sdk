@@ -236,6 +236,9 @@ export class ConferenceAccessAPI {
     }
 
     public canRestore(conf: IConferenceInfo) {
+        if (conf.cancelledByExternal)
+            return false;
+
         const delayMs = Date.now() - Date.parse(conf.finishedAt);
 
         return delayMs <= RestoreFastDelayMinutes * TimeMs.Minute;

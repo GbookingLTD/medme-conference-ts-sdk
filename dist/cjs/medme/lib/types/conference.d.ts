@@ -91,6 +91,7 @@ export interface IConferenceInfo {
     status: ConferenceStatusesEnum;
     joinedSpecialists: ISpecialist[];
     joinedClients: IClient[];
+    cancelledByExternal?: boolean;
 }
 export interface IConferenceInfoInput {
     appointmentId: string;

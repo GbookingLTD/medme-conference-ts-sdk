@@ -210,6 +210,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             });
         };
         ConferenceAccessAPI.prototype.canRestore = function (conf) {
+            if (conf.cancelledByExternal)
+                return false;
             var delayMs = Date.now() - Date.parse(conf.finishedAt);
             return delayMs <= exports.RestoreFastDelayMinutes * time_1.TimeMs.Minute;
         };

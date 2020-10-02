@@ -170,6 +170,7 @@ declare module "medme/lib/types/conference" {
         status: ConferenceStatusesEnum;
         joinedSpecialists: ISpecialist[];
         joinedClients: IClient[];
+        cancelledByExternal?: boolean;
     }
     export interface IConferenceInfoInput {
         appointmentId: string;

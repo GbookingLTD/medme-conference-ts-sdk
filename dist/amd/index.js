@@ -430,6 +430,8 @@ define("medme/lib/index", ["require", "exports", "medme/lib/httpRequest", "medme
             });
         };
         ConferenceAccessAPI.prototype.canRestore = function (conf) {
+            if (conf.cancelledByExternal)
+                return false;
             var delayMs = Date.now() - Date.parse(conf.finishedAt);
             return delayMs <= exports.RestoreFastDelayMinutes * time_1.TimeMs.Minute;
         };

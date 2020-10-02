@@ -115,6 +115,7 @@ export interface IConferenceInfo {
     status: ConferenceStatusesEnum
     joinedSpecialists: ISpecialist[],
     joinedClients: IClient[],
+    cancelledByExternal?: boolean
 }
 
 /**
