@@ -269,15 +269,18 @@ declare module "medme/lib/types/index" {
 declare module "medme/lib/sock" {
     import { ConferenceStatusesEnum } from "medme/lib/types/conference";
     export type ChangeConferenceStatusCallback = (newStatus: string) => {};
+    export type ChangeConferenceInfoCallback = () => {};
     export interface IConferenceSock {
         changeConferenceStatus(newStatus: ConferenceStatusesEnum): any;
         changeConferenceStatusCallback(cb: ChangeConferenceStatusCallback): any;
+        changeConferenceInfoCallback(cb: ChangeConferenceInfoCallback): any;
     }
     export class ConferenceSock implements IConferenceSock {
         private readonly wsUri;
         private ws_?;
         private at_?;
         private changeConferenceStatusCallback_?;
+        private changeConferenceInfoCallback_?;
         private write_;
         private onOpen_;
         private onMessage_;
@@ -289,6 +292,7 @@ declare module "medme/lib/sock" {
         connect(at: string): void;
         changeConferenceStatus(newStatus: ConferenceStatusesEnum): void;
         changeConferenceStatusCallback(cb: ChangeConferenceStatusCallback): this;
+        changeConferenceInfoCallback(cb: ChangeConferenceInfoCallback): this;
     }
 }
 declare module "medme/lib/ux" {

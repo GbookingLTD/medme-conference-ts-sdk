@@ -2,7 +2,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
@@ -477,6 +477,8 @@ define("medme/lib/sock", ["require", "exports"], function (require, exports) {
             var json = JSON.parse(msg.data);
             if (json.path === 'change_status_callback')
                 this.changeConferenceStatusCallback_.call(this, json.newStatus);
+            if (json.path === 'change_conf_info_callback')
+                this.changeConferenceInfoCallback_.call(this);
         };
         ConferenceSock.prototype.onClose_ = function (evt) {
             this.write_("CLOSED: " + evt.code + " " + evt.reason);
@@ -509,6 +511,10 @@ define("medme/lib/sock", ["require", "exports"], function (require, exports) {
         };
         ConferenceSock.prototype.changeConferenceStatusCallback = function (cb) {
             this.changeConferenceStatusCallback_ = cb;
+            return this;
+        };
+        ConferenceSock.prototype.changeConferenceInfoCallback = function (cb) {
+            this.changeConferenceInfoCallback_ = cb;
             return this;
         };
         return ConferenceSock;

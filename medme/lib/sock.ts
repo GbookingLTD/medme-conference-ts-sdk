@@ -1,10 +1,12 @@
 import {ConferenceStatusesEnum} from "./types/conference";
 
 export type ChangeConferenceStatusCallback = (newStatus: string) => {};
+export type ChangeConferenceInfoCallback = () => {};
 
 export interface IConferenceSock {
     changeConferenceStatus(newStatus: ConferenceStatusesEnum);
     changeConferenceStatusCallback(cb: ChangeConferenceStatusCallback);
+    changeConferenceInfoCallback(cb: ChangeConferenceInfoCallback);
 }
 
 export class ConferenceSock
@@ -13,6 +15,7 @@ export class ConferenceSock
     private ws_?: WebSocket;
     private at_?: string;
     private changeConferenceStatusCallback_?: ChangeConferenceStatusCallback;
+    private changeConferenceInfoCallback_?: ChangeConferenceInfoCallback;
 
     private write_(msg) {
         console.info('[%s] ConferenceWS', (new Date).toISOString(), this.at_, msg)
@@ -31,6 +34,8 @@ export class ConferenceSock
         const json = JSON.parse(msg.data);
         if (json.path === 'change_status_callback')
             this.changeConferenceStatusCallback_.call(this, json.newStatus);
+        if (json.path === 'change_conf_info_callback')
+            this.changeConferenceInfoCallback_.call(this);
     }
 
     private onClose_(evt: CloseEvent) {
@@ -75,6 +80,11 @@ export class ConferenceSock
 
     changeConferenceStatusCallback(cb: ChangeConferenceStatusCallback) {
         this.changeConferenceStatusCallback_ = cb;
+        return this;
+    }
+
+    changeConferenceInfoCallback(cb: ChangeConferenceInfoCallback) {
+        this.changeConferenceInfoCallback_ = cb;
         return this;
     }
 }

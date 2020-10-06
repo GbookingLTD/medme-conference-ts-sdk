@@ -23,3 +23,7 @@ clear:
 
 test:
 	npm run test
+
+get-deps:
+	npm i && \
+		npm install -g typescript

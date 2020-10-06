@@ -20,6 +20,8 @@ var ConferenceSock = (function () {
         var json = JSON.parse(msg.data);
         if (json.path === 'change_status_callback')
             this.changeConferenceStatusCallback_.call(this, json.newStatus);
+        if (json.path === 'change_conf_info_callback')
+            this.changeConferenceInfoCallback_.call(this);
     };
     ConferenceSock.prototype.onClose_ = function (evt) {
         this.write_("CLOSED: " + evt.code + " " + evt.reason);
@@ -52,6 +54,10 @@ var ConferenceSock = (function () {
     };
     ConferenceSock.prototype.changeConferenceStatusCallback = function (cb) {
         this.changeConferenceStatusCallback_ = cb;
+        return this;
+    };
+    ConferenceSock.prototype.changeConferenceInfoCallback = function (cb) {
+        this.changeConferenceInfoCallback_ = cb;
         return this;
     };
     return ConferenceSock;
