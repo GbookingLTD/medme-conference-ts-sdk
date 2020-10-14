@@ -424,7 +424,8 @@ export function timer(confInfo, timer) {
         totalRemainSeconds = Math.max(0, conferenceScheduledDurationSeconds - deltaSeconds - netDurationSeconds);
 
         hours = Math.floor(totalRemainSeconds / 3600);
-        const newMinutes = Math.floor(totalRemainSeconds / 60) % 3600;
+        const newMinutes = Math.floor(totalRemainSeconds / 60) % 60;
+        // если значение минут не поменялось, то изменяем в следующий раз через 100 мс
         if (newMinutes === minutes)
             timerDelay = 100;
         else
