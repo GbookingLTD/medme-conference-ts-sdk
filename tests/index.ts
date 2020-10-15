@@ -3,9 +3,10 @@ import * as assert from 'assert';
 import {TimeMs} from './time'
 import {ConferenceAccessAPI, ConferenceModifyAPI} from '../medme/lib'
 import {APIKEY, CONFERENCE_ENDPOINT} from '../medme/env'
-import {APIError, IAPIExpectFieldsErrorResponse} from "../medme/lib/request";
+import {APIError, IAPIExpectFieldsErrorResponse} from "../medme/lib/httpRequest";
 import {ErrorStatuses} from "../medme/lib/statuses";
 import {ConferenceRolesEnum, IConferenceInfoInput} from "../medme/lib/types/conference";
+import * as env from '../medme/env'
 
 let confCounter = 1;
 const makeAppointmentId = () =>
@@ -34,8 +35,8 @@ const simpleConf = (): IConferenceInfoInput =>
         specialists: []
     })
 
-const modifyAPI: ConferenceModifyAPI = new ConferenceModifyAPI(CONFERENCE_ENDPOINT);
-const accessAPI: ConferenceAccessAPI = new ConferenceAccessAPI(CONFERENCE_ENDPOINT);
+const modifyAPI: ConferenceModifyAPI = ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
+const accessAPI: ConferenceAccessAPI = ConferenceAccessAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
 
 describe('ConferenceModifyAPI', () => {
     it('create with wrong apikey should Unauthorized error', async () => {
@@ -108,7 +109,7 @@ describe('ConferenceAccessAPI', () => {
             const {access_token} = await createSimpleConf();
             const {conference_token} = await accessAPI.exchange(access_token);
             assert(conference_token);
-            assert.strictEqual(conference_token.length, 32)
+            assert.strictEqual(conference_token.length, 64)
     });
     it('getConferenceInfoByAccessToken', () => {
 
