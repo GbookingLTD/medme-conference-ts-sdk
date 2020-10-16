@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test-ci": "CONFERENCE_ENDPOINT=http://mmconf-ci.dev.gbooking.ru node --trace-warnings node_modules/mocha/bin/mocha --exit -r ts-node/register tests/index.ts"
+    "test-ci": "CONFERENCE_ENDPOINT=http://mmconf-ci.dev.gbooking.ru/meets/v1 node --trace-warnings node_modules/mocha/bin/mocha --exit -r ts-node/register tests/index.ts"
   },
   "author": "",
   "license": "ISC",
