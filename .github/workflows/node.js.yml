@@ -24,6 +24,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: curl http://dev.gbooking.ru/mmconf-run-if-not-exists
+    - run: curl http://mmconf-ci.dev.gbooking.ru/update-trigger
+    - run: sleep 30
     - run: npm install
     - run: make test
