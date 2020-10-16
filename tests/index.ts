@@ -35,8 +35,8 @@ const simpleConf = (): IConferenceInfoInput =>
         specialists: []
     })
 
-const modifyAPI: ConferenceModifyAPI = ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
-const accessAPI: ConferenceAccessAPI = ConferenceAccessAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
+const modifyAPI: ConferenceModifyAPI = ConferenceModifyAPI.createHttpAPI(process.env.CONFERENCE_ENDPOINT || env.CONFERENCE_ENDPOINT);
+const accessAPI: ConferenceAccessAPI = ConferenceAccessAPI.createHttpAPI(process.env.CONFERENCE_ENDPOINT || env.CONFERENCE_ENDPOINT);
 
 describe('ConferenceModifyAPI', () => {
     it('create with wrong apikey should Unauthorized error', async () => {

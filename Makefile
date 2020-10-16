@@ -21,6 +21,9 @@ clear_cjs:
 clear:
 	rm -rf dist/*
 
+test-ci:
+	npm run test-ci
+
 test:
 	npm run test
 
