@@ -256,7 +256,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             var deltaSeconds = now - firstUpdateNowSeconds;
             totalRemainSeconds = Math.max(0, conferenceScheduledDurationSeconds - deltaSeconds - netDurationSeconds);
             hours = Math.floor(totalRemainSeconds / 3600);
-            var newMinutes = Math.floor(totalRemainSeconds / 60) % 3600;
+            var newMinutes = Math.floor(totalRemainSeconds / 60) % 60;
             if (newMinutes === minutes)
                 timerDelay = 100;
             else

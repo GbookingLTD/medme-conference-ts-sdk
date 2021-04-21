@@ -1,6 +1,4 @@
-# MedMe Audio/Video Conferences TypeScript SDK
-
-## 
+# MedMe Conference Typescript SDK
 
 ## Установка
 
@@ -9,5 +7,8 @@
 
 ## Использование
 
-Перед использованием над `HTTP(S) API` выполните метод `initHttpAPI()`.
+Перед использованием `API` выполните метод `initHttpAPI()`, а так же `initWebSocketAPI`, 
+если необходимо получать изменения от сервера.
+
+
 

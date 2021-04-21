@@ -1,0 +1,1390 @@
+openapi: 3.0.1
+info:
+  title: MedMe Conference API
+  description: |
+    ## Схема работы конференции
+
+    Данное API предназначено для создания, управления доступом к конференции, управления состоянием, временем жизни,
+    получения и обновления информацией о конференции, получение изменений, произошедших в конференции.
+
+    Конференция имеет несколько статусов работы:
+
+    * pending
+    * open_for_joining
+    * started
+    * started_and_waiting
+    * started_and_paused
+    * cancelled_before_start
+    * cancelled_after_start
+    * finished
+
+    При создании конференции ей выставляется статус `pending`.
+
+    За некоторое время до начала конференции специалист может пригласить на ее начало.
+    Конференция перейдет в статус `open_for_joining`. В таком статусе клиенты могут к ней присоединиться.
+
+    Затем, когда все присоединились, становится доступен переход в статус `started`.
+
+    Когда пользователь, без которого конференция не может быть продолжена, уходит (например, "отваливается" интернет),
+    конференция переходит в статус `started_and_waiting`. Как только он возвращается, конференция возвращается в статус
+    `started`.
+
+    Специалист может приостановить конференцию. В таком случае она переходит в статус `started_and_paused`.
+    При возобновлении конференции она возвращается в статус `start`.
+
+    Специалист может завершить конференцию. В таком случае она переходит в статус `finished`.
+    Это состояние не может быть отменено.
+
+    Специалист или клиент могут отменить конференцию. В зависимости от того, когда по отношению к дате старта это произошло
+    она переходит в статус `cancelled_before_start` или `cancelled_after_start`. Эти состояния так же являются конечными.
+
+    В случае, если конференция осталась в состоянии отличном от конечного после времени начала через определенное время
+    она автоматически переходит в одно из 3-х конечных состояний - `finished`, `cancelled_after_start`:
+
+    * если она была начата - то в `finished`
+    * если нет - то в `cancelled_after_start`
+
+    Список всех возможных статусов ошибок (для каждого метода указано подмножество из этого списка):
+
+    * `UNKNOWN_ERROR`
+    * `UNAUTHORIZED`
+    * `VALIDATION_ERROR`
+    * `EXPIRED_TOKEN`
+    * `ACCESS_TOKEN_NOT_FOUND`
+    * `EXPECT_REQUEST_FIELDS`
+    * `OTP_EXPECT`
+    * `OTP_WRONG_CODE`
+    * `EXPECT_ACCESS_TOKEN`
+    * `EXPECT_CONFERENCE_TOKEN`
+    * `CONFERENCE_IS_NOT_READY_FOR_START`
+    * `CONFERENCE_CANNOT_JOIN`
+    * `CLIENT_ALREADY_JOINED`
+    * `CLIENT_SHOULD_BE_JOINED`
+    * `SPECIALIST_SHOULD_BE_JOINED`
+    * `CONFERENCE_WRONG_SPECIALIST`
+    * `CONFERENCE_WRONG_CLIENT`
+    * `CONFERENCE_CANNOT_BE_STARTED`
+    * `CONFERENCE_CANNOT_BE_CANCELLED`
+    * `CONFERENCE_CANNOT_BE_FINISHED`
+    * `CONFERENCE_CANNOT_BE_OPENED_FOR_JOIN`
+    * `CONFERENCE_CANNOT_BE_EDITED`
+    * `USER_SHOULD_BE_IN_CONFERENCE`
+    * `CONFERENCE_WRONG_STATUS_CHANGE`
+    * `RESTORE_FAST_TIMED_OUT`
+
+    Поскольку генераторы документации в массе своей пока не поддерживают стандарт json-schema v7,
+    значение в поле статуса ответа указано как default, а не как const
+
+  contact:
+    email: support@med.me
+  license:
+    name: MIT
+    url: https://github.com/GbookingLTD/medme-conference-ts-sdk/blob/master/LICENCE
+  version: 1.0.0
+externalDocs:
+  description: MedMe Conference SDK on Github
+  url: https://github.com/GbookingLTD/medme-conference-ts-sdk
+servers:
+  - url: https://apiv2.gbooking/meets/v1
+tags:
+  - name: Conference
+    description: |
+      ## Создание и управление конференцией
+
+      Содержит методы создания и управления конференцией
+
+paths:
+  /info:
+    get:
+      tags:
+        - Conference
+      summary: Получение данных о конференции
+      operationId: getConferenceInfo
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          description: Ключ доступа для конференции
+          schema:
+            type: string
+      responses:
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        200:
+          description: Данные конференции
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - role
+                  - user_id
+                  - conference_info
+                properties:
+                  status:
+                    type: string
+                    default: OK
+                  role:
+                    type: string
+                    description: Роль пользователя, создавшего конференцию
+                    enum:
+                      - CLIENT
+                      - SPECIALIST
+                  user_id:
+                    type: string
+                    description: Иденотификатор пользователя, создавшего конференцию
+                  conference_info:
+                    $ref: "#/components/schemas/ConferenceInfoExtended"
+
+  /create:
+    post:
+      tags:
+        - Conference
+      summary: Создание новой конференции
+      operationId: createConfrence
+      requestBody:
+        description: Параметры доступа и информация для создания конференции
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+                - user_id
+                - user_role
+                - conference_info
+              properties:
+                api_key:
+                  type: string
+                  description: APIKEY (указан в конфигурации сервера конференций)
+                user_id:
+                  type: string
+                  description: Идентификатор пользователя, создающего конференцию (должен быть указан в списке зарегистрированных специалистов или клиентов в данных конференции)
+                user_role:
+                  type: string
+                  enum:
+                    - CLIENT
+                    - SPECIALIST
+                  description: Роль пользователя, создающего конференцию
+                conference_info:
+                  $ref: '#/components/schemas/ConferenceInfo'
+        required: true
+      responses:
+        200:
+          description: Конференция успешно создана
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - access_token
+                properties:
+                  status:
+                    type: string
+                    default: OK
+                  access_token:
+                    type: string
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+         $ref: "#/components/errorResponses/WrongApiKey"
+
+        400:
+          $ref: "#/components/errorResponses/WrongRequest"
+
+      x-codegen-request-body-name: body
+
+  /exchange:
+    post:
+      tags:
+        - Conference
+      summary: Возвращает токен конференции
+      operationId: exchangeToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description: Возвращает токен конференции
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - conference_token
+                properties:
+                  status:
+                    type: string
+                    default: OK
+                  conference_token:
+                    type: string
+                    description: Токен конференции
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongRequest"
+
+  /open_for_join:
+    post:
+      tags:
+        - Conference
+      summary: Открыть конференцию для присоединения
+      description: Может выполнить только специалист
+      operationId: openForJoinConference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description: Конференция открыта для присоединения
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongOpenForJoinRequest"
+
+  /join:
+    post:
+      tags:
+        - Conference
+      summary: Присоединиться к конференции
+      operationId: joinToConference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description: Пользователь присоединен к конференции
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongJoinRequest"
+
+  /leave:
+    post:
+      tags:
+        - Conference
+      summary: Покинуть конференцию
+      operationId: leaveConference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description: Пользователь покинул конференцию
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongLeaveRequest"
+
+  /start:
+    post:
+      tags:
+        - Conference
+      summary: Начать конференцию
+      operationId: startConference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description: Конференция начата
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongStartRequest"
+
+  /finish:
+    post:
+      tags:
+        - Conference
+      description: Может выполнить только специалист
+      summary: Завершить конференцию
+      operationId: finishConference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description: Конференция закончена
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongFinishRequest"
+
+  /cancel:
+    post:
+      tags:
+        - Conference
+      description: Может выполнить только специалист
+      summary: Отмена конференции
+      operationId: cancelConference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description: Конференция отменена
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongCancelRequest"
+
+  /complete_empty_and_expired:
+    post:
+      tags:
+        - Conference
+      summary: Завершение "повисших" конференций
+      description: |
+        Завершает "пустые" и старые конференции.
+        Этот метод нужно поставить на cron.
+      operationId: completeEmptyAndExpiredConferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+              properties:
+                api_key:
+                  type: string
+                  description: APIKEY (указан в конфигурации сервера конференций)
+
+      responses:
+        200:
+          description: \"Повисшие\" конференции отменены
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongApiKey"
+
+        400:
+          $ref: "#/components/errorResponses/WrongRequest"
+
+      x-codegen-request-body-name: body
+
+  /restore_terminated_fast:
+    post:
+      tags:
+        - Conference
+      description: Может выполнить только специалист
+      summary: Восстановить конференцию
+      ddescription: Восстановить только что завершенную/отмененную конференцию
+      operationId: restoreConference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description: Конференция восстановлена
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongRestoreRequest"
+
+
+  /send_complete_callback:
+    post:
+      tags:
+        - Conference
+      summary: Отправляет callback на завершенные конференции
+      description: |
+        Отправляет callback на завершенные конференции, которые уже невозможно восстановить.
+        Этот метод нужно поставить на cron.
+      operationId: sendCompleteCallback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - api_key
+              properties:
+                api_key:
+                  type: string
+                  description: APIKEY (указан в конфигурации сервера конференций)
+
+      responses:
+        200:
+          description: Все зарегистрированные колбэки отправлены.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    default: OK
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongApiKey"
+
+        400:
+          $ref: "#/components/errorResponses/WrongRequest"
+
+      x-codegen-request-body-name: body
+
+
+  /durations:
+    post:
+      tags:
+        - Conference
+      summary: Возвращает продолжительность конференции
+      ddescription: Возвращает текущую продолжительность конференции для таймера
+      operationId: getConferenceDuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requests/AccessToken"
+
+      responses:
+        200:
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - now
+                  - expectedEndAt
+                  - scheduledDurationSeconds
+                  - netDurationSeconds
+                  - dirtyDurationSeconds
+                  - realDurationSeconds
+                properties:
+                  status:
+                    type: string
+                    default: OK
+                  now:
+                    type: string
+                    format: date-time
+                    description: Время на сервере на момент формирования ответа
+                  expectedEndAt:
+                    type: string
+                    format: date-time
+                    description: Время окончания конференции
+                  scheduledDurationSeconds:
+                    type: integer
+                    format: int32
+                    description: Запланированная длительность конференции в секундах
+                  netDurationSeconds:
+                    type: integer
+                    format: int32
+                    description: Общая чистая продолжительность конференции без учета пауз
+                  dirtyDurationSeconds:
+                    type: integer
+                    format: int32
+                    description: Общее время конференции с учетом пауз после завершения
+                  realDurationSeconds:
+                    type: integer
+                    format: int32
+                    description: Вычисляет длительность конференции, когда там хоть кто-то есть
+
+
+        500:
+          $ref: "#/components/errorResponses/UnknownError"
+
+        401:
+          $ref: "#/components/errorResponses/WrongAccessToken"
+
+        403:
+          $ref: "#/components/errorResponses/AccessTokenExpired"
+
+        400:
+          $ref: "#/components/errorResponses/WrongRequest"
+
+
+components:
+  requests:
+    AccessToken:
+      type: object
+      required:
+        - access_token
+      properties:
+        access_token:
+          type: string
+          description: ключ доступа
+
+  errorResponses:
+    UnknownError:
+      description: Unknown error
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                default: UNKNOWN_ERROR
+              description:
+                type: string
+                default: Unknown Error
+
+    WrongApiKey:
+      description: Wrong APIKEY
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                default: UNAUTHORIZE
+              description:
+                type: string
+                default: Wrong APIKEY
+
+    WrongRequest:
+      description: Wrong request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_REQUEST_FIELDS
+                  - VALIDATION_ERROR
+              description:
+                type: string
+                description: ''
+              expect_fields:
+                type: array
+                description: "When EXPECT_REQUEST_FIELDS. What required fields was not pass as an array of strings"
+                items:
+                  type: string
+              errors:
+                type: array
+                description: "When VALIDATION_ERROR. Validation errors"
+                items:
+                  type: object
+                  required:
+                    - type
+                    - path
+                    - message
+                  properties:
+                    type:
+                      type: string
+                      description: validation error type
+                    path:
+                      type: string
+                      description: path to field where was an error
+                    message:
+                      type: string
+                      description: error message
+
+    WrongRestoreRequest:
+      description: Wrong request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_REQUEST_FIELDS
+                  - VALIDATION_ERROR
+                  - RESTORE_FAST_TIMED_OUT
+              description:
+                type: string
+                description: ''
+              expect_fields:
+                type: array
+                description: "When EXPECT_REQUEST_FIELDS. What required fields was not pass as an array of strings"
+                items:
+                  type: string
+              errors:
+                type: array
+                description: "When VALIDATION_ERROR. Validation errors"
+                items:
+                  type: object
+                  required:
+                    - type
+                    - path
+                    - message
+                  properties:
+                    type:
+                      type: string
+                      description: validation error type
+                    path:
+                      type: string
+                      description: path to field where was an error
+                    message:
+                      type: string
+                      description: error message
+
+    WrongStartRequest:
+      description: Wrong request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_REQUEST_FIELDS
+                  - VALIDATION_ERROR
+                  - CONFERENCE_CANNOT_BE_STARTED
+                  - CONFERENCE_IS_NOT_READY_FOR_START
+                  - CONFERENCE_WRONG_SPECIALIST
+                  - CONFERENCE_CANNOT_JOIN
+                  - CONFERENCE_WRONG_SPECIALIST
+                  - CLIENT_ALREADY_JOINED
+              description:
+                type: string
+                description: ''
+              expect_fields:
+                type: array
+                description: "When EXPECT_REQUEST_FIELDS. What required fields was not pass as an array of strings"
+                items:
+                  type: string
+              errors:
+                type: array
+                description: "When VALIDATION_ERROR. Validation errors"
+                items:
+                  type: object
+                  required:
+                    - type
+                    - path
+                    - message
+                  properties:
+                    type:
+                      type: string
+                      description: validation error type
+                    path:
+                      type: string
+                      description: path to field where was an error
+                    message:
+                      type: string
+                      description: error message
+
+    WrongFinishRequest:
+      description: Wrong request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_REQUEST_FIELDS
+                  - VALIDATION_ERROR
+                  - CONFERENCE_CANNOT_JOIN
+                  - CONFERENCE_WRONG_SPECIALIST
+                  - CONFERENCE_WRONG_CLIENT
+                  - CLIENT_SHOULD_BE_JOINED
+                  - CONFERENCE_CANNOT_BE_FINISHED
+              description:
+                type: string
+                description: ''
+              expect_fields:
+                type: array
+                description: "When EXPECT_REQUEST_FIELDS. What required fields was not pass as an array of strings"
+                items:
+                  type: string
+              errors:
+                type: array
+                description: "When VALIDATION_ERROR. Validation errors"
+                items:
+                  type: object
+                  required:
+                    - type
+                    - path
+                    - message
+                  properties:
+                    type:
+                      type: string
+                      description: validation error type
+                    path:
+                      type: string
+                      description: path to field where was an error
+                    message:
+                      type: string
+                      description: error message
+
+    WrongCancelRequest:
+      description: Wrong request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_REQUEST_FIELDS
+                  - VALIDATION_ERROR
+                  - CONFERENCE_CANNOT_JOIN
+                  - CONFERENCE_WRONG_SPECIALIST
+                  - CONFERENCE_WRONG_CLIENT
+                  - CLIENT_SHOULD_BE_JOINED
+                  - CONFERENCE_CANNOT_BE_CANCELED
+              description:
+                type: string
+                description: ''
+              expect_fields:
+                type: array
+                description: "When EXPECT_REQUEST_FIELDS. What required fields was not pass as an array of strings"
+                items:
+                  type: string
+              errors:
+                type: array
+                description: "When VALIDATION_ERROR. Validation errors"
+                items:
+                  type: object
+                  required:
+                    - type
+                    - path
+                    - message
+                  properties:
+                    type:
+                      type: string
+                      description: validation error type
+                    path:
+                      type: string
+                      description: path to field where was an error
+                    message:
+                      type: string
+                      description: error message
+
+    WrongJoinRequest:
+      description: Wrong request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_REQUEST_FIELDS
+                  - VALIDATION_ERROR
+                  - CONFERENCE_CANNOT_JOIN
+                  - CLIENT_ALREADY_JOINED
+                  - CONFERENCE_WRONG_SPECIALIST
+                  - CONFERENCE_WRONG_CLIENT
+              description:
+                type: string
+                description: ''
+              expect_fields:
+                type: array
+                description: "When EXPECT_REQUEST_FIELDS. What required fields was not pass as an array of strings"
+                items:
+                  type: string
+              errors:
+                type: array
+                description: "When VALIDATION_ERROR. Validation errors"
+                items:
+                  type: object
+                  required:
+                    - type
+                    - path
+                    - message
+                  properties:
+                    type:
+                      type: string
+                      description: validation error type
+                    path:
+                      type: string
+                      description: path to field where was an error
+                    message:
+                      type: string
+                      description: error message
+
+    WrongLeaveRequest:
+      description: Wrong request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_REQUEST_FIELDS
+                  - VALIDATION_ERROR
+                  - CONFERENCE_CANNOT_JOIN
+                  - CONFERENCE_WRONG_SPECIALIST
+                  - CONFERENCE_WRONG_CLIENT
+                  - CLIENT_SHOULD_BE_JOINED
+              description:
+                type: string
+                description: ''
+              expect_fields:
+                type: array
+                description: "When EXPECT_REQUEST_FIELDS. What required fields was not pass as an array of strings"
+                items:
+                  type: string
+              errors:
+                type: array
+                description: "When VALIDATION_ERROR. Validation errors"
+                items:
+                  type: object
+                  required:
+                    - type
+                    - path
+                    - message
+                  properties:
+                    type:
+                      type: string
+                      description: validation error type
+                    path:
+                      type: string
+                      description: path to field where was an error
+                    message:
+                      type: string
+                      description: error message
+
+    WrongOpenForJoinRequest:
+      description: Wrong request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - description
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_REQUEST_FIELDS
+                  - VALIDATION_ERROR
+                  - CONFERENCE_CANNOT_BE_OPENED_FOR_JOIN
+                  - CONFERENCE_WRONG_SPECIALIST
+                  - CONFERENCE_WRONG_CLIENT
+                  - CONFERENCE_CANNOT_JOIN
+              description:
+                type: string
+                description: ''
+              expect_fields:
+                type: array
+                description: "When EXPECT_REQUEST_FIELDS. What required fields was not pass as an array of strings"
+                items:
+                  type: string
+              errors:
+                type: array
+                description: "When VALIDATION_ERROR. Validation errors"
+                items:
+                  type: object
+                  required:
+                    - type
+                    - path
+                    - message
+                  properties:
+                    type:
+                      type: string
+                      description: validation error type
+                    path:
+                      type: string
+                      description: path to field where was an error
+                    message:
+                      type: string
+                      description: error message
+
+
+    WrongAccessToken:
+      description: Wrong Access Token
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPECT_ACCESS_TOKEN
+                  - ACCESS_TOKEN_NOT_FOUND
+                  - EXPIRED_TOKEN
+              description:
+                type: string
+
+    AccessTokenExpired:
+      description: Access Token Expired
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                enum:
+                  - EXPIRED_TOKEN
+                default: EXPIRED_TOKEN
+
+  schemas:
+    ConferenceInfo:
+      type: object
+      description: Данные конференции
+      required:
+        - appointmentId
+        - isOpen
+        - l10n
+        - filialInfo
+        - organizationInfo
+        - openingDurationSeconds
+        - otp
+        - scheduledDurationSeconds
+        - scheduledStart
+        - services
+        - clients
+        - specialists
+      properties:
+        appointmentId:
+          type: string
+          description: Идентификатор записи в системе бронирования
+        isOpen:
+          type: boolean
+          default: false
+          description: Если конференция открытая она может начаться сразу без этапа присоединения к ней пользователей (без open_for_join)
+        l10n:
+          type: string
+          description: Локализация интерфейса конференции по умолчанию (пользователь указать локаль для себя для этой и будущих конференций)
+          enum:
+            - ru
+            - en
+            - he
+        organizationInfo:
+          type: object
+          required:
+            - id
+            - title
+          properties:
+            id:
+              type: string
+              description: Идентификатор организации
+            title:
+              type: string
+              description: Название организации
+        filialInfo:
+          $ref: "#/components/schemas/FilialInfo"
+        openingDurationSeconds:
+          type: integer
+          format: int32
+          description: время, за которое можно открыть возможность входа
+        otp:
+          type: boolean
+          default: false
+          description: проверка входа с помощью одноразового пароля по смс
+        scheduledDurationSeconds:
+          type: integer
+          format: int32
+          description: запланированная длительность конференции
+        scheduledStart:
+          type: string
+          format: date-time
+          description: запланированное время начала конференции
+        services:
+          type: array
+          description: список предоставляемых услуг
+          items:
+            $ref: "#/components/schemas/Service"
+        clients:
+          type: array
+          description: список клиентов (пациентов), зарегистрированных в конференции
+          items:
+            $ref: "#/components/schemas/Client"
+        specialists:
+          type: array
+          description: список специалистов (врачей), зарегистрированных в конференции
+          items:
+            $ref: "#/components/schemas/Specialist"
+
+    ConferenceInfoExtended:
+      allOf:
+        - $ref: "#/components/schemas/ConferenceInfo"
+        - type: object
+          required:
+            - createdAt
+            - status
+            - joinedClients
+            - joinedSpecialists
+          properties:
+            createdAt:
+              type: string
+              format: date-time
+              description: Дата создания конференции
+            startedAt:
+              type: string
+              format: date-time
+              description: Дата начала конференции
+            finishedAt:
+              type: string
+              format: date-time
+              description: Дата завершения конференции
+            status:
+              type: string
+              description: Текущий статус конференции
+              enum:
+                - pending
+                - open_for_joining
+                - started
+                - started_and_waiting
+                - started_and_paused
+                - cancelled_before_start
+                - cancelled_after_start
+                - finished
+            joinedClients:
+              type: array
+              description: Присоединенные клиенты
+              items:
+                $ref: "#/components/schemas/Client"
+            joinedSpecialists:
+              type: array
+              description: Присоединенные специалисты
+              items:
+                $ref: "#/components/schemas/Specialist"
+            cancelledByExternal:
+              type: boolean
+              default: false
+              description: Отменена системой бронирования
+
+    Specialist:
+      type: object
+      description: Данные специалиста
+      required:
+        - id
+        - name
+        - surname
+        - profession
+      properties:
+        id:
+          type: string
+          description: Идентификатор специалиста
+        name:
+          type: string
+          description: Имя специалиста
+        surname:
+          type: string
+          description: Фамилия специалиста
+        middleName:
+          type: string
+          description: Отчество специалиста (если есть)
+        profession:
+          type: string
+          description: Профессия специалиста
+        required:
+          type: boolean
+          description: Специалист должен присоединиться для начала конференции
+
+    Client:
+      type: object
+      description: Данные клиента
+      required:
+        - id
+        - name
+        - surname
+      properties:
+        id:
+          type: string
+          description: Идентификатор клиента
+        name:
+          type: string
+          description: Имя клиента
+        surname:
+          type: string
+          description: Фамилия клиента
+        middleName:
+          type: string
+          description: Отчество клиента (если есть)
+
+
+    Service:
+      type: object
+      description: Услуга
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: array
+          items:
+            type: object
+            required:
+              - lang
+              - text
+            properties:
+              lang:
+                type: string
+                description: Локаль
+                enum:
+                  - ru-ru
+                  - en-us
+                  - he-il
+                  - fr-fr
+                  - hu-hu
+                  - ee-ee
+                  - lv-lv
+                  - lt-lt
+                  - de-de
+                  - zh-cn
+                  - fi-fi
+                  - am-am
+                  - es-es
+                  - ge-ge
+                  - uz-uz
+                  - ar-ps
+              text:
+                type: string
+                description: Название услуги в указанной локали
+
+    FilialInfo:
+      type: object
+      description: Данные о филиале организации, для которой создается конференция
+      required:
+        - id
+        - title
+        - timezone
+      properties:
+        id:
+          type: string
+          description: Идентификатор филиала
+        title:
+          type: string
+          description: Название филиала
+        timezone:
+          type: string
+          description: Таймзона, в которой работает филиал
+          enum:
+            - UTC
+            - Europe/Moscow
+            - Europe/Berlin
+            - Etc
+

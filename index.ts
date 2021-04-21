@@ -12,6 +12,7 @@ import {ConferenceSock} from "./medme/lib/sock";
 export default lib
 
 export {
+    lib,
     env,
     request,
     statuses,

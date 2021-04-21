@@ -2,7 +2,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
@@ -732,7 +732,7 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
             var deltaSeconds = now - firstUpdateNowSeconds;
             totalRemainSeconds = Math.max(0, conferenceScheduledDurationSeconds - deltaSeconds - netDurationSeconds);
             hours = Math.floor(totalRemainSeconds / 3600);
-            var newMinutes = Math.floor(totalRemainSeconds / 60) % 3600;
+            var newMinutes = Math.floor(totalRemainSeconds / 60) % 60;
             if (newMinutes === minutes)
                 timerDelay = 100;
             else
@@ -762,7 +762,8 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
 define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/sock", "medme/lib/ux", "medme/lib/sock"], function (require, exports, lib, env, request, statuses, types, sock, UX, sock_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.initWebSocketAPI = exports.initHttpAPI = exports.conferenceWebSocketAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.UX = exports.sock = exports.types = exports.statuses = exports.request = exports.env = void 0;
+    exports.initWebSocketAPI = exports.initHttpAPI = exports.conferenceWebSocketAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.UX = exports.sock = exports.types = exports.statuses = exports.request = exports.env = exports.lib = void 0;
+    exports.lib = lib;
     exports.env = env;
     exports.request = request;
     exports.statuses = statuses;

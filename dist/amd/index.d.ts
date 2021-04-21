@@ -430,7 +430,7 @@ declare module "MedMe" {
     import * as sock from "medme/lib/sock";
     import * as UX from "medme/lib/ux";
     export default lib;
-    export { env, request, statuses, types, sock, UX };
+    export { lib, env, request, statuses, types, sock, UX };
     export let conferenceModifyAPI: lib.ConferenceModifyAPI;
     export let conferenceAccessAPI: lib.ConferenceAccessAPI;
     export let conferenceWebSocketAPI: sock.ConferenceSock;
