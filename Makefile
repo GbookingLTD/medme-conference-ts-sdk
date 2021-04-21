@@ -30,3 +30,6 @@ test:
 get-deps:
 	npm i && \
 		npm install -g typescript
+
+serve-openapi:
+	python3.8 -m http.server 4000
