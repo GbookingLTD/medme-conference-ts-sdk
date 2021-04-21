@@ -1,5 +1,7 @@
 # MedMe Conference Typescript SDK
 
+Описание запросов API смотрите [здесь](https://gbookingltd.github.io/medme-conference-ts-sdk/).
+
 ## Установка
 
 1. Настройте окружение в файле `medme/env.ts`
