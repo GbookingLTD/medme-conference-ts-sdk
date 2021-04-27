@@ -28,7 +28,7 @@ MedMe Conference SDK предполагает работу с сервером �
 1. Вставить в HTML ссылку через тег `script`
 
 ````html
-<script src="https://unpkg.com/gbookingltd/mmconf-sdk/1.0/dist/umd/index.min.js"></script>
+<script src="https://unpkg.com/@medme/mmconf-ts-sdk@1.0.0/mmconf.min.js"></script>
 ````
 
 2. Клонировать этот репозиторий 
@@ -50,13 +50,21 @@ tar -xzvf mmconf-ts-sdk-v1.0.tar.gz
 npm i @medme/mmconf-ts-sdk@1.0
 ````
 
-````yarn
+````bash
 yarn add @medme/mmconf-ts-sdk@1.0
 ````
 
 Используйте в примерах выше нужный вам номер версии.
 
 ## Сборка
+
+0. Установите typescript и webpack
+
+````bash
+npm i typescript --save-dev
+sudo npm i -g webpack webpack-cli 
+npm i javascript-obfuscator webpack-obfuscator --save-dev
+````
 
 1. Настройте окружение в файле `medme/env.ts`
 2. Выполните `make build` для сборки SDK
