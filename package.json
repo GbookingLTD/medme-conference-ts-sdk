@@ -1,6 +1,6 @@
 {
   "name": "@medme/mmconf-ts-sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MedMe Conference Typescript SDK",
   "main": "index.ts",
   "scripts": {
