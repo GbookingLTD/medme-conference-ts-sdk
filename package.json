@@ -1,8 +1,8 @@
 {
   "name": "@medme/mmconf-ts-sdk",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "MedMe Conference Typescript SDK",
-  "main": "index.ts",
+  "main": "dist/cjs/index.js",
   "scripts": {
     "test-ci": "CONFERENCE_ENDPOINT=http://mmconf-ci.dev.gbooking.ru/meets/v1 node --trace-warnings node_modules/mocha/bin/mocha --exit -r ts-node/register tests/index.ts"
   },
