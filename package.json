@@ -1,13 +1,13 @@
 {
-  "name": "medme-conference-ts-sdk",
+  "name": "@medme/mmconf-ts-sdk",
   "version": "1.0.0",
-  "description": "",
+  "description": "## Описание",
   "main": "index.ts",
   "scripts": {
     "test-ci": "CONFERENCE_ENDPOINT=http://mmconf-ci.dev.gbooking.ru/meets/v1 node --trace-warnings node_modules/mocha/bin/mocha --exit -r ts-node/register tests/index.ts"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "swvitaliy",
+  "license": "MIT",
   "dependencies": {
     "@types/form-data": "^2.5.0",
     "@types/mocha": "^7.0.2",
@@ -18,5 +18,21 @@
     "ts-node": "^8.10.2",
     "typescript": "^3.9.3"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GbookingLTD/medme-conference-ts-sdk.git"
+  },
+  "keywords": [
+    "medme",
+    "meeting",
+    "conference"
+  ],
+  "bugs": {
+    "url": "https://github.com/GbookingLTD/medme-conference-ts-sdk/issues"
+  },
+  "homepage": "https://github.com/GbookingLTD/medme-conference-ts-sdk#readme"
 }
