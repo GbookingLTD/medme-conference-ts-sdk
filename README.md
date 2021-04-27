@@ -28,30 +28,30 @@ MedMe Conference SDK предполагает работу с сервером �
 1. Вставить в HTML ссылку через тег `script`
 
 ````html
-<script src="https://unpkg.com/@medme/mmconf-ts-sdk@1.0.0/mmconf.min.js"></script>
+<script src="https://unpkg.com/@medme/mmconf-ts-sdk@1.0.1/mmconf.min.js"></script>
 ````
 
 2. Клонировать этот репозиторий 
 
 ````bash
-git clone https://github.com/GbookingLTD/1.0/medme-conference-ts-sdk.git
+git clone https://github.com/GbookingLTD/1.0.1/medme-conference-ts-sdk.git
 ````
 
 3. Скачать архив исходного кода и разархивировать
 
 ````bash
-wget  https://github.com/GbookingLTD/medme-conference-ts-sdk/archive/refs/tags/v1.0.tar.gz -O mmconf-ts-sdk-v1.0.tar.gz
-tar -xzvf mmconf-ts-sdk-v1.0.tar.gz
+wget  https://github.com/GbookingLTD/medme-conference-ts-sdk/archive/refs/tags/v1.0.1.tar.gz -O mmconf-ts-sdk-v1.0.tar.gz
+tar -xzvf mmconf-ts-sdk-v1.0.1.tar.gz
 ````
 
 4. Использовать npm или yarn
 
 ````bash
-npm i @medme/mmconf-ts-sdk@1.0
+npm i @medme/mmconf-ts-sdk@1.0.1
 ````
 
 ````bash
-yarn add @medme/mmconf-ts-sdk@1.0
+yarn add @medme/mmconf-ts-sdk@1.0.1
 ````
 
 Используйте в примерах выше нужный вам номер версии.
@@ -63,7 +63,6 @@ yarn add @medme/mmconf-ts-sdk@1.0
 ````bash
 npm i typescript --save-dev
 sudo npm i -g webpack webpack-cli 
-npm i javascript-obfuscator webpack-obfuscator --save-dev
 ````
 
 1. Настройте окружение в файле `medme/env.ts`
