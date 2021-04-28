@@ -2,7 +2,7 @@
 MedMe Conference UX logic
  */
 
-import {ConferenceRolesEnum, ConferenceStatusesEnum, IConferenceInfo, LanguageListEnum} from "./types/conference";
+import {ConferenceRolesEnum, ConferenceStatusesEnum, IConferenceInfo, IService, LanguageListEnum} from "./types/conference";
 import {
     ConferenceAccessAPI,
     IConferenceDurations,
@@ -11,6 +11,10 @@ import {
 } from "./index";
 import {APIError} from "./httpRequest";
 import {ErrorStatuses} from "./statuses";
+import {l10n} from "../lang/index"
+import * as env from "../env";
+import moment = require("moment");
+import {JitsiMeetExternalAPI} from "../jitsi-meet"
 
 /**
  * Блоки интерфейса.
@@ -220,6 +224,8 @@ export interface IFinishScreen extends IScreen {
 export interface IStartedScreen extends IScreen {
     conference: IConferenceInfo;
     userRole: ConferenceRolesEnum;
+    userId: string;
+    accessToken: string;
     confInfoBlock: IConferenceInfoBlock;
     specialistHelpBlock: ISpecialistHelpBlock;
     jitsiMeetBlock: IJitsiMeetBlock;
@@ -451,4 +457,108 @@ export function timer(confInfo, timer) {
     }
 
     return _this;
+}
+
+export type ConferenceEventFn = () => void;
+
+export interface IConferenceConfig {
+    lang: LanguageListEnum;
+    jitsiDomain: string;
+    l10n: {
+        dateTime: {
+            formatFull: string;
+        },
+        guest: string;
+        specialist: string;
+        client: string;
+    },
+    onJoined: ConferenceEventFn;
+    onLeft: ConferenceEventFn;
+}
+
+export enum VerticalEnum {
+    general = 'general',
+    medicine = 'medicine',
+};
+
+export function initConfConfigL10n(confConfig: IConferenceConfig, vertical: VerticalEnum) {
+    const lang = confConfig.lang;
+    confConfig.l10n = {
+        dateTime: {
+            formatFull: l10n[lang].dateTime.formatFull
+        },
+        guest: l10n[lang][vertical].guest,
+        specialist: l10n[lang][vertical].specialist,
+        client: l10n[lang][vertical].client,
+    };
+}
+
+let joined: boolean = false;
+
+export function openConference(conferenceAccessAPI: ConferenceAccessAPI, uxScreen: IStartedScreen, confConfig: IConferenceConfig) {
+    const conferenceToken = uxScreen.conferenceToken;
+    const accessToken = uxScreen.accessToken;
+    const confInfo = uxScreen.conference;
+    const userId = uxScreen.userId;
+    
+    const curLang = confConfig.lang;
+    const domain = confConfig.jitsiDomain || env.JITSI_DOMAIN;
+
+    const text = confConfig.l10n;
+
+    confInfo.services.forEach(function (s: IService) {
+        s.l10n_name = s.name.find(function (n) {
+            return n.lang === curLang;
+        });
+        if (!s.l10n_name && s.name && s.name.length)
+            s.l10n_name = s.name[0]
+    })
+
+    const subject = confInfo.services.map((s) => s.l10n_name.text).join(', ') + ', ' +
+        moment(confInfo.scheduledStart).format(text.dateTime.formatFull);
+
+    // find who I am
+    let whoIAm;
+    if (uxScreen.userRole === ConferenceRolesEnum.Specialist)
+        whoIAm = confInfo.specialists.find((s) => s.id === userId)
+    else
+        whoIAm = confInfo.clients.find((c) => c.id === userId)
+
+    let displayName;
+    if (whoIAm)
+        displayName = (whoIAm.profession ||
+            (uxScreen.userRole === ConferenceRolesEnum.Specialist ? text.specialist : text.client)) + ', ' +
+            whoIAm.name + ' ' + whoIAm.middleName + ' ' + whoIAm.surname;
+    else
+        displayName = text.guest;
+
+    const options = {
+        roomName: conferenceToken,
+        parentNode: document.getElementById('content'),
+        configOverwrite: { defaultLanguage: curLang.substr(0, 2), lang: curLang.substr(0, 2) },
+        interfaceConfigOverwrite: { defaultLanguage: curLang.substr(0, 2), lang: curLang.substr(0, 2) },
+        userInfo: {}
+    };
+
+    const api = new JitsiMeetExternalAPI(domain, options);
+    api.executeCommand('subject', subject);
+    api.executeCommand('displayName', displayName);
+
+    api.on('videoConferenceLeft', function (ev) {
+        console.warn('videoConferenceLeft', ev)
+        confConfig.onLeft && confConfig.onLeft();
+        if (joined) {
+            conferenceAccessAPI.leave(accessToken);
+            joined = false;
+            location.reload()
+        }
+    })
+
+    api.on('videoConferenceJoined', function (ev) {
+        confConfig.onJoined && confConfig.onJoined();
+        if (!joined) {
+            conferenceAccessAPI.join(accessToken);
+            joined = true;
+        }
+    })
 }

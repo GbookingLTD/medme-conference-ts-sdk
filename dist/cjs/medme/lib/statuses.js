@@ -34,3 +34,4 @@ var ErrorStatuses;
     ErrorStatuses["ConferenceWrongStatusChange"] = "CONFERENCE_WRONG_STATUS_CHANGE";
     ErrorStatuses["RestoreFastTimedOut"] = "RESTORE_FAST_TIMED_OUT";
 })(ErrorStatuses = exports.ErrorStatuses || (exports.ErrorStatuses = {}));
+//# sourceMappingURL=statuses.js.map

@@ -47,6 +47,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 define("medme/lib/statuses", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -88,11 +110,12 @@ define("medme/lib/statuses", ["require", "exports"], function (require, exports)
 define("medme/env", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.REQUEST_DEBUG = exports.APIKEY = exports.CONFERENCE_WS_ENDPOINT = exports.CONFERENCE_ENDPOINT = void 0;
+    exports.JITSI_DOMAIN = exports.REQUEST_DEBUG = exports.APIKEY = exports.CONFERENCE_WS_ENDPOINT = exports.CONFERENCE_ENDPOINT = void 0;
     exports.CONFERENCE_ENDPOINT = "http://localhost:3000/meets/v1";
     exports.CONFERENCE_WS_ENDPOINT = "ws://localhost:3333";
     exports.APIKEY = "dfghdshrqweo5y23984wdrty5e3w4q";
     exports.REQUEST_DEBUG = true;
+    exports.JITSI_DOMAIN = "localhost:8888";
 });
 define("medme/lib/httpRequest", ["require", "exports", "cross-fetch", "medme/lib/statuses", "medme/env"], function (require, exports, cross_fetch_1, statuses_1, env_1) {
     "use strict";
@@ -452,6 +475,7 @@ define("medme/lib/types/index", ["require", "exports", "medme/lib/types/conferen
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.conference = void 0;
+    conference = __importStar(conference);
     exports.conference = conference;
 });
 define("medme/lib/sock", ["require", "exports"], function (require, exports) {
@@ -521,10 +545,566 @@ define("medme/lib/sock", ["require", "exports"], function (require, exports) {
     }());
     exports.ConferenceSock = ConferenceSock;
 });
-define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "medme/lib/httpRequest", "medme/lib/statuses"], function (require, exports, conference_1, httpRequest_2, statuses_2) {
+define("medme/lang/date-time-en", [], {
+    "formatFull": "dd. DD MMM YYYY, H:mm",
+    "formatTimeShort": "HH:mm",
+    "formatDurationAbbrev": ["d", "h", "min", "sec"]
+});
+define("medme/lang/en-en", [], {
+    "document_title_prefix": "MedMe Meets | ",
+    "conference_preload_text": "please wait...",
+    "specialist": "specialist",
+    "specialists": "specialists",
+    "services": "services",
+    "service": "service",
+    "clients": "clients",
+    "client": "client",
+    "guest": "Guest",
+    "help_link": "Help",
+    "common": {
+        "title": "Doctor's appointments online",
+        "remained_duration": "remained",
+        "real_start": "start time",
+        "real_end": "end time"
+    },
+    "404": {
+        "title": "not found"
+    },
+    "401": {
+        "title": "access denied"
+    },
+    "pending_client": {
+        "title": "The meeting hasn't started yet",
+        "hint1": "We will send you an invitation 10 minutes before the reception starts",
+        "hint2": "Please stay in touch at this time.",
+        "conf_info_link": "information about meeting"
+    },
+    "pending_specialist": {
+        "title": "The meeting hasn't started yet",
+        "button": "Invite a client to an appointment",
+        "button_open": "Open meet",
+        "cancel_button": "Cancel the appointment",
+        "hint1": "Participants of the video conference will be able to log in to it",
+        "hint2": "If you or a client can't make an appointment, you can cancel it",
+        "conf_info_link": "information about meeting"
+    },
+    "join_client": {
+        "title": "Join a video conference",
+        "button": "Go to the reception",
+        "hint": "Click to start an appointment with your specialist",
+        "conf_info_link": "information about meeting"
+    },
+    "join_specialist": {
+        "title": "Join a video conference",
+        "button": "Join to the meeting",
+        "hint": "Click to start a meeting with a client",
+        "conf_info_link": "information about meeting"
+    },
+    "conference_info_block": {
+        "title": "Information about this conference",
+        "scheduled_start": "scheduled start time",
+        "scheduled_duration": "scheduled duration",
+        "real_duration": "duration",
+        "specialist": "specialist",
+        "specialists": "specialists",
+        "services": "services",
+        "service": "service",
+        "clients": "clients",
+        "client": "client",
+        "cancelled_during_several_minutes": "The meeting will be completed automatically in the next few minutes",
+        "finish_button": "Finish",
+        "leave_meet": "Leave"
+    },
+    "finish_screen": {
+        "title": "Meeting is already complete",
+        "hint1": "You can restore meeting within 3 minutes by clicking the button",
+        "restore_button": "To resume receiving",
+        "conf_info_link": "information about meeting"
+    },
+    "pause_block": {
+        "title": "Meeting on pause"
+    },
+    "cancelled_screen": {
+        "title": "Meeting canceled",
+        "client_hint0": "Your specialist may not be able to see you at this time. ",
+        "client_hint1": "You can make an appointment online for a different time or with a different specialist.",
+        "hint1": "You can restore meeting within 3 minutes by clicking the button",
+        "restore_button": "Resume meeting",
+        "conf_info_link": "information about meeting"
+    }
+});
+define("medme/lang/en-medicine", [], {
+    "document_title_prefix": "MedMe Meets | ",
+    "conference_preload_text": "please wait...",
+    "specialist": "doctor",
+    "specialists": "doctors",
+    "services": "services",
+    "service": "service",
+    "clients": "patients",
+    "client": "patient",
+    "guest": "Guest",
+    "help_link": "Help",
+    "common": {
+        "title": "Doctor's appointments online",
+        "remained_duration": "remained",
+        "real_start": "start time",
+        "real_end": "end time"
+    },
+    "404": {
+        "title": "not found"
+    },
+    "401": {
+        "title": "access denied"
+    },
+    "pending_client": {
+        "title": "The meeting hasn't started yet",
+        "hint1": "We will send you an invitation 10 minutes before the reception starts",
+        "hint2": "Please stay in touch at this time.",
+        "conf_info_link": "information about meeting"
+    },
+    "pending_specialist": {
+        "title": "The meeting hasn't started yet",
+        "button": "Invite a patient to an appointment",
+        "button_open": "Open meet",
+        "cancel_button": "Cancel the appointment",
+        "hint1": "Participants of the video conference will be able to log in to it",
+        "hint2": "If you or a client can't make an appointment, you can cancel it",
+        "conf_info_link": "information about meeting"
+    },
+    "join_client": {
+        "title": "Join a video conference",
+        "button": "Go to the reception",
+        "hint": "Click to start an appointment with your doctor",
+        "conf_info_link": "information about meeting"
+    },
+    "join_specialist": {
+        "title": "Join a video conference",
+        "button": "Join to the meeting",
+        "hint": "Click to start a meeting with a patient",
+        "conf_info_link": "information about meeting"
+    },
+    "conference_info_block": {
+        "title": "Information about this conference",
+        "scheduled_start": "scheduled start time",
+        "scheduled_duration": "scheduled duration",
+        "real_duration": "duration",
+        "specialist": "doctor",
+        "specialists": "doctors",
+        "services": "services",
+        "service": "service",
+        "clients": "patients",
+        "client": "patient",
+        "cancelled_during_several_minutes": "The meeting will be completed automatically in the next few minutes",
+        "finish_button": "Finish",
+        "leave_meet": "Leave"
+    },
+    "finish_screen": {
+        "title": "Meeting is already complete",
+        "hint1": "You can restore meeting within 3 minutes by clicking the button",
+        "restore_button": "To resume receiving",
+        "conf_info_link": "information about meeting"
+    },
+    "pause_block": {
+        "title": "Meeting on pause"
+    },
+    "cancelled_screen": {
+        "title": "Meeting canceled",
+        "client_hint0": "Your doctor may not be able to see you at this time. ",
+        "client_hint1": "You can make an appointment online for a different time or with a different specialist.",
+        "hint1": "You can restore meeting within 3 minutes by clicking the button",
+        "restore_button": "Resume meeting",
+        "conf_info_link": "information about meeting"
+    }
+});
+define("medme/lang/date-time-he", [], {
+    "formatFull": "dd. DD MMM YYYY, H:mm",
+    "formatTimeShort": "HH:mm",
+    "formatDurationAbbrev": ["יום", "שעה", "דק'", "שנ'"]
+});
+define("medme/lang/he-he", [], {
+    "document_title_prefix": "MedMe Meets | ",
+    "conference_preload_text": "הפגישה בטעינה...",
+    "specialist": "מטפל",
+    "specialists": "מטפלים",
+    "services": "שרותים",
+    "service": "שרות",
+    "clients": "מטופלים",
+    "client": "מטופל",
+    "guest": "אורח",
+    "help_link": "Help",
+    "common": {
+        "title": "MedMe Meets",
+        "remained_duration": "עד סוף המפגש נשאר",
+        "real_start": "זמן התחלה",
+        "real_end": "זמן סיום"
+    },
+    "404": {
+        "title": "המפגש לא נמצא"
+    },
+    "401": {
+        "title": "אין גישה"
+    },
+    "pending_client": {
+        "title": "הפגישה טרם התחילה",
+        "hint1": "תקבלו לינק למפגש 10 דק' לפני תחילתו",
+        "hint2": "אנא תהיו זמינים",
+        "conf_info_link": "מידע על המפגש"
+    },
+    "pending_specialist": {
+        "title": "הפגישה טרם התחילה",
+        "button": "להזמין מטופל למפגש",
+        "button_open": "לפתוח פגישה",
+        "cancel_button": "לבטל פגישה",
+        "hint1": "למשתתפי המפגש תהיה אפשרות להתחבר",
+        "hint2": "אם המטופל לא מצליח להתחבר ניתן לבטל את הפגישה",
+        "conf_info_link": "מידע על המפגש"
+    },
+    "join_client": {
+        "title": "להתחבר לפגישה",
+        "button": "להיכנס לפגישה",
+        "hint": "נא ללחוץ על מנת להתחיל",
+        "conf_info_link": "מידע על המפגש"
+    },
+    "join_specialist": {
+        "title": "להתחבר לפגישה",
+        "button": "להיכנס לפגישה",
+        "hint": "נא ללחוץ על מנת להתחיל",
+        "conf_info_link": "מידע על המפגש"
+    },
+    "conference_info_block": {
+        "title": "מידע על המפגש",
+        "scheduled_start": "זמן התחלה מתוכנן",
+        "scheduled_duration": "זמן סיום מתוכנן",
+        "real_duration": "משך הפגיזה",
+        "specialist": "מטפל",
+        "specialists": "מטפלים",
+        "services": "שרותים",
+        "service": "שרות",
+        "clients": "מטופלים",
+        "client": "מטופל",
+        "cancelled_during_several_minutes": "הפגישה תסתיים בעוד כמה דקות",
+        "finish_button": "לסיים",
+        "leave_meet": "לעזוב את הפגיזה"
+    },
+    "finish_screen": {
+        "title": "הפגישה הסתיימה",
+        "hint1": "אתם יכולים להתחבר לפגישה שנית במשך 3 דקות הקרובות על ידי לחיצה על כפתור",
+        "restore_button": "לחדש פגישה",
+        "conf_info_link": "מידע על הפגישה"
+    },
+    "pause_block": {
+        "title": "הפגישה מעצרה"
+    },
+    "cancelled_screen": {
+        "title": "הפגישה בוטלה",
+        "client_hint0": "כנראה המטפל לא יכול לקבל אתכם כעת ",
+        "client_hint1": "ניתן להירשם לזמן אחר",
+        "hint1": " אתם יכולים להתחבר לפגישה שנית במשך 3 דקות הקרובות על ידי לחיצה על כפתור ",
+        "restore_button": "לחדש פגישה",
+        "conf_info_link": "מידע על המפגש"
+    }
+});
+define("medme/lang/he-medicine", [], {
+    "document_title_prefix": "MedMe Meets | ",
+    "conference_preload_text": "הפגישה בטעינה...",
+    "specialist": "מטפל",
+    "specialists": "מטפלים",
+    "services": "שרותים",
+    "service": "שרות",
+    "clients": "מטופלים",
+    "client": "מטופל",
+    "guest": "אורח",
+    "help_link": "Help",
+    "common": {
+        "title": "MedMe Meets",
+        "remained_duration": "עד סוף המפגש נשאר",
+        "real_start": "זמן התחלה",
+        "real_end": "זמן סיום"
+    },
+    "404": {
+        "title": "המפגש לא נמצא"
+    },
+    "401": {
+        "title": "אין גישה"
+    },
+    "pending_client": {
+        "title": "הפגישה טרם התחילה",
+        "hint1": "תקבלו לינק למפגש 10 דק' לפני תחילתו",
+        "hint2": "אנא תהיו זמינים",
+        "conf_info_link": "מידע על המפגש"
+    },
+    "pending_specialist": {
+        "title": "הפגישה טרם התחילה",
+        "button": "להזמין מטופל למפגש",
+        "button_open": "לפתוח פגישה",
+        "cancel_button": "לבטל פגישה",
+        "hint1": "למשתתפי המפגש תהיה אפשרות להתחבר",
+        "hint2": "אם המטופל לא מצליח להתחבר ניתן לבטל את הפגישה",
+        "conf_info_link": "מידע על המפגש"
+    },
+    "join_client": {
+        "title": "להתחבר לפגישה",
+        "button": "להיכנס לפגישה",
+        "hint": "נא ללחוץ על מנת להתחיל",
+        "conf_info_link": "מידע על המפגש"
+    },
+    "join_specialist": {
+        "title": "להתחבר לפגישה",
+        "button": "להיכנס לפגישה",
+        "hint": "נא ללחוץ על מנת להתחיל",
+        "conf_info_link": "מידע על המפגש"
+    },
+    "conference_info_block": {
+        "title": "מידע על המפגש",
+        "scheduled_start": "זמן התחלה מתוכנן",
+        "scheduled_duration": "זמן סיום מתוכנן",
+        "real_duration": "משך הפגיזה",
+        "specialist": "מטפל",
+        "specialists": "מטפלים",
+        "services": "שרותים",
+        "service": "שרות",
+        "clients": "מטופלים",
+        "client": "מטופל",
+        "cancelled_during_several_minutes": "הפגישה תסתיים בעוד כמה דקות",
+        "finish_button": "לסיים",
+        "leave_meet": "לעזוב את הפגיזה"
+    },
+    "finish_screen": {
+        "title": "הפגישה הסתיימה",
+        "hint1": "אתם יכולים להתחבר לפגישה שנית במשך 3 דקות הקרובות על ידי לחיצה על כפתור",
+        "restore_button": "לחדש פגישה",
+        "conf_info_link": "מידע על הפגישה"
+    },
+    "pause_block": {
+        "title": "הפגישה מעצרה"
+    },
+    "cancelled_screen": {
+        "title": "הפגישה בוטלה",
+        "client_hint0": "כנראה המטפל לא יכול לקבל אתכם כעת ",
+        "client_hint1": "ניתן להירשם לזמן אחר",
+        "hint1": " אתם יכולים להתחבר לפגישה שנית במשך 3 דקות הקרובות על ידי לחיצה על כפתור ",
+        "restore_button": "לחדש פגישה",
+        "conf_info_link": "מידע על המפגש"
+    }
+});
+define("medme/lang/date-time-ru", [], {
+    "formatFull": "dd. DD MMM YYYY, H:mm",
+    "formatTimeShort": "HH:mm",
+    "formatDurationAbbrev": ["д", "ч", "мин", "сек"]
+});
+define("medme/lang/ru-ru", [], {
+    "document_title_prefix": "MedMe Meets | ",
+    "conference_preload_text": "идет подготовка...",
+    "specialist": "специалист",
+    "specialists": "специалисты",
+    "services": "услуги",
+    "service": "услуга",
+    "clients": "клиенты",
+    "client": "клиент",
+    "guest": "Гость",
+    "help_link": "Помощь",
+    "common": {
+        "title": "Приём к специалисту онлайн",
+        "remained_duration": "осталось времени",
+        "real_start": "время начала",
+        "real_end": "время окончания"
+    },
+    "404": {
+        "title": "приём не найден"
+    },
+    "401": {
+        "title": "нет доступа"
+    },
+    "pending_client": {
+        "title": "Приём ещё не начат",
+        "hint1": "Мы вышлем вам приглашение за 10 минут до начала приёма.",
+        "hint2": "Пожалуйста, будьте на связи в этот момент.",
+        "conf_info_link": "информация о приёме"
+    },
+    "pending_specialist": {
+        "title": "Приём ещё не начат",
+        "button": "Пригласить клиента на приём",
+        "button_open": "Открыть приём",
+        "cancel_button": "Отменить приём",
+        "hint1": "Участники видеоконференции получат возможность зайти на неё",
+        "hint2": "Если у вас или клиента не получается прийти на приём, вы можете отменить его",
+        "conf_info_link": "информация о приёме"
+    },
+    "join_client": {
+        "title": "Присоединиться к видеоконференции",
+        "button": "Зайти на приём",
+        "hint": "Нажмите, чтобы начать встречу со специалистом",
+        "conf_info_link": "информация о приёме"
+    },
+    "join_specialist": {
+        "title": "Присоединиться к видеоконференции",
+        "button": "Зайти на приём",
+        "hint": "Нажмите, чтобы начать встречу с пациентом",
+        "conf_info_link": "информация о приёме"
+    },
+    "conference_info_block": {
+        "title": "Информация о приёме",
+        "scheduled_start": "запланированное время начала",
+        "scheduled_duration": "запланированная длительность",
+        "real_duration": "длительность",
+        "specialist": "специалист",
+        "specialists": "специалисты",
+        "services": "услуги",
+        "service": "услуга",
+        "clients": "клиенты",
+        "client": "клиент",
+        "cancelled_during_several_minutes": "Встреча будет завершена автоматически в ближайшие несколько минут",
+        "finish_button": "Завершить",
+        "leave_meet": "Покинуть приём"
+    },
+    "finish_screen": {
+        "title": "Приём завершён",
+        "hint1": "Вы можете восстановить приём в течение 3-x минут, нажав по кнопке",
+        "restore_button": "Восстановить приём",
+        "conf_info_link": "информация о приёме"
+    },
+    "pause_block": {
+        "title": "Приём на паузе"
+    },
+    "cancelled_screen": {
+        "title": "Приём отменён",
+        "client_hint0": "Вероятно врач не может вас принять в это время. ",
+        "client_hint1": "Вы можете записаться онлайн на другое время или к другому специалисту.",
+        "hint1": "Вы можете восстановить приём в течение 3-x минут, нажав по кнопке",
+        "restore_button": "Восстановить приём",
+        "conf_info_link": "информация о приёме"
+    }
+});
+define("medme/lang/ru-medicine", [], {
+    "document_title_prefix": "MedMe Meets | ",
+    "conference_preload_text": "идет подготовка...",
+    "specialist": "врач",
+    "specialists": "врачи",
+    "services": "услуги",
+    "service": "услуга",
+    "clients": "пациенты",
+    "client": "пациент",
+    "guest": "Гость",
+    "help_link": "Помощь",
+    "common": {
+        "title": "MedMe Meets",
+        "remained_duration": "осталось времени",
+        "real_start": "время начала",
+        "real_end": "время окончания"
+    },
+    "404": {
+        "title": "Приём не найден"
+    },
+    "401": {
+        "title": "Нет доступа"
+    },
+    "pending_client": {
+        "title": "Приём ещё не начат",
+        "hint1": "Мы вышлем вам приглашение за 10 минут до начала приёма.",
+        "hint2": "Пожалуйста, будьте на связи в этот момент.",
+        "conf_info_link": "информация о приёме"
+    },
+    "pending_specialist": {
+        "title": "Приём ещё не начат",
+        "button": "Пригласить пациента на приём",
+        "button_open": "Открыть приём",
+        "cancel_button": "Отменить приём",
+        "hint1": "Участники видеоконференции получат возможность зайти на неё",
+        "hint2": "Если у вас или клиента не получается прийти на приём, вы можете отменить его",
+        "conf_info_link": "информация о приёме"
+    },
+    "join_client": {
+        "title": "Присоединиться к видеоконференции",
+        "button": "Зайти на приём",
+        "hint": "Нажмите, чтобы начать встречу с врачом",
+        "conf_info_link": "информация о приёме"
+    },
+    "join_specialist": {
+        "title": "Присоединиться к видеоконференции",
+        "button": "Зайти на приём",
+        "hint": "Нажмите, чтобы начать встречу с пациентом",
+        "conf_info_link": "информация о приёме"
+    },
+    "conference_info_block": {
+        "title": "Информация о приёме",
+        "scheduled_start": "запланированное время начала",
+        "scheduled_duration": "запланированная длительность",
+        "real_duration": "длительность",
+        "specialist": "врач",
+        "specialists": "врачи",
+        "services": "услуги",
+        "service": "услуга",
+        "clients": "пациенты",
+        "client": "пациент",
+        "cancelled_during_several_minutes": "Встреча будет завершена автоматически в ближайшие несколько минут",
+        "finish_button": "Завершить",
+        "leave_meet": "Покинуть приём"
+    },
+    "finish_screen": {
+        "title": "Приём завершён",
+        "hint1": "Вы можете восстановить приём в течение 3-x минут, нажав по кнопке",
+        "restore_button": "Восстановить приём",
+        "conf_info_link": "информация о приёме"
+    },
+    "pause_block": {
+        "title": "Приём на паузе"
+    },
+    "cancelled_screen": {
+        "title": "Приём отменён",
+        "client_hint0": "Вероятно врач не может вас принять в это время. ",
+        "client_hint1": "Вы можете записаться онлайн на другое время или к другому специалисту.",
+        "hint1": "Вы можете восстановить приём в течение 3-x минут, нажав по кнопке",
+        "restore_button": "Восстановить приём",
+        "conf_info_link": "информация о приёме"
+    }
+});
+define("medme/lang/lang-list", [], {
+    "list": [
+        {
+            "key": "ru-ru",
+            "alias": "Ru"
+        },
+        {
+            "key": "en-en",
+            "alias": "En"
+        },
+        {
+            "key": "he-he",
+            "alias": "He"
+        }
+    ]
+});
+define("medme/lang/index", ["require", "exports", "medme/lang/date-time-en", "medme/lang/en-en", "medme/lang/en-medicine", "medme/lang/date-time-he", "medme/lang/he-he", "medme/lang/he-medicine", "medme/lang/date-time-ru", "medme/lang/ru-ru", "medme/lang/ru-medicine", "medme/lang/lang-list"], function (require, exports, date_time_en_json_1, en_en_json_1, en_medicine_json_1, date_time_he_json_1, he_he_json_1, he_medicine_json_1, date_time_ru_json_1, ru_ru_json_1, ru_medicine_json_1, lang_list_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.timer = exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
+    exports.l10n = void 0;
+    date_time_en_json_1 = __importDefault(date_time_en_json_1);
+    en_en_json_1 = __importDefault(en_en_json_1);
+    en_medicine_json_1 = __importDefault(en_medicine_json_1);
+    date_time_he_json_1 = __importDefault(date_time_he_json_1);
+    he_he_json_1 = __importDefault(he_he_json_1);
+    he_medicine_json_1 = __importDefault(he_medicine_json_1);
+    date_time_ru_json_1 = __importDefault(date_time_ru_json_1);
+    ru_ru_json_1 = __importDefault(ru_ru_json_1);
+    ru_medicine_json_1 = __importDefault(ru_medicine_json_1);
+    lang_list_json_1 = __importDefault(lang_list_json_1);
+    exports.l10n = { ru: {}, he: {}, en: {} };
+    exports.l10n.en.dateTime = date_time_en_json_1.default;
+    exports.l10n.en.general = en_en_json_1.default;
+    exports.l10n.en.medicine = en_medicine_json_1.default;
+    exports.l10n.he.dateTime = date_time_he_json_1.default;
+    exports.l10n.he.general = he_he_json_1.default;
+    exports.l10n.he.medicine = he_medicine_json_1.default;
+    exports.l10n.ru.dateTime = date_time_ru_json_1.default;
+    exports.l10n.ru.general = ru_ru_json_1.default;
+    exports.l10n.ru.medicine = ru_medicine_json_1.default;
+    exports.l10n.langList = lang_list_json_1.default;
+});
+define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lang/index", "medme/env", "moment", "../jitsi-meet"], function (require, exports, conference_1, httpRequest_2, statuses_2, index_1, env, moment, jitsi_meet_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.openConference = exports.initConfConfigL10n = exports.VerticalEnum = exports.timer = exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
+    env = __importStar(env);
     var BlockEnum;
     (function (BlockEnum) {
         BlockEnum["Languages"] = "langs";
@@ -758,11 +1338,94 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
         return _this;
     }
     exports.timer = timer;
+    var VerticalEnum;
+    (function (VerticalEnum) {
+        VerticalEnum["general"] = "general";
+        VerticalEnum["medicine"] = "medicine";
+    })(VerticalEnum = exports.VerticalEnum || (exports.VerticalEnum = {}));
+    ;
+    function initConfConfigL10n(confConfig, vertical) {
+        var lang = confConfig.lang;
+        confConfig.l10n = {
+            dateTime: {
+                formatFull: index_1.l10n[lang].dateTime.formatFull
+            },
+            guest: index_1.l10n[lang][vertical].guest,
+            specialist: index_1.l10n[lang][vertical].specialist,
+            client: index_1.l10n[lang][vertical].client,
+        };
+    }
+    exports.initConfConfigL10n = initConfConfigL10n;
+    var joined = false;
+    function openConference(conferenceAccessAPI, uxScreen, confConfig) {
+        var conferenceToken = uxScreen.conferenceToken;
+        var accessToken = uxScreen.accessToken;
+        var confInfo = uxScreen.conference;
+        var userId = uxScreen.userId;
+        var curLang = confConfig.lang;
+        var domain = confConfig.jitsiDomain || env.JITSI_DOMAIN;
+        var text = confConfig.l10n;
+        confInfo.services.forEach(function (s) {
+            s.l10n_name = s.name.find(function (n) {
+                return n.lang === curLang;
+            });
+            if (!s.l10n_name && s.name && s.name.length)
+                s.l10n_name = s.name[0];
+        });
+        var subject = confInfo.services.map(function (s) { return s.l10n_name.text; }).join(', ') + ', ' +
+            moment(confInfo.scheduledStart).format(text.dateTime.formatFull);
+        var whoIAm;
+        if (uxScreen.userRole === conference_1.ConferenceRolesEnum.Specialist)
+            whoIAm = confInfo.specialists.find(function (s) { return s.id === userId; });
+        else
+            whoIAm = confInfo.clients.find(function (c) { return c.id === userId; });
+        var displayName;
+        if (whoIAm)
+            displayName = (whoIAm.profession ||
+                (uxScreen.userRole === conference_1.ConferenceRolesEnum.Specialist ? text.specialist : text.client)) + ', ' +
+                whoIAm.name + ' ' + whoIAm.middleName + ' ' + whoIAm.surname;
+        else
+            displayName = text.guest;
+        var options = {
+            roomName: conferenceToken,
+            parentNode: document.getElementById('content'),
+            configOverwrite: { defaultLanguage: curLang.substr(0, 2), lang: curLang.substr(0, 2) },
+            interfaceConfigOverwrite: { defaultLanguage: curLang.substr(0, 2), lang: curLang.substr(0, 2) },
+            userInfo: {}
+        };
+        var api = new jitsi_meet_1.JitsiMeetExternalAPI(domain, options);
+        api.executeCommand('subject', subject);
+        api.executeCommand('displayName', displayName);
+        api.on('videoConferenceLeft', function (ev) {
+            console.warn('videoConferenceLeft', ev);
+            confConfig.onLeft && confConfig.onLeft();
+            if (joined) {
+                conferenceAccessAPI.leave(accessToken);
+                joined = false;
+                location.reload();
+            }
+        });
+        api.on('videoConferenceJoined', function (ev) {
+            confConfig.onJoined && confConfig.onJoined();
+            if (!joined) {
+                conferenceAccessAPI.join(accessToken);
+                joined = true;
+            }
+        });
+    }
+    exports.openConference = openConference;
 });
 define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/sock", "medme/lib/ux", "medme/lib/sock"], function (require, exports, lib, env, request, statuses, types, sock, UX, sock_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.initWebSocketAPI = exports.initHttpAPI = exports.conferenceWebSocketAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.UX = exports.sock = exports.types = exports.statuses = exports.request = exports.env = exports.lib = void 0;
+    lib = __importStar(lib);
+    env = __importStar(env);
+    request = __importStar(request);
+    statuses = __importStar(statuses);
+    types = __importStar(types);
+    sock = __importStar(sock);
+    UX = __importStar(UX);
     exports.lib = lib;
     exports.env = env;
     exports.request = request;
@@ -781,3 +1444,4 @@ define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/li
     }
     exports.initWebSocketAPI = initWebSocketAPI;
 });
+//# sourceMappingURL=index.js.map

@@ -218,3 +218,4 @@ var ConferenceAccessAPI = (function () {
     return ConferenceAccessAPI;
 }());
 exports.ConferenceAccessAPI = ConferenceAccessAPI;
+//# sourceMappingURL=index.js.map

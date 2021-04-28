@@ -1,0 +1,6 @@
+{
+  "formatFull": "dd. DD MMM YYYY, H:mm",
+  "formatTimeShort": "HH:mm",
+  "formatDurationAbbrev": ["д", "ч", "мин", "сек"]
+
+}

@@ -1,7 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "declaration": true,
+    "module": "CommonJS",
+    "allowJs": false,
+    "sourceMap": true,
+    "rootDir": "./",
+    "declaration": false,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "newLine": "lf",
     "lib": [
       "ES2015.Promise",

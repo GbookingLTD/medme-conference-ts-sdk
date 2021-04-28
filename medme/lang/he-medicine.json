@@ -1,0 +1,95 @@
+{
+  "document_title_prefix": "MedMe Meets | ",
+  "conference_preload_text": "הפגישה בטעינה...",
+  "specialist": "מטפל",
+  "specialists": "מטפלים",
+  "services": "שרותים",
+  "service": "שרות",
+  "clients": "מטופלים",
+  "client": "מטופל",
+  "guest": "אורח",
+  "help_link": "Help",
+  "common": {
+    "title": "MedMe Meets",
+    "remained_duration": "עד סוף המפגש נשאר",
+    "real_start": "זמן התחלה",
+    "real_end": "זמן סיום"
+
+  },
+  "404": {
+    "title": "המפגש לא נמצא"
+  },
+  "401": {
+    "title": "אין גישה"
+  },
+
+  "pending_client": {
+    "title": "הפגישה טרם התחילה",
+    "hint1": "תקבלו לינק למפגש 10 דק' לפני תחילתו",
+    "hint2": "אנא תהיו זמינים",
+    "conf_info_link": "מידע על המפגש"
+
+  },
+
+  "pending_specialist": {
+    "title": "הפגישה טרם התחילה",
+    "button": "להזמין מטופל למפגש",
+    "button_open": "לפתוח פגישה",
+    "cancel_button": "לבטל פגישה",
+    "hint1": "למשתתפי המפגש תהיה אפשרות להתחבר",
+    "hint2": "אם המטופל לא מצליח להתחבר ניתן לבטל את הפגישה",
+    "conf_info_link": "מידע על המפגש"
+  },
+
+  "join_client": {
+    "title": "להתחבר לפגישה",
+    "button": "להיכנס לפגישה",
+    "hint": "נא ללחוץ על מנת להתחיל",
+    "conf_info_link": "מידע על המפגש"
+  },
+
+  "join_specialist": {
+    "title": "להתחבר לפגישה",
+    "button": "להיכנס לפגישה",
+    "hint": "נא ללחוץ על מנת להתחיל",
+    "conf_info_link": "מידע על המפגש"
+  },
+
+  "conference_info_block": {
+    "title": "מידע על המפגש",
+    "scheduled_start": "זמן התחלה מתוכנן",
+    "scheduled_duration": "זמן סיום מתוכנן",
+    "real_duration": "משך הפגיזה",
+    "specialist": "מטפל",
+    "specialists": "מטפלים",
+    "services": "שרותים",
+    "service": "שרות",
+    "clients": "מטופלים",
+    "client": "מטופל",
+    "cancelled_during_several_minutes": "הפגישה תסתיים בעוד כמה דקות",
+    "finish_button": "לסיים",
+    "leave_meet": "לעזוב את הפגיזה"
+  },
+
+  "finish_screen" : {
+    "title": "הפגישה הסתיימה",
+    "hint1": "אתם יכולים להתחבר לפגישה שנית במשך 3 דקות הקרובות על ידי לחיצה על כפתור",
+    "restore_button": "לחדש פגישה",
+    "conf_info_link": "מידע על הפגישה"
+  },
+
+  "pause_block": {
+    "title": "הפגישה מעצרה"
+  },
+
+  "cancelled_screen" : {
+    "title": "הפגישה בוטלה",
+    "client_hint0": "כנראה המטפל לא יכול לקבל אתכם כעת ",
+    "client_hint1": "ניתן להירשם לזמן אחר",
+
+    "hint1": " אתם יכולים להתחבר לפגישה שנית במשך 3 דקות הקרובות על ידי לחיצה על כפתור ",
+    "restore_button": "לחדש פגישה",
+    "conf_info_link": "מידע על המפגש"
+  }
+
+}

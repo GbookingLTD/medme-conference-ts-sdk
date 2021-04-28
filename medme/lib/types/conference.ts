@@ -72,7 +72,11 @@ export interface IService {
     name: {
         lang: LanguageListEnum;
         text: string;
-    }[]
+    }[],
+    l10n_name: {
+        lang: LanguageListEnum;
+        text: string;
+    };
 }
 
 /**

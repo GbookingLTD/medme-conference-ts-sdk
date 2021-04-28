@@ -1,0 +1,16 @@
+{
+  "list": [
+    {
+      "key": "ru-ru",
+      "alias": "Ru"
+    },
+    {
+      "key": "en-en",
+      "alias": "En"
+    },
+    {
+      "key": "he-he",
+      "alias": "He"
+    }
+  ]
+}

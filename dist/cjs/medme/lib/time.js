@@ -12,3 +12,4 @@ var TimeMs = (function () {
     return TimeMs;
 }());
 exports.TimeMs = TimeMs;
+//# sourceMappingURL=time.js.map

@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,10 +55,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.timer = exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
+exports.openConference = exports.initConfConfigL10n = exports.VerticalEnum = exports.timer = exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
 var conference_1 = require("./types/conference");
 var httpRequest_1 = require("./httpRequest");
 var statuses_1 = require("./statuses");
+var index_1 = require("../lang/index");
+var env = __importStar(require("../env"));
+var moment = require("moment");
+var jitsi_meet_1 = require("../jitsi-meet");
 var BlockEnum;
 (function (BlockEnum) {
     BlockEnum["Languages"] = "langs";
@@ -273,3 +296,80 @@ function timer(confInfo, timer) {
     return _this;
 }
 exports.timer = timer;
+var VerticalEnum;
+(function (VerticalEnum) {
+    VerticalEnum["general"] = "general";
+    VerticalEnum["medicine"] = "medicine";
+})(VerticalEnum = exports.VerticalEnum || (exports.VerticalEnum = {}));
+;
+function initConfConfigL10n(confConfig, vertical) {
+    var lang = confConfig.lang;
+    confConfig.l10n = {
+        dateTime: {
+            formatFull: index_1.l10n[lang].dateTime.formatFull
+        },
+        guest: index_1.l10n[lang][vertical].guest,
+        specialist: index_1.l10n[lang][vertical].specialist,
+        client: index_1.l10n[lang][vertical].client,
+    };
+}
+exports.initConfConfigL10n = initConfConfigL10n;
+var joined = false;
+function openConference(conferenceAccessAPI, uxScreen, confConfig) {
+    var conferenceToken = uxScreen.conferenceToken;
+    var accessToken = uxScreen.accessToken;
+    var confInfo = uxScreen.conference;
+    var userId = uxScreen.userId;
+    var curLang = confConfig.lang;
+    var domain = confConfig.jitsiDomain || env.JITSI_DOMAIN;
+    var text = confConfig.l10n;
+    confInfo.services.forEach(function (s) {
+        s.l10n_name = s.name.find(function (n) {
+            return n.lang === curLang;
+        });
+        if (!s.l10n_name && s.name && s.name.length)
+            s.l10n_name = s.name[0];
+    });
+    var subject = confInfo.services.map(function (s) { return s.l10n_name.text; }).join(', ') + ', ' +
+        moment(confInfo.scheduledStart).format(text.dateTime.formatFull);
+    var whoIAm;
+    if (uxScreen.userRole === conference_1.ConferenceRolesEnum.Specialist)
+        whoIAm = confInfo.specialists.find(function (s) { return s.id === userId; });
+    else
+        whoIAm = confInfo.clients.find(function (c) { return c.id === userId; });
+    var displayName;
+    if (whoIAm)
+        displayName = (whoIAm.profession ||
+            (uxScreen.userRole === conference_1.ConferenceRolesEnum.Specialist ? text.specialist : text.client)) + ', ' +
+            whoIAm.name + ' ' + whoIAm.middleName + ' ' + whoIAm.surname;
+    else
+        displayName = text.guest;
+    var options = {
+        roomName: conferenceToken,
+        parentNode: document.getElementById('content'),
+        configOverwrite: { defaultLanguage: curLang.substr(0, 2), lang: curLang.substr(0, 2) },
+        interfaceConfigOverwrite: { defaultLanguage: curLang.substr(0, 2), lang: curLang.substr(0, 2) },
+        userInfo: {}
+    };
+    var api = new jitsi_meet_1.JitsiMeetExternalAPI(domain, options);
+    api.executeCommand('subject', subject);
+    api.executeCommand('displayName', displayName);
+    api.on('videoConferenceLeft', function (ev) {
+        console.warn('videoConferenceLeft', ev);
+        confConfig.onLeft && confConfig.onLeft();
+        if (joined) {
+            conferenceAccessAPI.leave(accessToken);
+            joined = false;
+            location.reload();
+        }
+    });
+    api.on('videoConferenceJoined', function (ev) {
+        confConfig.onJoined && confConfig.onJoined();
+        if (!joined) {
+            conferenceAccessAPI.join(accessToken);
+            joined = true;
+        }
+    });
+}
+exports.openConference = openConference;
+//# sourceMappingURL=ux.js.map

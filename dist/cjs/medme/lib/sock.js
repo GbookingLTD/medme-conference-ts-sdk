@@ -63,3 +63,4 @@ var ConferenceSock = (function () {
     return ConferenceSock;
 }());
 exports.ConferenceSock = ConferenceSock;
+//# sourceMappingURL=sock.js.map

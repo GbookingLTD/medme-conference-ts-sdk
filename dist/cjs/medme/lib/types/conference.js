@@ -40,3 +40,4 @@ var ConferenceStatusesEnum;
     ConferenceStatusesEnum["CancelledAfterStart"] = "cancelled_after_start";
     ConferenceStatusesEnum["Finished"] = "finished";
 })(ConferenceStatusesEnum = exports.ConferenceStatusesEnum || (exports.ConferenceStatusesEnum = {}));
+//# sourceMappingURL=conference.js.map
