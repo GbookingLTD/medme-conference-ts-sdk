@@ -13,8 +13,10 @@ import {APIError} from "./httpRequest";
 import {ErrorStatuses} from "./statuses";
 import {l10n} from "../lang/index"
 import * as env from "../env";
-import moment = require("moment");
-import {JitsiMeetExternalAPI} from "../jitsi-meet"
+import moment from "moment";
+import {JitsiMeetExternalAPI} from "../3dparts/jitsi-meet"
+
+export {l10n};
 
 /**
  * Блоки интерфейса.
@@ -233,7 +235,7 @@ export interface IStartedScreen extends IScreen {
     timerBlock: IConferenceDurations;
 }
 
-type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen |
+export type ScreenType = (I4xxScreen | IPendingClientScreen | IPendingSpecialistScreen |
     IJoinClientScreen | IJoinSpecialistScreen | ICancelledScreen |
     IFinishScreen | IStartedScreen) & IScreen;
 

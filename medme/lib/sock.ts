@@ -1,7 +1,7 @@
 import {ConferenceStatusesEnum} from "./types/conference";
 
-export type ChangeConferenceStatusCallback = (newStatus: string) => {};
-export type ChangeConferenceInfoCallback = () => {};
+export type ChangeConferenceStatusCallback = (newStatus: string) => void;
+export type ChangeConferenceInfoCallback = () => void;
 
 export interface IConferenceSock {
     changeConferenceStatus(newStatus: ConferenceStatusesEnum);

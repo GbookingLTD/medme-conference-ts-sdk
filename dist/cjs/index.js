@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initWebSocketAPI = exports.initHttpAPI = exports.conferenceWebSocketAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.UX = exports.sock = exports.types = exports.statuses = exports.request = exports.env = exports.lib = void 0;
+exports.initWebSocketAPI = exports.initHttpAPI = exports.conferenceWebSocketAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.JML = exports.UX = exports.sock = exports.types = exports.statuses = exports.request = exports.env = exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = exports.lib = void 0;
 var lib = __importStar(require("./medme/lib/index"));
 exports.lib = lib;
 var env = __importStar(require("./medme/env"));
@@ -34,8 +34,14 @@ var sock = __importStar(require("./medme/lib/sock"));
 exports.sock = sock;
 var UX = __importStar(require("./medme/lib/ux"));
 exports.UX = UX;
+var JML = __importStar(require("./medme/lib/jmlib"));
+exports.JML = JML;
 var sock_1 = require("./medme/lib/sock");
 exports.default = lib;
+var ConferenceModifyAPI = lib.ConferenceModifyAPI;
+exports.ConferenceModifyAPI = ConferenceModifyAPI;
+var ConferenceAccessAPI = lib.ConferenceAccessAPI;
+exports.ConferenceAccessAPI = ConferenceAccessAPI;
 function initHttpAPI() {
     exports.conferenceModifyAPI = lib.ConferenceModifyAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);
     exports.conferenceAccessAPI = lib.ConferenceAccessAPI.createHttpAPI(env.CONFERENCE_ENDPOINT);

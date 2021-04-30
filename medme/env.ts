@@ -1,5 +1,8 @@
-export const CONFERENCE_ENDPOINT: string = "http://localhost:3000/meets/v1"
-export const CONFERENCE_WS_ENDPOINT: string = "ws://localhost:3333"
-export const APIKEY: string = "dfghdshrqweo5y23984wdrty5e3w4q"
+export const CONFERENCE_ENDPOINT: string = "http://apiv2.gbooking.ru/meets/v1"
+export const CONFERENCE_WS_ENDPOINT: string = "wss://apiv2.gbooking.ru/meets/v1/ws"
+export const APIKEY: string = "[:: Api_KEy ::]"
 export const REQUEST_DEBUG: boolean = true;
-export const JITSI_DOMAIN: string = "localhost:8888";
+
+export const JITSI_DOMAIN: string = "jitsi.mmconf.net";
+export const JITSI_MUC: string = "conference.jitsi.mmconf.net";
+export const JITSI_BOTH: string = "https://jitsi.mmconf.net/http-bind";

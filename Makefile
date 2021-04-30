@@ -1,30 +1,43 @@
-build: gen_lang_index build_cjs build_amd build_web copy_web_to_root
+build: gen_lang_index build_cjs build_amd build_es2015 build_web copy_web_to_root
 
 build_cjs: clear_cjs
-	tsc -p tsconfig.json --resolveJsonModule -m commonjs --removeComments --outDir dist/cjs
+	tsc -p tsconfig.json -m commonjs --removeComments --outDir dist/cjs
 
 build_amd: clear_amd
 	tsc -p tsconfig.json -m amd --removeComments --outfile dist/amd/index.js
 
-build_umd: clear_umd
-	tsc -p tsconfig.json -m umd --removeComments --outDir dist/umd
+build_es2015: clear_es2015
+	tsc -p tsconfig.json -m es2015 --removeComments --outDir dist/es2015
 
-build_web: clear_web
+build_web: build_webpack copy_web_to_root copy_web_to_app
+
+serve_app:
+	cd examples/app/public && python3.8 -m http.server 4000
+
+build_webpack: clear_web
 	webpack -c webpack.web.config.js
-	webpack -c webpack.web.min.config.js
+
+build_example_app:
+	webpack -c webpack.examples.app.config.js
 
 gen_lang_index:
 	node gen_lang_index.js > medme/lang/index.ts
 
 copy_web_to_root:
 	cp dist/web/index.all.js mmconf.js
-	cp dist/web/index.all.min.js mmconf.min.js
+	cp dist/web/index.all.js mmconf.js.map
+	cp dist/web/index.all.js mmconf.min.js
+	cp dist/web/index.all.js mmconf.min.js.map
+
+copy_web_to_app:
+	cp dist/web/index.all.js examples/app/public/mmconf.js
+	cp dist/web/index.all.js examples/app/public/mmconf.js.map
 
 clear_amd:
 	rm -rf dist/amd/*
 
-clear_umd:
-	rm -rf dist/umd/*
+clear_es2015:
+	rm -rf dist/es2015/*
 
 clear_cjs:
 	rm -rf dist/cjs/*

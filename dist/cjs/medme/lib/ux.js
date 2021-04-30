@@ -54,15 +54,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.openConference = exports.initConfConfigL10n = exports.VerticalEnum = exports.timer = exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = void 0;
+exports.openConference = exports.initConfConfigL10n = exports.VerticalEnum = exports.timer = exports.createScreen = exports._make4xxScreen = exports.createSpecialistHelpBlock = exports.createLanguagesBlock = exports.ScreenEnum = exports.createConferenceInfoBlock = exports.BlockEnum = exports.l10n = void 0;
 var conference_1 = require("./types/conference");
 var httpRequest_1 = require("./httpRequest");
 var statuses_1 = require("./statuses");
 var index_1 = require("../lang/index");
+Object.defineProperty(exports, "l10n", { enumerable: true, get: function () { return index_1.l10n; } });
 var env = __importStar(require("../env"));
-var moment = require("moment");
-var jitsi_meet_1 = require("../jitsi-meet");
+var moment_1 = __importDefault(require("moment"));
+var jitsi_meet_1 = require("../3dparts/jitsi-meet");
 var BlockEnum;
 (function (BlockEnum) {
     BlockEnum["Languages"] = "langs";
@@ -331,7 +335,7 @@ function openConference(conferenceAccessAPI, uxScreen, confConfig) {
             s.l10n_name = s.name[0];
     });
     var subject = confInfo.services.map(function (s) { return s.l10n_name.text; }).join(', ') + ', ' +
-        moment(confInfo.scheduledStart).format(text.dateTime.formatFull);
+        moment_1.default(confInfo.scheduledStart).format(text.dateTime.formatFull);
     var whoIAm;
     if (uxScreen.userRole === conference_1.ConferenceRolesEnum.Specialist)
         whoIAm = confInfo.specialists.find(function (s) { return s.id === userId; });

@@ -21,6 +21,8 @@ MedMe Conference SDK предполагает работу с сервером �
 
 [Описание запросов API в формате OpenAPI](https://gbookingltd.github.io/medme-conference-ts-sdk/). 
 
+[Тестовое приложение](examples/app/).
+
 ## Начало работы
 
 Есть несколько вариантов получения MedMe Conference SDK
@@ -40,7 +42,7 @@ git clone https://github.com/GbookingLTD/1.0.1/medme-conference-ts-sdk.git
 3. Скачать архив исходного кода и разархивировать
 
 ````bash
-wget  https://github.com/GbookingLTD/medme-conference-ts-sdk/archive/refs/tags/v1.0.1.tar.gz -O mmconf-ts-sdk-v1.0.tar.gz
+wget  https://github.com/GbookingLTD/medme-conference-ts-sdk/archive/refs/tags/v1.0.1.tar.gz -O mmconf-ts-sdk-v1.0.1.tar.gz
 tar -xzvf mmconf-ts-sdk-v1.0.1.tar.gz
 ````
 
@@ -74,7 +76,7 @@ sudo npm i -g webpack webpack-cli
 если необходимо получать изменения от сервера.
 
 ````ts
-import * as mmconf from "mmconf-ts-sdk"
+import mmconf from "@medme/mmconf-ts-sdk"
 mmconf.initHttpAPI();
 mmconf.initWebSocketAPI();
 ````
@@ -83,7 +85,7 @@ mmconf.initWebSocketAPI();
 создать экземпляры классов и указать в конструкторе свои значения Endpoint сервера 
 
 ````ts
-import * as mmconf from "mmconf-ts-sdk"
+import * as mmconf from "@medme/mmconf-ts-sdk"
 
 // medme conference control API
 const conferenceModifyAPI = mmconf.ConferenceModifyAPI.createHttpAPI(CONFERENCE_ENDPOINT);
@@ -114,9 +116,9 @@ var confRes = conferenceModifyAPI.create('[:: SEcRet Ap1keY ::]', user_id, user_
 
 Примеры использования метода создания конференции смотрите в примерах:
 
-* [samples/conf_a.js](./samples/conf_a.js)
-* [samples/conf_b.js](./samples/conf_b.js)
-* [samples/conf_c.js](./samples/conf_c.js)
+* [examples/conf_a.js](./examples/conf_a.js)
+* [examples/conf_b.js](./examples/conf_b.js)
+* [examples/conf_c.js](./examples/conf_c.js)
 
 В случае возникновения ошибки возникнет исключение `APIError`. Примеры обработки ошибки смотрите 
 в тестах [tests/index.ts](./tests/index.ts).

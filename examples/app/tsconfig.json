@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "rootDir": "./../..",
+    "target": "ES5",
+    "module": "amd",
+    "allowJs": true,
+    "sourceMap": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "newLine": "lf",
+    "types": [ "node" ],
+    "typeRoots": [ "./../../node_modules/@types" ]
+  },
+  "files": [
+    "src/app.ts"
+  ]
+}

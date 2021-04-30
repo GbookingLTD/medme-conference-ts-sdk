@@ -1,0 +1,83 @@
+{
+    "document_title_prefix": "MedMe Meets | ",
+    "conference_preload_text": "please wait...",
+    "specialist": "specialist",
+    "specialists": "specialists",
+    "services": "services",
+    "service": "service",
+    "clients": "clients",
+    "client": "client",
+    "guest": "Guest",
+    "help_link": "Help",
+    "common": {
+        "title": "Doctor's appointments online",
+        "remained_duration": "remained",
+        "real_start": "start time",
+        "real_end": "end time"
+    },
+    "404": {
+        "title": "not found"
+    },
+    "401": {
+        "title": "access denied"
+    },
+    "pending_client": {
+        "title": "The meeting hasn't started yet",
+        "hint1": "We will send you an invitation 10 minutes before the reception starts",
+        "hint2": "Please stay in touch at this time.",
+        "conf_info_link": "information about meeting"
+    },
+    "pending_specialist": {
+        "title": "The meeting hasn't started yet",
+        "button": "Invite a client to an appointment",
+        "button_open": "Open meet",
+        "cancel_button": "Cancel the appointment",
+        "hint1": "Participants of the video conference will be able to log in to it",
+        "hint2": "If you or a client can't make an appointment, you can cancel it",
+        "conf_info_link": "information about meeting"
+    },
+    "join_client": {
+        "title": "Join a video conference",
+        "button": "Go to the reception",
+        "hint": "Click to start an appointment with your specialist",
+        "conf_info_link": "information about meeting"
+    },
+    "join_specialist": {
+        "title": "Join a video conference",
+        "button": "Join to the meeting",
+        "hint": "Click to start a meeting with a client",
+        "conf_info_link": "information about meeting"
+    },
+    "conference_info_block": {
+        "title": "Information about this conference",
+        "scheduled_start": "scheduled start time",
+        "scheduled_duration": "scheduled duration",
+        "real_duration": "duration",
+        "specialist": "specialist",
+        "specialists": "specialists",
+        "services": "services",
+        "service": "service",
+        "clients": "clients",
+        "client": "client",
+        "cancelled_during_several_minutes": "The meeting will be completed automatically in the next few minutes",
+        "finish_button": "Finish",
+        "leave_meet": "Leave"
+    },
+    "finish_screen": {
+        "title": "Meeting is already complete",
+        "hint1": "You can restore meeting within 3 minutes by clicking the button",
+        "restore_button": "To resume receiving",
+        "conf_info_link": "information about meeting"
+    },
+    "pause_block": {
+        "title": "Meeting on pause"
+    },
+    "cancelled_screen": {
+        "title": "Meeting canceled",
+        "client_hint0": "Your specialist may not be able to see you at this time. ",
+        "client_hint1": "You can make an appointment online for a different time or with a different specialist.",
+        "hint1": "You can restore meeting within 3 minutes by clicking the button",
+        "restore_button": "Resume meeting",
+        "conf_info_link": "information about meeting"
+    }
+}
