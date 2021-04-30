@@ -3001,8 +3001,18 @@ define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet", "@medm
     }());
     exports.ConferenceSession = ConferenceSession;
     ;
+    var voidFn = function () { };
     var ConferenceEvents = (function () {
         function ConferenceEvents() {
+            this.onLocalTrack = voidFn;
+            this.onRemoteTrack = voidFn;
+            this.onConferenceJoined = voidFn;
+            this.onUserLeft = voidFn;
+            this.onConnected = voidFn;
+            this.onConnectionFailed = voidFn;
+            this.onDeviceListChanged = voidFn;
+            this.onConnectionDisconnected = voidFn;
+            this.onSwitchVideo = voidFn;
         }
         return ConferenceEvents;
     }());
@@ -3278,6 +3288,7 @@ define("examples/app/src/conf", ["require", "exports", "jquery", "index"], funct
                 }
             });
         }
+        return sessCtl;
     }
     exports.openConference = openConference;
 });
@@ -3297,9 +3308,12 @@ define("examples/app/src/app", ["require", "exports", "jquery", "index", "exampl
         cancel: null,
         leave: null,
         restore: null,
+        unload: null,
+        switchVideo: null,
+        changeAudioOutput: null,
     };
     exports.App.main = function () {
-        var CONFERENCE_ENDPOINT = "https://apiv2.gbooking.ru/meets/v1";
+        var CONFERENCE_ENDPOINT = "https://apiv2.gbooking.ru/meets/v1/c326be0234a0acdd1e3c29510692d32c3f08e05a";
         var CONFERENCE_WS_ENDPOINT = "wss://apiv2.gbooking.ru/meets/v1/ws";
         var conferenceModifyAPI = mmconf.ConferenceModifyAPI.createHttpAPI(CONFERENCE_ENDPOINT);
         var conferenceAccessAPI = mmconf.ConferenceAccessAPI.createHttpAPI(CONFERENCE_ENDPOINT);
@@ -3550,7 +3564,18 @@ define("examples/app/src/app", ["require", "exports", "jquery", "index", "exampl
                 jquery_2.default('#content')
                     .append("<p><a href=\"#\" class=\"conf_info_link\" onclick=\"toggle_info(); return;\">" + text.join_client.conf_info_link + "</a></p>")
                     .show();
-                conf_1.openConference();
+                var sessCtl_1 = conf_1.openConference();
+                exports.App.unload = function () {
+                    sessCtl_1.unload();
+                };
+                exports.App.switchVideo = function () {
+                    sessCtl_1.switchVideo();
+                };
+                exports.App.changeAudioOutput = function (select) {
+                    sessCtl_1.changeAudioOutput(select.value);
+                };
+                jquery_2.default('#conference')
+                    .show();
                 return;
             }
             console.error("unknown screen name " + uxScreen.name);

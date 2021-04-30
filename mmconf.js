@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("medme/3dparts/jitsi-meet"), require("@medme/lib-jitsi-meet/JitsiMeetJS"), require("@medme/lib-jitsi-meet/JitsiConference"), require("@medme/lib-jitsi-meet/JitsiConnection"), require("@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack"), require("@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"));
+		module.exports = factory(require("medme/3dparts/jitsi-meet"), require("JitsiMeetJS"), require("@medme/lib-jitsi-meet/JitsiConference"), require("@medme/lib-jitsi-meet/JitsiConnection"), require("@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack"), require("@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"));
 	else if(typeof define === 'function' && define.amd)
-		define("mmconf", ["medme/3dparts/jitsi-meet", "@medme/lib-jitsi-meet/JitsiMeetJS", "@medme/lib-jitsi-meet/JitsiConference", "@medme/lib-jitsi-meet/JitsiConnection", "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack", "@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"], factory);
+		define("mmconf", ["medme/3dparts/jitsi-meet", "JitsiMeetJS", "@medme/lib-jitsi-meet/JitsiConference", "@medme/lib-jitsi-meet/JitsiConnection", "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack", "@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"], factory);
 	else if(typeof exports === 'object')
-		exports["mmconf"] = factory(require("medme/3dparts/jitsi-meet"), require("@medme/lib-jitsi-meet/JitsiMeetJS"), require("@medme/lib-jitsi-meet/JitsiConference"), require("@medme/lib-jitsi-meet/JitsiConnection"), require("@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack"), require("@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"));
+		exports["mmconf"] = factory(require("medme/3dparts/jitsi-meet"), require("JitsiMeetJS"), require("@medme/lib-jitsi-meet/JitsiConference"), require("@medme/lib-jitsi-meet/JitsiConnection"), require("@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack"), require("@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"));
 	else
-		root["mmconf"] = factory(root["medme/3dparts/jitsi-meet"], root["@medme/lib-jitsi-meet/JitsiMeetJS"], root["@medme/lib-jitsi-meet/JitsiConference"], root["@medme/lib-jitsi-meet/JitsiConnection"], root["@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack"], root["@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_medme_3dparts_jitsi_meet__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_JitsiMeetJS__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_JitsiConference__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_JitsiConnection__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_modules_RTC_JitsiLocalTrack__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_modules_RTC_JitsiRemoteTrack__) {
+		root["mmconf"] = factory(root["medme/3dparts/jitsi-meet"], root["JitsiMeetJS"], root["@medme/lib-jitsi-meet/JitsiConference"], root["@medme/lib-jitsi-meet/JitsiConnection"], root["@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack"], root["@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_medme_3dparts_jitsi_meet__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_JitsiConference__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_JitsiConnection__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_modules_RTC_JitsiLocalTrack__, __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_modules_RTC_JitsiRemoteTrack__) {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2989,17 +2989,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     }
     exports.openConference = openConference;
 }).apply(__WEBPACK_LOCAL_MODULE_19__exports = {}, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_LOCAL_MODULE_19__ === undefined && (__WEBPACK_LOCAL_MODULE_19__ = __WEBPACK_LOCAL_MODULE_19__exports));
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(/*! @medme/lib-jitsi-meet/JitsiMeetJS */ "@medme/lib-jitsi-meet/JitsiMeetJS"), __webpack_require__(/*! @medme/lib-jitsi-meet/JitsiConference */ "@medme/lib-jitsi-meet/JitsiConference"), __webpack_require__(/*! @medme/lib-jitsi-meet/JitsiConnection */ "@medme/lib-jitsi-meet/JitsiConnection"), __webpack_require__(/*! @medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack */ "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack"), __webpack_require__(/*! @medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack */ "@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"), __WEBPACK_LOCAL_MODULE_1__], __WEBPACK_LOCAL_MODULE_20__ = (function (require, exports, JitsiMeetJS_1, JitsiConference_1, JitsiConnection_1, JitsiLocalTrack_1, JitsiRemoteTrack_1, defaultEnv) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(/*! @medme/lib-jitsi-meet */ "@medme/lib-jitsi-meet"), __webpack_require__(/*! @medme/lib-jitsi-meet/JitsiConference */ "@medme/lib-jitsi-meet/JitsiConference"), __webpack_require__(/*! @medme/lib-jitsi-meet/JitsiConnection */ "@medme/lib-jitsi-meet/JitsiConnection"), __webpack_require__(/*! @medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack */ "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack"), __webpack_require__(/*! @medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack */ "@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack"), __WEBPACK_LOCAL_MODULE_1__], __WEBPACK_LOCAL_MODULE_20__ = (function (require, exports, lib_jitsi_meet_1, JitsiConference_1, JitsiConnection_1, JitsiLocalTrack_1, JitsiRemoteTrack_1, defaultEnv) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.createConferenceAndConnect = exports.ConferenceCtl = exports.ConferenceConfig = exports.ConferenceEvents = exports.ConferenceSession = exports.JitsiRemoteTrack = exports.JitsiLocalTrack = exports.JitsiConnection = exports.JitsiConference = exports.JitsiMeetJS = void 0;
-    JitsiMeetJS_1 = __importDefault(JitsiMeetJS_1);
+    lib_jitsi_meet_1 = __importDefault(lib_jitsi_meet_1);
     JitsiConference_1 = __importDefault(JitsiConference_1);
     JitsiConnection_1 = __importDefault(JitsiConnection_1);
     JitsiLocalTrack_1 = __importDefault(JitsiLocalTrack_1);
     JitsiRemoteTrack_1 = __importDefault(JitsiRemoteTrack_1);
     defaultEnv = __importStar(defaultEnv);
-    exports.JitsiMeetJS = JitsiMeetJS_1.default;
+    exports.JitsiMeetJS = lib_jitsi_meet_1.default;
     exports.JitsiConference = JitsiConference_1.default;
     exports.JitsiConnection = JitsiConnection_1.default;
     exports.JitsiLocalTrack = JitsiLocalTrack_1.default;
@@ -3020,8 +3020,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     }());
     exports.ConferenceSession = ConferenceSession;
     ;
+    var voidFn = function () { };
     var ConferenceEvents = (function () {
         function ConferenceEvents() {
+            this.onLocalTrack = voidFn;
+            this.onRemoteTrack = voidFn;
+            this.onConferenceJoined = voidFn;
+            this.onUserLeft = voidFn;
+            this.onConnected = voidFn;
+            this.onConnectionFailed = voidFn;
+            this.onDeviceListChanged = voidFn;
+            this.onConnectionDisconnected = voidFn;
+            this.onSwitchVideo = voidFn;
         }
         return ConferenceEvents;
     }());
@@ -3058,7 +3068,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             this.events = events;
         }
         ConferenceCtl.prototype.changeAudioOutput = function (selected) {
-            JitsiMeetJS_1.default.mediaDevices.setAudioOutputDevice(selected);
+            lib_jitsi_meet_1.default.mediaDevices.setAudioOutputDevice(selected);
         };
         ConferenceCtl.prototype.unload = function () {
             for (var i = 0; i < this.session._localTracks.length; i++) {
@@ -3074,7 +3084,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 this.session._localTracks[1].dispose();
                 this.session._localTracks.pop();
             }
-            JitsiMeetJS_1.default.createLocalTracks({
+            lib_jitsi_meet_1.default.createLocalTracks({
                 devices: [this.session.isVideo ? 'video' : 'desktop']
             })
                 .then(function (tracks) {
@@ -3129,22 +3139,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         }
         function onConnectionSuccess() {
             sess.room = sess.connection.initJitsiConference('conference', confOptions);
-            sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_ADDED, onRemoteTrack);
-            sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_REMOVED, function (track) {
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_ADDED, onRemoteTrack);
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_REMOVED, function (track) {
                 console.log("track removed!!!" + track);
             });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-            sess.room.on(JitsiMeetJS_1.default.events.conference.USER_JOINED, function (id) {
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.CONFERENCE_JOINED, onConferenceJoined);
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.USER_JOINED, function (id) {
                 console.log('user join');
                 sess._remoteTracks[id] = [];
             });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.USER_LEFT, onUserLeft);
-            sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_MUTE_CHANGED, function (track) {
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.USER_LEFT, onUserLeft);
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_MUTE_CHANGED, function (track) {
                 console.log(track.getType() + " - " + track.isMuted());
             });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) { return console.log(userID + " - " + displayName); });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_AUDIO_LEVEL_CHANGED, function (userID, audioLevel) { return console.log(userID + " - " + audioLevel); });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.PHONE_NUMBER_CHANGED, function () { return console.log(sess.room.getPhoneNumber() + " - " + sess.room.getPhonePin()); });
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) { return console.log(userID + " - " + displayName); });
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_AUDIO_LEVEL_CHANGED, function (userID, audioLevel) { return console.log(userID + " - " + audioLevel); });
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.PHONE_NUMBER_CHANGED, function () { return console.log(sess.room.getPhoneNumber() + " - " + sess.room.getPhonePin()); });
             sess.room.join();
             events.onConnected(sess);
         }
@@ -3158,9 +3168,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         }
         function disconnect() {
             console.log('disconnect!');
-            sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-            sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
-            sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
+            sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+            sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
+            sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
             events.onConnectionDisconnected(sess);
         }
         var unload = sessCtl.unload.bind(sessCtl);
@@ -3168,14 +3178,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         var initOptions = {
             disableAudioLevels: true
         };
-        JitsiMeetJS_1.default.init(initOptions);
-        sess.connection = new JitsiMeetJS_1.default.JitsiConnection(null, null, options);
-        sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-        sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
-        sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
-        JitsiMeetJS_1.default.mediaDevices.addEventListener(JitsiMeetJS_1.default.events.mediaDevices.DEVICE_LIST_CHANGED, onDeviceListChanged);
+        lib_jitsi_meet_1.default.init(initOptions);
+        sess.connection = new lib_jitsi_meet_1.default.JitsiConnection(null, null, options);
+        sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+        sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
+        sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
+        lib_jitsi_meet_1.default.mediaDevices.addEventListener(lib_jitsi_meet_1.default.events.mediaDevices.DEVICE_LIST_CHANGED, onDeviceListChanged);
         sess.connection.connect();
-        JitsiMeetJS_1.default.createLocalTracks({ devices: ['audio', 'video'] })
+        lib_jitsi_meet_1.default.createLocalTracks({ devices: ['audio', 'video'] })
             .then(onLocalTracks)
             .catch(function (error) {
             throw error;
@@ -25235,17 +25245,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_JitsiConnection
 
 /***/ }),
 
-/***/ "@medme/lib-jitsi-meet/JitsiMeetJS":
-/*!****************************************************!*\
-  !*** external "@medme/lib-jitsi-meet/JitsiMeetJS" ***!
-  \****************************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_JitsiMeetJS__;
-
-/***/ }),
-
 /***/ "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack":
 /*!********************************************************************!*\
   !*** external "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack" ***!
@@ -25265,6 +25264,17 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_modules_RTC_Jit
 
 "use strict";
 module.exports = __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet_modules_RTC_JitsiRemoteTrack__;
+
+/***/ }),
+
+/***/ "@medme/lib-jitsi-meet":
+/*!******************************!*\
+  !*** external "JitsiMeetJS" ***!
+  \******************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = __WEBPACK_EXTERNAL_MODULE__medme_lib_jitsi_meet__;
 
 /***/ }),
 

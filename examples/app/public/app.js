@@ -23722,9 +23722,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         cancel: null,
         leave: null,
         restore: null,
+        unload: null,
+        switchVideo: null,
+        changeAudioOutput: null,
     };
     exports.App.main = function () {
-        var CONFERENCE_ENDPOINT = "https://apiv2.gbooking.ru/meets/v1";
+        var CONFERENCE_ENDPOINT = "https://apiv2.gbooking.ru/meets/v1/c326be0234a0acdd1e3c29510692d32c3f08e05a";
         var CONFERENCE_WS_ENDPOINT = "wss://apiv2.gbooking.ru/meets/v1/ws";
         // medme conference control API
         var conferenceModifyAPI = mmconf.ConferenceModifyAPI.createHttpAPI(CONFERENCE_ENDPOINT);
@@ -23991,7 +23994,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 jquery_1.default('#content')
                     .append("<p><a href=\"#\" class=\"conf_info_link\" onclick=\"toggle_info(); return;\">" + text.join_client.conf_info_link + "</a></p>")
                     .show();
-                conf_1.openConference();
+                var sessCtl_1 = conf_1.openConference();
+                exports.App.unload = function () {
+                    sessCtl_1.unload();
+                };
+                exports.App.switchVideo = function () {
+                    sessCtl_1.switchVideo();
+                };
+                exports.App.changeAudioOutput = function (select) {
+                    sessCtl_1.changeAudioOutput(select.value);
+                };
+                jquery_1.default('#conference')
+                    .show();
                 return;
             }
             console.error("unknown screen name " + uxScreen.name);
@@ -24157,6 +24171,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 }
             });
         }
+        return sessCtl;
     }
     exports.openConference = openConference;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -24831,8 +24846,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     }());
     exports.ConferenceSession = ConferenceSession;
     ;
+    var voidFn = function () { };
     var ConferenceEvents = /** @class */ (function () {
         function ConferenceEvents() {
+            this.onLocalTrack = voidFn;
+            this.onRemoteTrack = voidFn;
+            this.onConferenceJoined = voidFn;
+            this.onUserLeft = voidFn;
+            this.onConnected = voidFn;
+            this.onConnectionFailed = voidFn;
+            this.onDeviceListChanged = voidFn;
+            this.onConnectionDisconnected = voidFn;
+            this.onSwitchVideo = voidFn;
         }
         return ConferenceEvents;
     }());

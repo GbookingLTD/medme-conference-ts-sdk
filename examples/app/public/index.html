@@ -23,13 +23,15 @@
 </head>
 <body>
     <div id="notice" style="display: none;"></div>
+
     <div id="content" style="display: none;"></div>
+
     <div id="conference" style="display: none;">
-        <a href="#" onclick="unload()">Unload</a>
-        <a href="#" onclick="switchVideo()">switchVideo</a>
+        <a href="#" onclick="App.unload(); return;">Unload</a>
+        <a href="#" onclick="App.switchVideo(); return;">switchVideo</a>
         <div id="audioOutputSelectWrapper" style="display: none;">
             Change audio output device
-            <select id="audioOutputSelect" onchange="changeAudioOutput(this)"></select>
+            <select id="audioOutputSelect" onchange="App.changeAudioOutput(this); return;"></select>
         </div>
         <!-- <video id="localVideo" autoplay="true"></video> -->
         <!--<audio id="localAudio" autoplay="true" muted="true"></audio>-->

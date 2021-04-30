@@ -1,4 +1,4 @@
-import JitsiMeetJS from "@medme/lib-jitsi-meet/JitsiMeetJS";
+import JitsiMeetJS from "@medme/lib-jitsi-meet";
 import JitsiConference from "@medme/lib-jitsi-meet/JitsiConference";
 import JitsiConnection from "@medme/lib-jitsi-meet/JitsiConnection";
 import JitsiLocalTrack from "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack";
@@ -16,6 +16,7 @@ export declare class ConferenceSession {
     getRemoteTracks: () => Map<string, JitsiRemoteTrack>;
 }
 export declare class ConferenceEvents {
+    constructor();
     onLocalTrack: (track: JitsiLocalTrack, idx: number, session: ConferenceSession) => void;
     onRemoteTrack: (track: JitsiRemoteTrack, idx: number, session: ConferenceSession) => void;
     onConferenceJoined: (session: ConferenceSession) => void;

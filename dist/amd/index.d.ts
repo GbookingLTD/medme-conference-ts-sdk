@@ -275,8 +275,8 @@ declare module "medme/lib/types/index" {
 }
 declare module "medme/lib/sock" {
     import { ConferenceStatusesEnum } from "medme/lib/types/conference";
-    export type ChangeConferenceStatusCallback = (newStatus: string) => {};
-    export type ChangeConferenceInfoCallback = () => {};
+    export type ChangeConferenceStatusCallback = (newStatus: string) => void;
+    export type ChangeConferenceInfoCallback = () => void;
     export interface IConferenceSock {
         changeConferenceStatus(newStatus: ConferenceStatusesEnum): any;
         changeConferenceStatusCallback(cb: ChangeConferenceStatusCallback): any;
@@ -461,7 +461,7 @@ declare module "medme/lib/ux" {
     export function openConference(conferenceAccessAPI: ConferenceAccessAPI, uxScreen: IStartedScreen, confConfig: IConferenceConfig): void;
 }
 declare module "medme/lib/jmlib" {
-    import JitsiMeetJS from "@medme/lib-jitsi-meet/JitsiMeetJS";
+    import JitsiMeetJS from "@medme/lib-jitsi-meet";
     import JitsiConference from "@medme/lib-jitsi-meet/JitsiConference";
     import JitsiConnection from "@medme/lib-jitsi-meet/JitsiConnection";
     import JitsiLocalTrack from "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack";
@@ -479,6 +479,7 @@ declare module "medme/lib/jmlib" {
         getRemoteTracks: () => Map<string, JitsiRemoteTrack>;
     }
     export class ConferenceEvents {
+        constructor();
         onLocalTrack: (track: JitsiLocalTrack, idx: number, session: ConferenceSession) => void;
         onRemoteTrack: (track: JitsiRemoteTrack, idx: number, session: ConferenceSession) => void;
         onConferenceJoined: (session: ConferenceSession) => void;
@@ -515,8 +516,7 @@ declare module "medme/lib/jmlib" {
     }
     export function createConferenceAndConnect(config: ConferenceConfig, events: ConferenceEvents): ConferenceCtl;
 }
-/// <amd-module name="MedMe" />
-declare module "MedMe" {
+declare module "index" {
     import * as lib from "medme/lib/index";
     import * as env from "medme/env";
     import * as request from "medme/lib/httpRequest";

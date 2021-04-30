@@ -118,4 +118,5 @@ export function openConference() {
         });
     }
 
+    return sessCtl;
 }

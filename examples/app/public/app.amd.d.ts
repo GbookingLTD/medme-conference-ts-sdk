@@ -479,6 +479,7 @@ declare module "medme/lib/jmlib" {
         getRemoteTracks: () => Map<string, JitsiRemoteTrack>;
     }
     export class ConferenceEvents {
+        constructor();
         onLocalTrack: (track: JitsiLocalTrack, idx: number, session: ConferenceSession) => void;
         onRemoteTrack: (track: JitsiRemoteTrack, idx: number, session: ConferenceSession) => void;
         onConferenceJoined: (session: ConferenceSession) => void;
@@ -535,7 +536,8 @@ declare module "index" {
     export function initWebSocketAPI(): void;
 }
 declare module "examples/app/src/conf" {
-    export function openConference(): void;
+    import { JML } from "index";
+    export function openConference(): JML.ConferenceCtl;
 }
 declare module "examples/app/src/app" {
     export let App: {
@@ -548,5 +550,8 @@ declare module "examples/app/src/app" {
         cancel: Function;
         leave: Function;
         restore: Function;
+        unload: Function;
+        switchVideo: Function;
+        changeAudioOutput: Function;
     };
 }

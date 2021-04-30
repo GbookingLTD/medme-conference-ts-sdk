@@ -14,6 +14,9 @@ export let App: {
     cancel: Function;
     leave: Function;
     restore: Function;
+    unload: Function;
+    switchVideo: Function;
+    changeAudioOutput: Function;
 } = {
     main: null,
     renderConferenceInfo: null,
@@ -23,6 +26,9 @@ export let App: {
     cancel: null,
     leave: null,
     restore: null,
+    unload: null,
+    switchVideo: null,
+    changeAudioOutput: null,
 };
 
 App.main = () => {
@@ -380,7 +386,22 @@ App.main = () => {
             .append(`<p><a href="#" class="conf_info_link" onclick="toggle_info(); return;">${text.join_client.conf_info_link}</a></p>`)
             .show();
 
-            openConference();
+            let sessCtl = openConference();
+
+            App.unload = () => {
+                sessCtl.unload();
+            };
+
+            App.switchVideo = () => {
+                sessCtl.switchVideo();
+            };
+
+            App.changeAudioOutput = (select) => {
+                sessCtl.changeAudioOutput(select.value);  
+            };
+
+            $('#conference')
+            .show();
 
             return;
         }

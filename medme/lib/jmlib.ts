@@ -37,7 +37,21 @@ export class ConferenceSession {
     getRemoteTracks = (): Map<string, JitsiRemoteTrack> => this._remoteTracks;
 };
 
+const voidFn = () => {};
+
 export class ConferenceEvents {
+    constructor() {
+        this.onLocalTrack = voidFn;
+        this.onRemoteTrack = voidFn;
+        this.onConferenceJoined = voidFn;
+        this.onUserLeft = voidFn;
+        this.onConnected = voidFn;
+        this.onConnectionFailed = voidFn;
+        this.onDeviceListChanged = voidFn;
+        this.onConnectionDisconnected = voidFn;
+        this.onSwitchVideo = voidFn;
+    }
+
     onLocalTrack: (track: JitsiLocalTrack, idx: number, session: ConferenceSession) => void;
     onRemoteTrack: (track: JitsiRemoteTrack, idx: number, session: ConferenceSession) => void;
     onConferenceJoined: (session: ConferenceSession) => void;

@@ -1,4 +1,3 @@
-/// <amd-module name="MedMe" />
 import * as lib from './medme/lib/index';
 import * as env from './medme/env';
 import * as request from './medme/lib/httpRequest';

@@ -2970,17 +2970,17 @@ define("medme/lib/ux", ["require", "exports", "medme/lib/types/conference", "med
     }
     exports.openConference = openConference;
 });
-define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet/JitsiMeetJS", "@medme/lib-jitsi-meet/JitsiConference", "@medme/lib-jitsi-meet/JitsiConnection", "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack", "@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack", "medme/env"], function (require, exports, JitsiMeetJS_1, JitsiConference_1, JitsiConnection_1, JitsiLocalTrack_1, JitsiRemoteTrack_1, defaultEnv) {
+define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet", "@medme/lib-jitsi-meet/JitsiConference", "@medme/lib-jitsi-meet/JitsiConnection", "@medme/lib-jitsi-meet/modules/RTC/JitsiLocalTrack", "@medme/lib-jitsi-meet/modules/RTC/JitsiRemoteTrack", "medme/env"], function (require, exports, lib_jitsi_meet_1, JitsiConference_1, JitsiConnection_1, JitsiLocalTrack_1, JitsiRemoteTrack_1, defaultEnv) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.createConferenceAndConnect = exports.ConferenceCtl = exports.ConferenceConfig = exports.ConferenceEvents = exports.ConferenceSession = exports.JitsiRemoteTrack = exports.JitsiLocalTrack = exports.JitsiConnection = exports.JitsiConference = exports.JitsiMeetJS = void 0;
-    JitsiMeetJS_1 = __importDefault(JitsiMeetJS_1);
+    lib_jitsi_meet_1 = __importDefault(lib_jitsi_meet_1);
     JitsiConference_1 = __importDefault(JitsiConference_1);
     JitsiConnection_1 = __importDefault(JitsiConnection_1);
     JitsiLocalTrack_1 = __importDefault(JitsiLocalTrack_1);
     JitsiRemoteTrack_1 = __importDefault(JitsiRemoteTrack_1);
     defaultEnv = __importStar(defaultEnv);
-    exports.JitsiMeetJS = JitsiMeetJS_1.default;
+    exports.JitsiMeetJS = lib_jitsi_meet_1.default;
     exports.JitsiConference = JitsiConference_1.default;
     exports.JitsiConnection = JitsiConnection_1.default;
     exports.JitsiLocalTrack = JitsiLocalTrack_1.default;
@@ -3001,8 +3001,18 @@ define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet/JitsiMee
     }());
     exports.ConferenceSession = ConferenceSession;
     ;
+    var voidFn = function () { };
     var ConferenceEvents = (function () {
         function ConferenceEvents() {
+            this.onLocalTrack = voidFn;
+            this.onRemoteTrack = voidFn;
+            this.onConferenceJoined = voidFn;
+            this.onUserLeft = voidFn;
+            this.onConnected = voidFn;
+            this.onConnectionFailed = voidFn;
+            this.onDeviceListChanged = voidFn;
+            this.onConnectionDisconnected = voidFn;
+            this.onSwitchVideo = voidFn;
         }
         return ConferenceEvents;
     }());
@@ -3039,7 +3049,7 @@ define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet/JitsiMee
             this.events = events;
         }
         ConferenceCtl.prototype.changeAudioOutput = function (selected) {
-            JitsiMeetJS_1.default.mediaDevices.setAudioOutputDevice(selected);
+            lib_jitsi_meet_1.default.mediaDevices.setAudioOutputDevice(selected);
         };
         ConferenceCtl.prototype.unload = function () {
             for (var i = 0; i < this.session._localTracks.length; i++) {
@@ -3055,7 +3065,7 @@ define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet/JitsiMee
                 this.session._localTracks[1].dispose();
                 this.session._localTracks.pop();
             }
-            JitsiMeetJS_1.default.createLocalTracks({
+            lib_jitsi_meet_1.default.createLocalTracks({
                 devices: [this.session.isVideo ? 'video' : 'desktop']
             })
                 .then(function (tracks) {
@@ -3110,22 +3120,22 @@ define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet/JitsiMee
         }
         function onConnectionSuccess() {
             sess.room = sess.connection.initJitsiConference('conference', confOptions);
-            sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_ADDED, onRemoteTrack);
-            sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_REMOVED, function (track) {
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_ADDED, onRemoteTrack);
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_REMOVED, function (track) {
                 console.log("track removed!!!" + track);
             });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-            sess.room.on(JitsiMeetJS_1.default.events.conference.USER_JOINED, function (id) {
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.CONFERENCE_JOINED, onConferenceJoined);
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.USER_JOINED, function (id) {
                 console.log('user join');
                 sess._remoteTracks[id] = [];
             });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.USER_LEFT, onUserLeft);
-            sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_MUTE_CHANGED, function (track) {
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.USER_LEFT, onUserLeft);
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_MUTE_CHANGED, function (track) {
                 console.log(track.getType() + " - " + track.isMuted());
             });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) { return console.log(userID + " - " + displayName); });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_AUDIO_LEVEL_CHANGED, function (userID, audioLevel) { return console.log(userID + " - " + audioLevel); });
-            sess.room.on(JitsiMeetJS_1.default.events.conference.PHONE_NUMBER_CHANGED, function () { return console.log(sess.room.getPhoneNumber() + " - " + sess.room.getPhonePin()); });
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) { return console.log(userID + " - " + displayName); });
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_AUDIO_LEVEL_CHANGED, function (userID, audioLevel) { return console.log(userID + " - " + audioLevel); });
+            sess.room.on(lib_jitsi_meet_1.default.events.conference.PHONE_NUMBER_CHANGED, function () { return console.log(sess.room.getPhoneNumber() + " - " + sess.room.getPhonePin()); });
             sess.room.join();
             events.onConnected(sess);
         }
@@ -3139,9 +3149,9 @@ define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet/JitsiMee
         }
         function disconnect() {
             console.log('disconnect!');
-            sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-            sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
-            sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
+            sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+            sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
+            sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
             events.onConnectionDisconnected(sess);
         }
         var unload = sessCtl.unload.bind(sessCtl);
@@ -3149,14 +3159,14 @@ define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet/JitsiMee
         var initOptions = {
             disableAudioLevels: true
         };
-        JitsiMeetJS_1.default.init(initOptions);
-        sess.connection = new JitsiMeetJS_1.default.JitsiConnection(null, null, options);
-        sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-        sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
-        sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
-        JitsiMeetJS_1.default.mediaDevices.addEventListener(JitsiMeetJS_1.default.events.mediaDevices.DEVICE_LIST_CHANGED, onDeviceListChanged);
+        lib_jitsi_meet_1.default.init(initOptions);
+        sess.connection = new lib_jitsi_meet_1.default.JitsiConnection(null, null, options);
+        sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+        sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
+        sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
+        lib_jitsi_meet_1.default.mediaDevices.addEventListener(lib_jitsi_meet_1.default.events.mediaDevices.DEVICE_LIST_CHANGED, onDeviceListChanged);
         sess.connection.connect();
-        JitsiMeetJS_1.default.createLocalTracks({ devices: ['audio', 'video'] })
+        lib_jitsi_meet_1.default.createLocalTracks({ devices: ['audio', 'video'] })
             .then(onLocalTracks)
             .catch(function (error) {
             throw error;
@@ -3165,7 +3175,7 @@ define("medme/lib/jmlib", ["require", "exports", "@medme/lib-jitsi-meet/JitsiMee
     }
     exports.createConferenceAndConnect = createConferenceAndConnect;
 });
-define("MedMe", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/sock", "medme/lib/ux", "medme/lib/jmlib", "medme/lib/sock"], function (require, exports, lib, env, request, statuses, types, sock, UX, JML, sock_1) {
+define("index", ["require", "exports", "medme/lib/index", "medme/env", "medme/lib/httpRequest", "medme/lib/statuses", "medme/lib/types/index", "medme/lib/sock", "medme/lib/ux", "medme/lib/jmlib", "medme/lib/sock"], function (require, exports, lib, env, request, statuses, types, sock, UX, JML, sock_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.initWebSocketAPI = exports.initHttpAPI = exports.conferenceWebSocketAPI = exports.conferenceAccessAPI = exports.conferenceModifyAPI = exports.JML = exports.UX = exports.sock = exports.types = exports.statuses = exports.request = exports.env = exports.ConferenceAccessAPI = exports.ConferenceModifyAPI = exports.lib = void 0;

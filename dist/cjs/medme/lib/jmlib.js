@@ -23,8 +23,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createConferenceAndConnect = exports.ConferenceCtl = exports.ConferenceConfig = exports.ConferenceEvents = exports.ConferenceSession = exports.JitsiRemoteTrack = exports.JitsiLocalTrack = exports.JitsiConnection = exports.JitsiConference = exports.JitsiMeetJS = void 0;
-var JitsiMeetJS_1 = __importDefault(require("@medme/lib-jitsi-meet/JitsiMeetJS"));
-exports.JitsiMeetJS = JitsiMeetJS_1.default;
+var lib_jitsi_meet_1 = __importDefault(require("@medme/lib-jitsi-meet"));
+exports.JitsiMeetJS = lib_jitsi_meet_1.default;
 var JitsiConference_1 = __importDefault(require("@medme/lib-jitsi-meet/JitsiConference"));
 exports.JitsiConference = JitsiConference_1.default;
 var JitsiConnection_1 = __importDefault(require("@medme/lib-jitsi-meet/JitsiConnection"));
@@ -50,8 +50,18 @@ var ConferenceSession = (function () {
 }());
 exports.ConferenceSession = ConferenceSession;
 ;
+var voidFn = function () { };
 var ConferenceEvents = (function () {
     function ConferenceEvents() {
+        this.onLocalTrack = voidFn;
+        this.onRemoteTrack = voidFn;
+        this.onConferenceJoined = voidFn;
+        this.onUserLeft = voidFn;
+        this.onConnected = voidFn;
+        this.onConnectionFailed = voidFn;
+        this.onDeviceListChanged = voidFn;
+        this.onConnectionDisconnected = voidFn;
+        this.onSwitchVideo = voidFn;
     }
     return ConferenceEvents;
 }());
@@ -88,7 +98,7 @@ var ConferenceCtl = (function () {
         this.events = events;
     }
     ConferenceCtl.prototype.changeAudioOutput = function (selected) {
-        JitsiMeetJS_1.default.mediaDevices.setAudioOutputDevice(selected);
+        lib_jitsi_meet_1.default.mediaDevices.setAudioOutputDevice(selected);
     };
     ConferenceCtl.prototype.unload = function () {
         for (var i = 0; i < this.session._localTracks.length; i++) {
@@ -104,7 +114,7 @@ var ConferenceCtl = (function () {
             this.session._localTracks[1].dispose();
             this.session._localTracks.pop();
         }
-        JitsiMeetJS_1.default.createLocalTracks({
+        lib_jitsi_meet_1.default.createLocalTracks({
             devices: [this.session.isVideo ? 'video' : 'desktop']
         })
             .then(function (tracks) {
@@ -159,22 +169,22 @@ function createConferenceAndConnect(config, events) {
     }
     function onConnectionSuccess() {
         sess.room = sess.connection.initJitsiConference('conference', confOptions);
-        sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_ADDED, onRemoteTrack);
-        sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_REMOVED, function (track) {
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_ADDED, onRemoteTrack);
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_REMOVED, function (track) {
             console.log("track removed!!!" + track);
         });
-        sess.room.on(JitsiMeetJS_1.default.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-        sess.room.on(JitsiMeetJS_1.default.events.conference.USER_JOINED, function (id) {
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.CONFERENCE_JOINED, onConferenceJoined);
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.USER_JOINED, function (id) {
             console.log('user join');
             sess._remoteTracks[id] = [];
         });
-        sess.room.on(JitsiMeetJS_1.default.events.conference.USER_LEFT, onUserLeft);
-        sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_MUTE_CHANGED, function (track) {
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.USER_LEFT, onUserLeft);
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_MUTE_CHANGED, function (track) {
             console.log(track.getType() + " - " + track.isMuted());
         });
-        sess.room.on(JitsiMeetJS_1.default.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) { return console.log(userID + " - " + displayName); });
-        sess.room.on(JitsiMeetJS_1.default.events.conference.TRACK_AUDIO_LEVEL_CHANGED, function (userID, audioLevel) { return console.log(userID + " - " + audioLevel); });
-        sess.room.on(JitsiMeetJS_1.default.events.conference.PHONE_NUMBER_CHANGED, function () { return console.log(sess.room.getPhoneNumber() + " - " + sess.room.getPhonePin()); });
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.DISPLAY_NAME_CHANGED, function (userID, displayName) { return console.log(userID + " - " + displayName); });
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.TRACK_AUDIO_LEVEL_CHANGED, function (userID, audioLevel) { return console.log(userID + " - " + audioLevel); });
+        sess.room.on(lib_jitsi_meet_1.default.events.conference.PHONE_NUMBER_CHANGED, function () { return console.log(sess.room.getPhoneNumber() + " - " + sess.room.getPhonePin()); });
         sess.room.join();
         events.onConnected(sess);
     }
@@ -188,9 +198,9 @@ function createConferenceAndConnect(config, events) {
     }
     function disconnect() {
         console.log('disconnect!');
-        sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-        sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
-        sess.connection.removeEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
+        sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+        sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
+        sess.connection.removeEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
         events.onConnectionDisconnected(sess);
     }
     var unload = sessCtl.unload.bind(sessCtl);
@@ -198,14 +208,14 @@ function createConferenceAndConnect(config, events) {
     var initOptions = {
         disableAudioLevels: true
     };
-    JitsiMeetJS_1.default.init(initOptions);
-    sess.connection = new JitsiMeetJS_1.default.JitsiConnection(null, null, options);
-    sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-    sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
-    sess.connection.addEventListener(JitsiMeetJS_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
-    JitsiMeetJS_1.default.mediaDevices.addEventListener(JitsiMeetJS_1.default.events.mediaDevices.DEVICE_LIST_CHANGED, onDeviceListChanged);
+    lib_jitsi_meet_1.default.init(initOptions);
+    sess.connection = new lib_jitsi_meet_1.default.JitsiConnection(null, null, options);
+    sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
+    sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_FAILED, onConnectionFailed);
+    sess.connection.addEventListener(lib_jitsi_meet_1.default.events.connection.CONNECTION_DISCONNECTED, disconnect);
+    lib_jitsi_meet_1.default.mediaDevices.addEventListener(lib_jitsi_meet_1.default.events.mediaDevices.DEVICE_LIST_CHANGED, onDeviceListChanged);
     sess.connection.connect();
-    JitsiMeetJS_1.default.createLocalTracks({ devices: ['audio', 'video'] })
+    lib_jitsi_meet_1.default.createLocalTracks({ devices: ['audio', 'video'] })
         .then(onLocalTracks)
         .catch(function (error) {
         throw error;
